@@ -7,7 +7,6 @@ import dk.kb.cop3.backend.crud.cache.CacheManager;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
 import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
-import dk.kb.cop2.backend.crud.format.*;
 import dk.kb.cop3.backend.crud.format.*;
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;

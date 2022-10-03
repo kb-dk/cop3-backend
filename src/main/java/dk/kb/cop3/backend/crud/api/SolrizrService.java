@@ -1,6 +1,5 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop2.backend.crud.database.*;
 import dk.kb.cop3.backend.constants.ConfigurableConstants;
 import org.apache.log4j.Logger;
 

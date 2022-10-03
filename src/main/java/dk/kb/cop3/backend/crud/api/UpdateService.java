@@ -2,10 +2,9 @@ package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.constants.ConfigurableConstants;
 import dk.kb.cop3.backend.crud.cache.CacheManager;
-import dk.kb.cop2.backend.crud.database.*;
+import dk.kb.cop3.backend.crud.database.*;
 import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.crud.util.JMSProducer;
-import dk.kb.cop3.backend.crud.database.*;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
