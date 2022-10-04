@@ -1,7 +1,41 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
 
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
+    <context-param>
+        <param-name>properties</param-name>
+        <param-value>oaicat.properties</param-value>
+    </context-param>
+
+
+    <servlet>
+        <servlet-name>oaiserver</servlet-name>
+        <servlet-class>ORG.oclc.oai.server.OAIHandler</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>oaiserver</servlet-name>
+        <url-pattern>/oai/*</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>Jersey REST Service</servlet-name>
+        <servlet-class>
+            com.sun.jersey.spi.container.servlet.ServletContainer
+        </servlet-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>dk.kb.cop3.backend.crud.api</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Jersey REST Service</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
 </web-app>
