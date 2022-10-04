@@ -8,6 +8,19 @@
   <name>cop3-backend</name>
   <url>http://maven.apache.org</url>
 
+  <repositories>
+    <repository>
+      <id>sbprojects-nexus</id>
+      <url>https://sbprojects.statsbiblioteket.dk/nexus/content/groups/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
