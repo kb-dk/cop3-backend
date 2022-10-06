@@ -1,6 +1,7 @@
 package dk.kb.cop3.backend.crud.database.hibernate;
 
 import java.lang.*;
+import java.util.Set;
 
 /**
  * kb.dk
@@ -13,6 +14,7 @@ public class UserPermissions {
 
     private Integer permissionId;
     private String permissionName;
+    private Set<UserRole> roles;
 
     public Integer getPermissionId() {
         return permissionId;
@@ -28,6 +30,14 @@ public class UserPermissions {
 
     public void setPermissionName(String permissionName) {
         this.permissionName = permissionName;
+    }
+
+    public Set<UserRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<UserRole> roles) {
+        this.roles = roles;
     }
 
     @Override

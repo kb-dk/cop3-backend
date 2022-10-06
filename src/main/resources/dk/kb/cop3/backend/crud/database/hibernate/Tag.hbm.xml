@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 27, 2011 3:35:31 PM by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.crud.database.hibernate.Tag" table="TAG" >
+        <id name="id" type="string">
+            <column name="ID" length="1024" />
+            <generator class="assigned" />
+        </id>
+        <property name="tag_value" type="string">
+            <column name="TAG_VALUE" length="4000" not-null="true" />
+        </property>
+
+
+        <set name="objects" table="TAG_JOIN" inverse="false" lazy="true" fetch="select">
+            <key>
+                <column name="TID" length="1024" not-null="true" />
+            </key>
+            <many-to-many entity-name="dk.kb.cop3.backend.crud.database.hibernate.Object">
+                <column name="OID" length="1024" not-null="true" />
+            </many-to-many>
+
+
+
+        </set>
+    </class>
+</hibernate-mapping>

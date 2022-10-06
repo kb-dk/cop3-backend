@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.crud.database.hibernate.User" table="USERS" >
+        <id name="pid" type="string">
+            <column name="USER_PID"/>
+            <generator class="assigned"/>
+        </id>
+        <property name="id" type="string" column="USER_ID" not-null="true" />
+        <property name="givenName" type="string" column="USER_GIVEN_NAME" not-null="true"/>
+        <property name="surName" type="string" column="USER_SURNAME" not-null="true"/>
+        <property name="commonName" type="string" column="USER_COMMON_NAME" not-null="true"/>
+        <many-to-one name="role" class="dk.kb.cop3.backend.crud.database.hibernate.UserRole" foreign-key="ROLE_ID" column="USER_ROLE_ID" lazy="false"/>
+        <property name="email" type="string" column="USER_EMAIL" not-null="false" />
+        <property name="userScore" type="big_integer">
+            <column name="USER_SCORE" not-null="false" default="0" />
+        </property>
+
+        <property name="userScore1" type="big_integer">
+            <column name="USERSCORE1"  not-null="false" default="0" />
+        </property>
+        <property name="userScore2" type="big_integer">
+            <column name="USERSCORE2"  not-null="false" default="0" />
+        </property>
+        <property name="userScore3" type="big_integer">
+            <column name="USERSCORE3"  not-null="false" default="0" />
+        </property>
+        <property name="userScore4" type="big_integer">
+            <column name="USERSCORE4"  not-null="false" default="0" />
+        </property>
+        <property name="userScore5" type="big_integer">
+            <column name="USERSCORE5"  not-null="false" default="0" />
+        </property>
+        <property name="userScore6" type="big_integer">
+            <column name="USERSCORE6"  not-null="false" default="0" />
+        </property>
+        <property name="userScore7" type="big_integer">
+            <column name="USERSCORE7"  not-null="false" default="0" />
+        </property>
+        <property name="userScore8" type="big_integer">
+            <column name="USERSCORE8"  not-null="false" default="0" />
+        </property>
+        <property name="userScore9" type="big_integer">
+            <column name="USERSCORE9"  not-null="false" default="0" />
+        </property>
+
+
+        <property name="lastActive" type="timestamp" column="LAST_ACTIVE_DATE" not-null="true" />
+    </class>
+</hibernate-mapping>

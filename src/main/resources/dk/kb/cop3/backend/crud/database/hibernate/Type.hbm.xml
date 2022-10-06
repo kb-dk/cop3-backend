@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 27, 2011 3:35:31 PM by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.crud.database.hibernate.Type" table="TYPE" >
+        <id name="id" type="big_decimal">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="assigned" />
+        </id>
+        <property name="typeText" type="string">
+            <column name="TYPE_TEXT" length="4000" not-null="true" unique="true" />
+        </property>
+        <set name="objects" table="OBJECT" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="TYPE_ID" precision="22" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="dk.kb.cop3.backend.crud.database.hibernate.Object" />
+        </set>
+    </class>
+</hibernate-mapping>
