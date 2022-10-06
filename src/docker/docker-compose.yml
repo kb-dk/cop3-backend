@@ -6,7 +6,7 @@ services:
     image: postgres:14.5
     restart: always
     environment:
-      - POSTGRES_USER=cop
+      - POSTGRES_USER=cop3
       - POSTGRES_PASSWORD=cop123
       - POSTGRES_DB=cop
     volumes:
