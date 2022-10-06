@@ -1,0 +1,16 @@
+version: '3'
+services:
+  copdb:
+    container_name: copdb
+    hostname: copdb
+    image: postgres:14.5
+    restart: always
+    environment:
+      - POSTGRES_USER=cop
+      - POSTGRES_PASSWORD=cop123
+      - POSTGRES_DB=cop
+    volumes:
+      -  ./postgres-init.d:/docker-entrypoint-initdb.d
+    ports:
+      - "25432:5432"
+
