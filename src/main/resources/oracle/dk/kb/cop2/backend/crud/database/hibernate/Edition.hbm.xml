@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 27, 2011 3:35:31 PM by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.migrate.hibernate.EditionOracle" table="EDITION" schema="COP2">
+        <id name="id" type="string">
+            <column name="ID" length="1024" />
+            <generator class="assigned" />
+        </id>
+        <property name="name" type="string">
+            <column name="NAME" length="4000" not-null="true" />
+        </property>
+        <property name="nameEn" type="string">
+            <column name="NAME_EN" length="4000" not-null="true" />
+        </property>
+        <property name="urlName" type="string">
+            <column name="URL_NAME" length="4000" not-null="true" />
+        </property>
+        <property name="urlMatrialType" type="string">
+            <column name="URL_MATRIAL_TYPE" length="1024" not-null="true" />
+        </property>
+        <property name="urlPubYear" type="big_decimal">
+            <column name="URL_PUB_YEAR" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="urlPubMonth" type="string">
+            <column name="URL_PUB_MONTH" length="1024" not-null="true" />
+        </property>
+        <property name="urlCollection" type="string">
+            <column name="URL_COLLECTION" length="1024" not-null="true" />
+        </property>
+        <property name="cumulusCatalog" type="string">
+            <column name="CUMULUS_CATALOG" length="4000" not-null="true" />
+        </property>
+        <property name="cumulusTopCatagory" type="string">
+            <column name="CUMULUS_TOP_CATAGORY" length="1024" not-null="true" />
+        </property>
+        <property name="normalisationrule" type="string">
+            <column name="NORMALISATIONRULE" length="1024" not-null="true" />
+        </property>
+        <property name="status" type="string">
+            <column name="STATUS" length="1024" />
+        </property>
+        <property name="uiLanguage" type="string">
+            <column name="UI_LANGUAGE" length="1024" />
+        </property>
+        <property name="uiSort" type="string">
+            <column name="UI_SORT" length="1024" />
+        </property>
+        <property name="uiShow" type="string">
+            <column name="UI_SHOW" length="1024" />
+        </property>
+        <property name="opml" type="string">
+            <column name="OPML" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="4000" />
+        </property>
+        <property name="descriptionEn" type="string">
+            <column name="DESCRIPTION_EN" length="4000" />
+        </property>
+        <property name="collectionDa" type="string">
+            <column name="COLLECTION_DA" length="4000" />
+        </property>
+        <property name="collectionEn" type="string">
+            <column name="COLLECTION_EN" length="4000" />
+        </property>
+        <property name="departmentDa" type="string">
+            <column name="DEPARTMENT_DA" length="4000" />
+        </property>
+        <property name="departmentEn" type="string">
+            <column name="DEPARTMENT_EN" length="4000" />
+        </property>
+        <property name="contactEmail" type="string">
+            <column name="CONTACT_EMAIL" length="4000" />
+        </property>
+
+        <property name="lastModified" type="string">
+            <column name="LAST_MODIFIED" length="1024" not-null="false" />
+        </property>
+        <property name="visiblePublic" type="char">
+            <column name="VISIBLE_TO_PUBLIC" length="1" not-null="false" />
+        </property>
+	<property name="log" type="string">
+	    <column name="LOG" not-null="false" length="999999" />
+        </property>
+
+        <set name="objects" table="OBJECT" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="EID" length="1024" not-null="true" />
+            </key>
+            <one-to-many class="dk.kb.cop3.backend.migrate.hibernate.ObjectOracle" />
+        </set>
+    </class>
+</hibernate-mapping>

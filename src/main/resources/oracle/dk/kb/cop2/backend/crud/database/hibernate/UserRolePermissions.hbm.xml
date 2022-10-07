@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.migrate.hibernate.UserRolePermissionsOracle" table="USER_ROLE_PERMISSIONS" schema="COP2">
+        <composite-id mapped="true" class="dk.kb.cop3.backend.migrate.hibernate.UserRolePermissionsPKOracle">
+            <key-property name="permissionId" column="PERMISSION_ID"/>
+            <key-property name="roleId" column="ROLE_ID"/>
+        </composite-id>
+    </class>
+</hibernate-mapping>

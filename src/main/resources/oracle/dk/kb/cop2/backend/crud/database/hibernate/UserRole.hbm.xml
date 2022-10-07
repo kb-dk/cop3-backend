@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.migrate.hibernate.UserRoleOracle" table="USER_ROLE" schema="COP2">
+        <id name="roleId" column="ROLE_ID">
+            <generator class="assigned"/>
+        </id>
+        <property name="roleName" column="ROLE_NAME"/>
+        <set name="permissions" table="USER_ROLE_PERMISSIONS" schema="COP2" lazy="false">
+            <key column="ROLE_ID" foreign-key="ROLE_ID"/>
+            <many-to-many column="PERMISSION_ID" class="dk.kb.cop3.backend.migrate.hibernate.UserPermissionsOracle"/>
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,37 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+    <session-factory>
+
+        <property name="hibernate.dialect">dk.kb.cop3.backend.crud.database.Oracle10gGeometryDialect</property>
+        <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+
+
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@oracle-test-03.kb.dk:1521:KURSUS</property>
+
+       <property name="hibernate.connection.username">COP2</property>
+        <property name="hibernate.connection.password">cop2123</property>
+
+
+        <property name="show_sql">false</property>
+        <property name="format_sql">false</property>
+
+
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Object.hbm.xml"/>
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Edition.hbm.xml"/>
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Category.hbm.xml"/>
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Tag.hbm.xml"/>
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Comment.hbm.xml"/>
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Type.hbm.xml"/>
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/AuditTrail.hbm.xml"/>
+<!--        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/User.hbm.xml"/>-->
+<!--        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/UserRole.hbm.xml"/>-->
+<!--        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/UserPermissions.hbm.xml"/>-->
+<!--        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/UserRolePermissions.hbm.xml"/>-->
+    </session-factory>
+
+</hibernate-configuration>
+

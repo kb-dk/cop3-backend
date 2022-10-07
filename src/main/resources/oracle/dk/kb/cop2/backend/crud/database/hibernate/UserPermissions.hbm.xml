@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.migrate.hibernate.UserPermissionsOracle" table="USER_PERMISSIONS">
+        <id name="permissionId" type="integer">
+            <column name="PERMISSION_ID"/>
+            <generator class="assigned"/>
+        </id>
+        <property name="permissionName" type="string" column="PERMISSION_NAME" not-null="true"/>
+    </class>
+</hibernate-mapping>

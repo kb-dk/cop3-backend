@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 27, 2011 3:35:31 PM by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.migrate.hibernate.ObjectOracle" table="OBJECT" schema="COP2">
+        <id name="id" type="string">
+            <column name="ID" length="1024" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="type" class="dk.kb.cop3.backend.migrate.hibernate.TypeOracle" fetch="select">
+            <column name="TYPE_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="edition" class="dk.kb.cop3.backend.migrate.hibernate.EditionOracle" fetch="select">
+            <column name="EID" length="1024" not-null="true" />
+        </many-to-one>
+        <property name="mods" type="string">
+            <column name="MODS" not-null="true" />
+        </property>
+        <property name="lastModified" type="string">
+            <column name="LAST_MODIFIED" length="1024" not-null="true" />
+        </property>
+        <property name="deleted" type="char">
+            <column name="DELETED" length="1" not-null="true" />
+        </property>
+        <property name="lastModifiedBy" type="string">
+            <column name="LAST_MODIFIED_BY" length="4000" not-null="true" />
+        </property>
+        <property name="objVersion" type="big_decimal">
+            <column name="OBJ_VERSION" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="point" type="dk.kb.cop3.backend.crud.database.type.JGeometryType">
+            <column name="POINT" />
+        </property>
+        <property name="title" type="string">
+            <column name="TITLE" length="4000" />
+        </property>
+        <property name="creator" type="string">
+            <column name="CREATOR" length="4000" />
+        </property>
+
+        <property name="bookmark" type="big_integer">
+            <column name="BOOKMARK" default="0" not-null="false" />
+        </property>
+
+        <property name="likes" type="big_integer">
+            <column name="LIKES" default="0" precision="22" scale="0" not-null="false" />
+        </property>
+
+        <property name="correctness" type="big_decimal">
+            <column name="CORRECTNESS" default="0.0" precision="22" scale="0" not-null="false" />
+        </property>
+
+
+
+        <property name="randomNumber" type="big_decimal">
+            <column name="RANDOM_NUMBER" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="interestingess" type="big_decimal">
+            <column name="INTERESTINGESS" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="person" type="string">
+            <column name="PERSON" length="4000" />
+        </property>
+        <property name="building" type="string">
+            <column name="BUILDING" length="4000" />
+        </property>
+        <property name="location" type="string">
+            <column name="LOCATION" length="4000" />
+        </property>
+        <property name="notBefore" type="date">
+            <column name="NOT_BEFORE" length="7" />
+        </property>
+        <property name="notAfter" type="date">
+            <column name="NOT_AFTER" length="7" />
+        </property>
+        <set name="categories" table="CATEGORY_JOIN" inverse="false" lazy="true" fetch="select">
+            <key>
+                <column name="OID" length="1024" not-null="true" />
+            </key>
+            <many-to-many entity-name="dk.kb.cop3.backend.migrate.hibernate.CategoryOracle">
+                <column name="CID" length="1024" not-null="true" />
+            </many-to-many>
+        </set>
+
+        <set name="keywords" table="TAG_JOIN" inverse="false" lazy="true" fetch="select">
+            <key>
+                <column name="OID" length="1024" not-null="false" />
+            </key>
+            <many-to-many entity-name="dk.kb.cop3.backend.migrate.hibernate.TagOracle">
+                <column name="TID" length="1024" not-null="false" />
+            </many-to-many>
+        </set>
+
+        <set name="comments" table="COMMENTS" inverse="false" lazy="true" fetch="select">
+            <key>
+                <column name="XLINK_TO" length="1024" not-null="true" />
+            </key>
+            <one-to-many class="dk.kb.cop3.backend.migrate.hibernate.CommentOracle" />
+        </set>
+
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.migrate.hibernate.CommentOracle" table="COMMENTS" schema="COP2">
+        <id name="id" type="string">
+            <column name="ID" length="50" />
+        </id>
+        <property name="text" type="string">
+            <column name="COMMENT_TEXT" length="2048" not-null="true" />
+        </property>
+        <property name="creator" type="string">
+            <column name="CREATOR" length="100" not-null="true" />
+        </property>
+        <property name="xlink_to" type="string">
+            <column name="XLINK_TO" length="200" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
