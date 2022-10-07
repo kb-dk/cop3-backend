@@ -2,7 +2,10 @@ package dk.kb.cop3.backend.crud.database.hibernate;
 // Generated Apr 27, 2011 3:35:37 PM by Hibernate Tools 3.3.0.GA
 
 
-import dk.kb.cop3.backend.crud.database.type.JGeometryType;
+
+
+
+import dk.kb.cop3.backend.crud.database.type.Point;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -24,7 +27,7 @@ public class Object  implements java.io.Serializable {
      private char deleted;
      private String lastModifiedBy;
      private BigDecimal objVersion;
-     private JGeometryType point;
+     private Point point;
 
      private String title;
      private String creator;
@@ -64,7 +67,7 @@ public class Object  implements java.io.Serializable {
         this.randomNumber = randomNumber;
         this.interestingess = interestingess;
     }
-    public Object(String id, Type type, Edition edition, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, JGeometryType point, String title, String creator, BigDecimal randomNumber, BigDecimal interestingess, String person, String building, String location, Date notBefore, Date notAfter, Set categories) {
+    public Object(String id, Type type, Edition edition, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, Point point, String title, String creator, BigDecimal randomNumber, BigDecimal interestingess, String person, String building, String location, Date notBefore, Date notAfter, Set categories) {
        this.id = id;
        this.type = type;
        this.edition = edition;
@@ -110,7 +113,7 @@ public class Object  implements java.io.Serializable {
 
     }
 
-    public Object(String id, Type type, Edition edition, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, JGeometryType point, String title, String creator, BigInteger likes, BigInteger bookmark, BigDecimal correctness, BigDecimal randomNumber, BigDecimal interestingess, String person, String building, String location, Date notBefore, Date notAfter, Set categories, Set keywords) {
+    public Object(String id, Type type, Edition edition, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, Point point, String title, String creator, BigInteger likes, BigInteger bookmark, BigDecimal correctness, BigDecimal randomNumber, BigDecimal interestingess, String person, String building, String location, Date notBefore, Date notAfter, Set categories, Set keywords) {
         this.id = id;
         this.type = type;
         this.edition = edition;
@@ -232,11 +235,11 @@ public class Object  implements java.io.Serializable {
     public void setObjVersion(BigDecimal objVersion) {
         this.objVersion = objVersion;
     }
-    public JGeometryType getPoint() {
+    public Point getPoint() {
         return this.point;
     }
     
-    public void setPoint(JGeometryType point) {
+    public void setPoint(Point point) {
         this.point = point;
     }
     public String getTitle() {

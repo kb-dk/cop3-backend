@@ -5,8 +5,8 @@ import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
-import dk.kb.cop3.backend.crud.database.type.JGeometryType;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.database.type.Point;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.w3c.dom.Document;
@@ -158,7 +158,7 @@ public class BeanUtils {
             if(latlng != null && !latlng.equals("")){
                 String lat = latlng.split(",")[0];
                 String lon = latlng.split(",")[1];
-                copject.setPoint(new JGeometryType(Double.parseDouble(lon), Double.parseDouble(lat), 0));
+                copject.setPoint(new Point(Double.parseDouble(lat),Double.parseDouble(lon)));
                 if(copject.getCorrectness() == null){
                     copject.setCorrectness(new BigDecimal(0)); // maybe we need this.
                 }

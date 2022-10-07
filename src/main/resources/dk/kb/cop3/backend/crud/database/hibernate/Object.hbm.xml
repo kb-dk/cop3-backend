@@ -29,9 +29,9 @@
         <property name="objVersion" type="big_decimal">
             <column name="OBJ_VERSION" precision="22" scale="0" not-null="true" />
         </property>
-<!--        <property name="point" type="dk.kb.cop3.backend.crud.database.type.JGeometryType">-->
-<!--            <column name="POINT" />-->
-<!--        </property>-->
+        <property name="point" type="dk.kb.cop3.backend.crud.database.type.Point">
+            <column name="POINT" />
+        </property>
         <property name="title" type="string">
             <column name="TITLE" length="4000" />
         </property>

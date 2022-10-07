@@ -6,7 +6,7 @@ import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Tag;
 import dk.kb.cop3.backend.crud.database.hibernate.Comment;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.database.type.JGeometryType;
+import dk.kb.cop3.backend.crud.database.type.Point;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -353,11 +353,10 @@ public abstract class MetadataFormulator {
 
                     currentRawMods = cobject.getMods();
                     this.lastModifiedTimeStamp = cobject.getLastModified();
-                    JGeometryType point = cobject.getPoint();
+                    Point point = cobject.getPoint();
                     if (point != null) {
-                        double[] coords = point.getPoint();
-                        latitude = "" + coords[1];
-                        longitude = "" + coords[0];
+                        latitude = "" + point.getLat();
+                        longitude = "" + point.getLng();
                     }
                     //logger.debug("lat="+latitude+" lng="+longitude);
                     recordId = cobject.getId();

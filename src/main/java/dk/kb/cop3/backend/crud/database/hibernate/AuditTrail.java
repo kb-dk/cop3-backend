@@ -2,7 +2,9 @@ package dk.kb.cop3.backend.crud.database.hibernate;
 // Generated Apr 27, 2011 3:35:37 PM by Hibernate Tools 3.3.0.GA
 
 
-import dk.kb.cop3.backend.crud.database.type.JGeometryType;
+
+
+import dk.kb.cop3.backend.crud.database.type.Point;
 
 import java.math.BigDecimal;
 
@@ -20,7 +22,7 @@ public class AuditTrail  implements java.io.Serializable {
      private char deleted;
      private String lastModifiedBy;
      private BigDecimal objVersion;
-     private JGeometryType point;
+     private Point point;
 
     public AuditTrail() {
     }
@@ -34,7 +36,7 @@ public class AuditTrail  implements java.io.Serializable {
         this.lastModifiedBy = lastModifiedBy;
         this.objVersion = objVersion;
     }
-    public AuditTrail(String id, String oid, String eid, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, JGeometryType point) {
+    public AuditTrail(String id, String oid, String eid, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, Point point) {
        this.id = id;
        this.oid = oid;
        this.eid = eid;
@@ -102,11 +104,11 @@ public class AuditTrail  implements java.io.Serializable {
     public void setObjVersion(BigDecimal objVersion) {
         this.objVersion = objVersion;
     }
-    public JGeometryType getPoint() {
+    public Point getPoint() {
         return this.point;
     }
     
-    public void setPoint(JGeometryType point) {
+    public void setPoint(Point point) {
         this.point = point;
     }
 

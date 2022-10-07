@@ -2,7 +2,7 @@ package dk.kb.cop3.backend.crud.database;
 
 import dk.kb.cop3.backend.crud.database.hibernate.AuditTrail;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.database.type.JGeometryType;
+import dk.kb.cop3.backend.crud.database.type.Point;
 import dk.kb.cop3.backend.crud.util.BeanUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -285,7 +285,7 @@ public class HibernateMetadataWriter implements MetadataWriter {
                 existingCobject.setLastModified("" + new Date().getTime()); // set the new lastmodified to just now.
                 existingCobject.setObjVersion(existingCobject.getObjVersion().add(new BigDecimal("1")));
                 existingCobject.setInterestingess(existingCobject.getInterestingess().add(new BigDecimal("1")));
-                existingCobject.setPoint(new JGeometryType(lon, lat, 0));
+                existingCobject.setPoint(new Point(lat,lon));
                 existingCobject.setLastModifiedBy(user);
                 existingCobject.setCorrectness(new BigDecimal(correctness));
                 logger.debug("audit version " + audit.getObjVersion() + ", new version " + existingCobject.getObjVersion());

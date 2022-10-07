@@ -3,9 +3,9 @@ package dk.kb.cop3.backend.crud.database;
 import dk.kb.cop3.backend.constants.ConfigurableConstants;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 
-import dk.kb.cop3.backend.crud.database.type.JGeometryType;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.database.type.Point;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.*;
 
@@ -93,9 +93,9 @@ public class SolrMetadataSource extends HibernateMetadataSource {
 	    String lat = latlng.split(",")[0];
 	    String lon = latlng.split(",")[1];
 
-	    copject.setPoint(new JGeometryType(Double.parseDouble(lon), Double.parseDouble(lat), 0));
+	    copject.setPoint(new Point(Double.parseDouble(lon), Double.parseDouble(lat)));
 	} else {
-	    copject.setPoint(new JGeometryType(Double.parseDouble("0"), Double.parseDouble("0"), 0));
+	    copject.setPoint(new Point(Double.parseDouble("0"), Double.parseDouble("0")));
 	}
 
 	java.math.BigDecimal correctness = new java.math.BigDecimal("-1");
