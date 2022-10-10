@@ -34,12 +34,4 @@ public class MigrateCategories {
         trans.commit();
         session.close();
     }
-
-
-    private static Session getOracleSession() {
-        Configuration oraConf = new Configuration().configure("oracle/hibernate-oracle.cfg.xml");
-        SessionFactory oracSessfac = oraConf.buildSessionFactory();
-        return oracSessfac.openSession();
-    }
-
 }
