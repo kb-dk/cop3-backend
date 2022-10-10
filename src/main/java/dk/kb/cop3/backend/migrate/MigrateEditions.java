@@ -10,9 +10,7 @@ import java.util.List;
 
 public class MigrateEditions {
     public static void main(String[] args) {
-        Configuration oraConf = new Configuration().configure("oracle/hibernate-oracle.cfg.xml");
-        SessionFactory oracSessfac = oraConf.buildSessionFactory();
-        Session oraSession = oracSessfac.openSession();
+        Session oraSession = getOracleSession();
 
         SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
                 .buildSessionFactory();
@@ -30,6 +28,13 @@ public class MigrateEditions {
                     trans.commit();
                     psqlSession.close();
                 });
+    }
+
+    private static Session getOracleSession() {
+        Configuration oraConf = new Configuration().configure("oracle/hibernate-oracle.cfg.xml");
+        SessionFactory oracSessfac = oraConf.buildSessionFactory();
+        Session oraSession = oracSessfac.openSession();
+        return oraSession;
     }
 
 }
