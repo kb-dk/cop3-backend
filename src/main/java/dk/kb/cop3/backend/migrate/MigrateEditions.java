@@ -1,6 +1,8 @@
 package dk.kb.cop3.backend.migrate;
 
+import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -9,8 +11,11 @@ import org.hibernate.cfg.Configuration;
 import java.util.List;
 
 public class MigrateEditions {
+    private static Logger logger = Logger.getLogger(MigrateEditions.class);
+
+
     public static void main(String[] args) {
-        Session oraSession = getOracleSession();
+        Session oraSession = MigrationUtils.getOracleSession();
 
         SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
                 .buildSessionFactory();
@@ -19,20 +24,17 @@ public class MigrateEditions {
         List<EditionOracle> editions = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.EditionOracle").list();
         editions.stream()
                 .map(oraEdition -> ObjectConverter.convertEdition(oraEdition))
-                .forEach(edition-> {
-                    Session psqlSession = psqlSessfac.openSession();
-                    Transaction trans = psqlSession.beginTransaction();
-                    psqlSession.save(edition);
-                    trans.commit();
-                    psqlSession.close();
+                .forEach(edition-> { saveEditionInPostgres(psqlSessfac,edition);
                 });
     }
 
-    private static Session getOracleSession() {
-        Configuration oraConf = new Configuration().configure("oracle/hibernate-oracle.cfg.xml");
-        SessionFactory oracSessfac = oraConf.buildSessionFactory();
-        Session oraSession = oracSessfac.openSession();
-        return oraSession;
+    private static void saveEditionInPostgres(SessionFactory psqlSessFac, Edition edition) {
+        logger.info("Saving edition "+edition.getId());
+        Session psqlSession = psqlSessFac.openSession();
+        Transaction trans = psqlSession.beginTransaction();
+        psqlSession.save(edition);
+        trans.commit();
+        psqlSession.close();
     }
 
 }

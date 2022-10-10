@@ -1,6 +1,9 @@
 package dk.kb.cop3.backend.migrate;
 
+import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
+import dk.kb.cop3.backend.migrate.hibernate.CategoryOracle;
+import dk.kb.cop3.backend.migrate.hibernate.CommentOracle;
 import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
 
 import java.util.HashSet;
@@ -37,4 +40,10 @@ public class ObjectConverter {
             return edition;
     }
 
+    public static Category convertCategory(CategoryOracle categoryOracle) {
+        Category category = new Category();
+        category.setId(categoryOracle.getId());
+        category.setCategoryText(categoryOracle.getCategoryText());
+        return category;
+    }
 }

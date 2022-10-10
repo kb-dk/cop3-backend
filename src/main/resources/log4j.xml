@@ -1,0 +1,54 @@
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+  <!-- TODO: Write file appender for the webservice -->
+
+        <!-- Console appender for All classes-->
+        <appender name="console"
+                class="org.apache.log4j.ConsoleAppender">
+                <layout class="org.apache.log4j.PatternLayout">
+                        <!-- This pattern also includes the service name -->
+                        <param name="ConversionPattern"
+                                value="COP2 [%d{yyyy-MM-dd HH.mm:ss}] %-5p %C{1} %M: %m %n" />
+                </layout>
+        </appender>
+
+
+        <!-- Logger for  data-controller-->
+        <logger name="dk.kb.cop2.backend.datacontroller">
+          <level value="debug"/>
+            <appender-ref ref="console" />
+        </logger>
+
+      <!-- Logger for  exporter-->
+        <logger name="dk.kb.cop2.backend.exporter">
+          <level value="debug"/>
+            <appender-ref ref="console" />
+        </logger>
+
+        <!-- Logger for  CRUD-->
+        <logger name="dk.kb.cop2.backend.crud">
+          <level value="debug"/>
+            <appender-ref ref="console" />
+        </logger>
+
+        <!-- Logger for  cacheing-->
+        <logger name="dk.kb.cop2.backend.crud.cache">
+          <level value="debug"/>
+            <appender-ref ref="console" />
+        </logger>
+
+        <logger name="ORG.oclc.oai">
+            <level value="debug"/>
+            <appender-ref ref="console" />
+        </logger>
+
+
+        <!-- Catch all logger. Set to debug, if external jars fails -->
+        <root>
+          <priority value="warn"/>
+          <appender-ref ref="console" />
+        </root>
+
+</log4j:configuration>
