@@ -12,6 +12,17 @@
             <column name="TAG_VALUE" length="4000" not-null="true" />
         </property>
 
+        <property name="xlink_to" type="string">
+            <column name="XLINK_TO" length="4000" not-null="true" />
+        </property>
+
+        <property name="creator" type="string">
+            <column name="CREATOR" length="4000" not-null="true" />
+        </property>
+
+        <property name="timestamp" type="timestamp">
+            <column name="TIMESTAMP" not-null="true" />
+        </property>
 
         <set name="objects" table="TAG_JOIN" inverse="false" lazy="true" fetch="select">
             <key>

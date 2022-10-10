@@ -17,7 +17,7 @@ public class TagOracle implements Serializable{
     //private String timestamp;
     private String xlink_to;
     private Set objects = new HashSet(0);
-
+    private java.sql.Timestamp timestamp;
 
     public String getId() {
         return id;
@@ -57,5 +57,13 @@ public class TagOracle implements Serializable{
 
     public void setObjects(Set objects) {
         this.objects = objects;
+    }
+
+    public  java.sql.Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(java.sql.Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 }
