@@ -46,9 +46,10 @@ public class Edition  implements java.io.Serializable {
     }
 
 	
-    public Edition(String id, String name, String urlName, String urlMatrialType, BigDecimal urlPubYear, String urlPubMonth, String urlCollection, String cumulusCatalog, String cumulusTopCatagory, String normalisationrule) {
+    public Edition(String id, String name, String nameEn, String urlName, String urlMatrialType, BigDecimal urlPubYear, String urlPubMonth, String urlCollection, String cumulusCatalog, String cumulusTopCatagory, String normalisationrule) {
         this.id = id;
         this.name = name;
+        this.nameEn = nameEn;
         this.urlName = urlName;
         this.urlMatrialType = urlMatrialType;
         this.urlPubYear = urlPubYear;
@@ -58,9 +59,10 @@ public class Edition  implements java.io.Serializable {
         this.cumulusTopCatagory = cumulusTopCatagory;
         this.normalisationrule = normalisationrule;
     }
-    public Edition(String id, String name, String urlName, String urlMatrialType, BigDecimal urlPubYear, String urlPubMonth, String urlCollection, String cumulusCatalog, String cumulusTopCatagory, String normalisationrule, String status, String uiLanguage, String uiSort, String uiShow, String opml, String description, String collectionDa, String collectionEn, String departmentDa, String departmentEn, String contactEmail, Set objects, char visiblePublic) {
+    public Edition(String id, String name, String nameEn, String urlName, String urlMatrialType, BigDecimal urlPubYear, String urlPubMonth, String urlCollection, String cumulusCatalog, String cumulusTopCatagory, String normalisationrule, String status, String uiLanguage, String uiSort, String uiShow, String opml, String description, String collectionDa, String collectionEn, String departmentDa, String departmentEn, String contactEmail, Set objects, char visiblePublic, String lastModified) {
        this.id = id;
        this.name = name;
+       this.nameEn = nameEn;
        this.urlName = urlName;
        this.urlMatrialType = urlMatrialType;
        this.urlPubYear = urlPubYear;
@@ -81,6 +83,8 @@ public class Edition  implements java.io.Serializable {
        this.departmentEn = departmentEn;
        this.contactEmail = contactEmail;
        this.objects = objects;
+       this.visiblePublic = visiblePublic;
+       this.lastModified = lastModified;
     }
    
     public String getId() {
