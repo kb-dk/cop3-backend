@@ -50,8 +50,8 @@
         <property name="uiShow" type="string">
             <column name="UI_SHOW" length="1024" />
         </property>
-        <property name="opml" type="string">
-            <column name="OPML" />
+        <property name="opml" type="text">
+            <column name="OPML"/>
         </property>
         <property name="description" type="string">
             <column name="DESCRIPTION" length="4000" />
