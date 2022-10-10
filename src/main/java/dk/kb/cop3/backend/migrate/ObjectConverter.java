@@ -1,6 +1,8 @@
 package dk.kb.cop3.backend.migrate;
 
+import dk.kb.cop3.backend.crud.database.hibernate.Comment;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
+import dk.kb.cop3.backend.migrate.hibernate.CommentOracle;
 import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
 
 import java.util.HashSet;
@@ -35,6 +37,16 @@ public class ObjectConverter {
             edition.setVisiblePublic(editionOracle.getVisiblePublic());
             edition.setLastModified(editionOracle.getLastModified());
             return edition;
+    }
+
+    public static Comment convertComment(CommentOracle commentOracle) {
+        Comment comment = new Comment();
+        comment.setText(commentOracle.getText());
+        comment.setCreator(commentOracle.getCreator());
+        comment.setXlink_to(commentOracle.getXlink_to());
+        comment.setId(commentOracle.getId());
+        comment.setHost_uri(commentOracle.getHost_uri());
+        return comment;
     }
 
 }
