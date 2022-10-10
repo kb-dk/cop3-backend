@@ -18,8 +18,7 @@ public class MigrateEditions {
 
         List<EditionOracle> editions = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.EditionOracle").list();
         editions.stream()
-                .map(oraEdition -> {
-                    return ObjectConverter.convertEdition(oraEdition);})
+                .map(oraEdition -> ObjectConverter.convertEdition(oraEdition))
                 .forEach(edition-> {
                     Session psqlSession = psqlSessfac.openSession();
                     Transaction trans = psqlSession.beginTransaction();
