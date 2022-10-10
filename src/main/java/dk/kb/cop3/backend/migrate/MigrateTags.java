@@ -19,8 +19,6 @@ public class MigrateTags {
         List<TagOracle> tags = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.TagOracle").list();
         tags.stream()
                 .map(oraTag -> {
-                    System.out.println("getXlink_to");
-                    System.out.println(oraTag.getXlink_to());
                     return ObjectConverter.convertTag(oraTag);})
                 .forEach(tag-> {
                     Session psqlSession = psqlSessfac.openSession();
