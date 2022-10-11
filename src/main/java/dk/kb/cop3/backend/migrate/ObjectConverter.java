@@ -1,11 +1,8 @@
 package dk.kb.cop3.backend.migrate;
 
-import dk.kb.cop3.backend.crud.database.hibernate.Category;
-import dk.kb.cop3.backend.crud.database.hibernate.Edition;
-import dk.kb.cop3.backend.crud.database.hibernate.Tag;
-import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.database.hibernate.*;
 
-import dk.kb.cop3.backend.crud.database.hibernate.Type;
+import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.type.JGeometryType;
 import dk.kb.cop3.backend.crud.database.type.Point;
 import dk.kb.cop3.backend.migrate.hibernate.*;
@@ -110,5 +107,15 @@ public class ObjectConverter {
         tag.setXlink_to(tagOracle.getXlink_to());
         tag.setTimestamp(tagOracle.getTimestamp());
         return tag;
+    }
+
+    public static Comment convertComment(CommentOracle commentOracle) {
+        Comment comment = new Comment();
+        comment.setText(commentOracle.getText());
+        comment.setCreator(commentOracle.getCreator());
+        comment.setXlink_to(commentOracle.getXlink_to());
+        comment.setId(commentOracle.getId());
+        comment.setHost_uri(commentOracle.getHost_uri());
+        return comment;
     }
 }
