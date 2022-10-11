@@ -1,13 +1,10 @@
 package dk.kb.cop3.backend.migrate;
 
-import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
-import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.database.hibernate.Type;
-import dk.kb.cop3.backend.crud.database.type.JGeometryType;
-import dk.kb.cop3.backend.crud.database.type.Point;
-import dk.kb.cop3.backend.migrate.hibernate.CategoryOracle;
+import dk.kb.cop3.backend.crud.database.hibernate.Tag;
+
 import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
+import dk.kb.cop3.backend.migrate.hibernate.TagOracle;
 import dk.kb.cop3.backend.migrate.hibernate.ObjectOracle;
 import dk.kb.cop3.backend.migrate.hibernate.TypeOracle;
 
@@ -92,4 +89,13 @@ public class ObjectConverter {
         return new Point(point.getPoint()[0],point.getPoint()[1]);
     }
 
+    public static Tag convertTag(TagOracle tagOracle) {
+        Tag tag = new Tag();
+        tag.setId(tagOracle.getId());
+        tag.setTag_value(tagOracle.getTag_value());
+        tag.setCreator(tagOracle.getCreator());
+        tag.setXlink_to(tagOracle.getXlink_to());
+        tag.setTimestamp(tagOracle.getTimestamp());
+        return tag;
+    }
 }
