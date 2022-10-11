@@ -1,7 +1,10 @@
 package dk.kb.cop3.backend.migrate;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
+import dk.kb.cop3.backend.crud.database.hibernate.Tag;
+
 import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
+import dk.kb.cop3.backend.migrate.hibernate.TagOracle;
 
 import java.util.HashSet;
 
@@ -37,4 +40,13 @@ public class ObjectConverter {
             return edition;
     }
 
+    public static Tag convertTag(TagOracle tagOracle) {
+        Tag tag = new Tag();
+        tag.setId(tagOracle.getId());
+        tag.setTag_value(tagOracle.getTag_value());
+        tag.setCreator(tagOracle.getCreator());
+        tag.setXlink_to(tagOracle.getXlink_to());
+        tag.setTimestamp(tagOracle.getTimestamp());
+        return tag;
+    }
 }
