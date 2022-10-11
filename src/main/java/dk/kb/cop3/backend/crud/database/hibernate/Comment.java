@@ -11,7 +11,8 @@ public class Comment implements Serializable {
     private String id;
     private String creator;
     private String xlink_to;
-    private Object object;
+    private String host_uri;
+
 
     public String getText() {
         return text;
@@ -45,12 +46,12 @@ public class Comment implements Serializable {
         this.xlink_to = xlink_to;
     }
 
-    public Object getObject() {
-        return object;
+    public String getHost_uri() {
+        return host_uri;
     }
 
-    public void setObject(Object object) {
-        this.object = object;
+    public void setHost_uri(String host_uri) {
+        this.host_uri = host_uri;
     }
 
     @Override
@@ -60,6 +61,7 @@ public class Comment implements Serializable {
                 ", id='" + id + '\'' +
                 ", creator='" + creator + '\'' +
                 ", xlink_to='" + xlink_to + '\'' +
+                ", host_uri='" + host_uri + '\'' +
                 '}';
     }
 }
