@@ -1,14 +1,18 @@
 package dk.kb.cop3.backend.migrate;
 
+import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Tag;
+import dk.kb.cop3.backend.crud.database.hibernate.Object;
 
-import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
-import dk.kb.cop3.backend.migrate.hibernate.TagOracle;
-import dk.kb.cop3.backend.migrate.hibernate.ObjectOracle;
-import dk.kb.cop3.backend.migrate.hibernate.TypeOracle;
+import dk.kb.cop3.backend.crud.database.hibernate.Type;
+import dk.kb.cop3.backend.crud.database.type.JGeometryType;
+import dk.kb.cop3.backend.crud.database.type.Point;
+import dk.kb.cop3.backend.migrate.hibernate.*;
 
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ObjectConverter {
 
@@ -78,7 +82,16 @@ public class ObjectConverter {
         object.setNotAfter(oraObject.getNotAfter());
         object.setCorrectness(oraObject.getCorrectness());
         object.setLikes(oraObject.getLikes());
-        object.setBookmark(oraObject.getBookmark());
+        object.setLikes(oraObject.getLikes());
+
+        object.setKeywords((Set<Tag>) oraObject.getKeywords().stream()
+                .map(oraTag-> {return convertTag((TagOracle) oraTag);})
+                        .collect(Collectors.toSet()));
+
+        object.setCategories((Set<Category>) oraObject.getCategories().stream()
+                .map(oraCategory->{return convertCategory((CategoryOracle) oraCategory);})
+                .collect(Collectors.toSet()));
+
         return object;
     }
 
