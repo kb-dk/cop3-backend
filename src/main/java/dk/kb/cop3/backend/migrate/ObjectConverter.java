@@ -7,7 +7,6 @@ import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import dk.kb.cop3.backend.crud.database.type.JGeometryType;
 import dk.kb.cop3.backend.crud.database.type.Point;
 import dk.kb.cop3.backend.migrate.hibernate.CategoryOracle;
-import dk.kb.cop3.backend.migrate.hibernate.CommentOracle;
 import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
 import dk.kb.cop3.backend.migrate.hibernate.ObjectOracle;
 import dk.kb.cop3.backend.migrate.hibernate.TypeOracle;
