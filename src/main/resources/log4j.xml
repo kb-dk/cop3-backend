@@ -14,34 +14,44 @@
                 </layout>
         </appender>
 
+    <appender name="coplog"
+              class="org.apache.log4j.FileAppender">
+        <param name="File" value="logs/cop.log" />
+        <param name="Append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="DATACONTROL[%d{yyyy-MM-dd HH.mm:ss}] %-5p %C{1} %M: %m %n" />
+        </layout>
+    </appender>
+
 
         <!-- Logger for  data-controller-->
-        <logger name="dk.kb.cop2.backend.datacontroller">
+        <logger name="dk.kb.cop3">
           <level value="debug"/>
-            <appender-ref ref="console" />
+            <appender-ref ref="coplog" />
         </logger>
 
       <!-- Logger for  exporter-->
         <logger name="dk.kb.cop2.backend.exporter">
           <level value="debug"/>
-            <appender-ref ref="console" />
+            <appender-ref ref="coplog" />
         </logger>
 
         <!-- Logger for  CRUD-->
         <logger name="dk.kb.cop2.backend.crud">
           <level value="debug"/>
-            <appender-ref ref="console" />
+            <appender-ref ref="coplog" />
         </logger>
 
         <!-- Logger for  cacheing-->
         <logger name="dk.kb.cop2.backend.crud.cache">
           <level value="debug"/>
-            <appender-ref ref="console" />
+            <appender-ref ref="coplog" />
         </logger>
 
         <logger name="ORG.oclc.oai">
             <level value="debug"/>
-            <appender-ref ref="console" />
+            <appender-ref ref="coplog" />
         </logger>
 
 
