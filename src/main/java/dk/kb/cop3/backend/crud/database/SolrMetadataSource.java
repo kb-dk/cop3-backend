@@ -7,6 +7,7 @@ import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.type.Point;
 import org.apache.log4j.Logger;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.criterion.*;
 
 import org.apache.solr.client.solrj.SolrServerException;
@@ -15,6 +16,8 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrDocument;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -93,9 +96,11 @@ public class SolrMetadataSource extends HibernateMetadataSource {
 	    String lat = latlng.split(",")[0];
 	    String lon = latlng.split(",")[1];
 
-	    copject.setPoint(new Point(Double.parseDouble(lon), Double.parseDouble(lat)));
+        GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
+        copject.setPoint(geoFactory.createPoint(new Coordinate(Double.valueOf(lat),Double.valueOf(lon))));
 	} else {
-	    copject.setPoint(new Point(Double.parseDouble("0"), Double.parseDouble("0")));
+        GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
+        copject.setPoint(geoFactory.createPoint(new Coordinate(0,0)));
 	}
 
 	java.math.BigDecimal correctness = new java.math.BigDecimal("-1");

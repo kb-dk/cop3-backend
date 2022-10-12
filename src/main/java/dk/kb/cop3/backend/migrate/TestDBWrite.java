@@ -4,11 +4,14 @@ import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import dk.kb.cop3.backend.crud.database.type.Point;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
 
 
 import java.math.BigDecimal;
@@ -41,9 +44,9 @@ public class TestDBWrite {
         edition.setVisiblePublic('j');
         session.save(edition);
         Object object = new Object();
-        GeometryCollection p = new Point(10,20);
+        GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
+        object.setPoint(geoFactory.createPoint(new Coordinate(10,20)));
         object.setId("test1234");
-        object.setPoint(p);
         object.setType(type);
         object.setEdition(edition);
         object.setMods("<mods></mods>");

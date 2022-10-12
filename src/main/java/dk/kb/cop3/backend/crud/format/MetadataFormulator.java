@@ -355,8 +355,8 @@ public abstract class MetadataFormulator {
                     this.lastModifiedTimeStamp = cobject.getLastModified();
                     Geometry point = cobject.getPoint();
                     if (point != null) {
-                        latitude = "" + point.getLat();
-                        longitude = "" + point.getLng();
+                        latitude = "" + point.getCoordinates()[0].getX();
+                        longitude = "" + point.getCoordinates()[0].getY();
                     }
                     //logger.debug("lat="+latitude+" lng="+longitude);
                     recordId = cobject.getId();
