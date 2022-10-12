@@ -17,13 +17,10 @@ import org.springframework.jdbc.support.nativejdbc.C3P0NativeJdbcExtractor;
 /**
  * This object is a UserType that represents an SDO_GEOMETRY type for use with
  * Oracle 10g databases and the Oracle Spatial Libraries
- * 
  * It represents an SDO_GEOMETRY database type by wrapping the
  * oracle.spatial.geometry.JGeometry type and implementing
  * org.hibernate.usertype.UserType.
- * 
  * This class should be used with the OracleSpacialDialect class.
- * 
  * (NOTE: I tried just extending the JGeometry instead of aggregating it, that
  * doesn't work. The static load returns a JGeometry that can't be cast to the
  * sub-class)
@@ -34,7 +31,7 @@ import org.springframework.jdbc.support.nativejdbc.C3P0NativeJdbcExtractor;
  */
 public class JGeometryType implements UserType, Serializable {
     private static final long serialVersionUID = 1L;
-    private JGeometry geometryInstance = null;
+    private JGeometry geometryInstance;
  
     /**
      * This default constructor does create an instance of 1 point at origin
@@ -128,12 +125,19 @@ public class JGeometryType implements UserType, Serializable {
 
     @Override
     public Object nullSafeGet(ResultSet resultSet, String[] strings, SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException, SQLException {
-        return null;
+        if (resultSet.wasNull()) {
+            return null;
+        }
+        STRUCT geometry = (STRUCT) resultSet.getObject( strings[0]);
+        if (geometry == null) {
+            return null;
+        }
+        JGeometry jg = JGeometry.load( geometry);
+        return new JGeometryType( jg);
     }
 
     @Override
     public void nullSafeSet(PreparedStatement preparedStatement, Object o, int i, SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
-
     }
 
     /* calls the load method */
