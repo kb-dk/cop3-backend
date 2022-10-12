@@ -29,7 +29,7 @@
         <property name="objVersion" type="big_decimal">
             <column name="OBJ_VERSION" precision="22" scale="0" not-null="true" />
         </property>
-        <property name="point" type="dk.kb.cop3.backend.crud.database.type.Point">
+        <property name="point" type="jts_geometry">
             <column name="POINT" />
         </property>
     </class>
