@@ -18,6 +18,7 @@
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Edition.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Category.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Tag.hbm.xml"/>
+        <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/XLink.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Comment.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Type.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/AuditTrail.hbm.xml"/>

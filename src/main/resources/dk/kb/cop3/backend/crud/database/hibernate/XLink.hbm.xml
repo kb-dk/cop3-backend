@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.crud.database.hibernate.XLink" table="XLINK" >
+        <id name="id" type="string">
+            <column name="ID" length="1024" />
+            <generator class="assigned" />
+        </id>
+
+        <property name="xlink_from" type="string">
+            <column name="XLINK_FROM" length="4000" not-null="true" />
+        </property>
+
+        <property name="xlink_to" type="string">
+            <column name="XLINK_TO" length="4000" not-null="true" />
+        </property>
+
+        <property name="xlink_type" type="string">
+            <column name="XLINK_TYPE" length="4000" not-null="true" />
+        </property>
+
+        <property name="xlink_role" type="string">
+            <column name="XLINK_ROLE" length="4000" not-null="true" />
+        </property>
+
+        <property name="creator" type="string">
+            <column name="CREATOR" length="4000" not-null="true" />
+        </property>
+
+        <property name="timestamp" type="timestamp">
+            <column name="TIMESTAMP" not-null="true" />
+        </property>
+
+        <property name="xlink_title" type="string">
+            <column name="XLINK_TITLE" length="4000" not-null="true" />
+        </property>
+
+    </class>
+</hibernate-mapping>

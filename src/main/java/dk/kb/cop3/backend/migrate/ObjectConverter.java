@@ -2,9 +2,11 @@ package dk.kb.cop3.backend.migrate;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Tag;
+import dk.kb.cop3.backend.crud.database.hibernate.XLink;
 
 import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
 import dk.kb.cop3.backend.migrate.hibernate.TagOracle;
+import dk.kb.cop3.backend.migrate.hibernate.XLinkOracle;
 
 import java.util.HashSet;
 
@@ -48,5 +50,18 @@ public class ObjectConverter {
         tag.setXlink_to(tagOracle.getXlink_to());
         tag.setTimestamp(tagOracle.getTimestamp());
         return tag;
+    }
+
+    public static XLink convertXLink(XLinkOracle xlinkOracle) {
+        XLink xlink = new XLink();
+        xlink.setId(xlinkOracle.getId());
+        xlink.setXlink_from(xlinkOracle.getXlink_from());
+        xlink.setXlink_to(xlinkOracle.getXlink_to());
+        xlink.setXlink_type(xlinkOracle.getXlink_type());
+        xlink.setXlink_role(xlinkOracle.getXlink_role());
+        xlink.setCreator(xlinkOracle.getCreator());
+        xlink.setTimestamp(xlinkOracle.getTimestamp());
+        xlink.setXlink_title(xlinkOracle.getXlink_title());
+        return xlink;
     }
 }

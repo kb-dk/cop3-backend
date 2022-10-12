@@ -5,11 +5,6 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author: Andreas B. Westh
- * Date: 11/29/11
- * Time: 17:38 PM
- */
 public class Tag implements Serializable{
 
     private String id;
