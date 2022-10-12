@@ -4,8 +4,11 @@ import dk.kb.cop3.backend.crud.database.hibernate.*;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.type.JGeometryType;
-import dk.kb.cop3.backend.crud.database.type.Point;
 import dk.kb.cop3.backend.migrate.hibernate.*;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -92,11 +95,14 @@ public class ObjectConverter {
         return object;
     }
 
-    private static Point convertPoint(JGeometryType point) {
+    private static Geometry convertPoint(JGeometryType point) {
         if (point == null) {
             return null;
         }
-        return new Point(point.getPoint()[0],point.getPoint()[1]);
+        GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
+        double lat = point.getPoint()[0];
+        double lon = point.getPoint()[1];
+        return geoFactory.createPoint(new Coordinate(Double.valueOf(lat),Double.valueOf(lon)));
     }
 
     public static Tag convertTag(TagOracle tagOracle) {
