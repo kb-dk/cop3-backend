@@ -5,7 +5,8 @@ package dk.kb.cop3.backend.crud.database.hibernate;
 
 
 
-import dk.kb.cop3.backend.crud.database.type.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -27,7 +28,7 @@ public class Object  implements java.io.Serializable {
      private char deleted;
      private String lastModifiedBy;
      private BigDecimal objVersion;
-     private Point point;
+     private Geometry point;
 
      private String title;
      private String creator;
@@ -67,7 +68,7 @@ public class Object  implements java.io.Serializable {
         this.randomNumber = randomNumber;
         this.interestingess = interestingess;
     }
-    public Object(String id, Type type, Edition edition, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, Point point, String title, String creator, BigDecimal randomNumber, BigDecimal interestingess, String person, String building, String location, Date notBefore, Date notAfter, Set categories) {
+    public Object(String id, Type type, Edition edition, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, GeometryCollection point, String title, String creator, BigDecimal randomNumber, BigDecimal interestingess, String person, String building, String location, Date notBefore, Date notAfter, Set categories) {
        this.id = id;
        this.type = type;
        this.edition = edition;
@@ -89,7 +90,31 @@ public class Object  implements java.io.Serializable {
        this.categories = categories;
     }
 
-    public Object(String id, Type type, Edition edition, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, Point point, String title, String creator, BigInteger likes, BigInteger bookmark, BigDecimal correctness, BigDecimal randomNumber, BigDecimal interestingess, String person, String building, String location, Date notBefore, Date notAfter, Set categories, Set keywords) {
+    public String toString(){
+        return  "id: " + this.id + "\n" +
+                "type: " + this.type + "\n" +
+                "edition: " + this.edition + "\n" +
+                "mods: " + this.mods + "\n" +
+                "lastModified: " + this.lastModified + "\n" +
+                "deleted: " + this.deleted + "\n" +
+                "lastModifiedBy: " + this.lastModifiedBy + "\n" +
+                "objVersion: " + this.objVersion + "\n" +
+                "point: " + this.point + "\n" +
+                "title: " + this.title + "\n" +
+                "creator: " + this.creator + "\n" +
+                "randomNumber: " + this.randomNumber + "\n" +
+                "interestingess: " + this.interestingess + "\n" +
+                "person: " + this.person + "\n" +
+                "building: " + this.building + "\n" +
+                "location: " + this.location + "\n" +
+                "notBefore: " + this.notBefore + "\n" +
+                "notAfter: " + this.notAfter + "\n" +
+                "categories: " + this.categories;
+
+
+    }
+
+    public Object(String id, Type type, Edition edition, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, GeometryCollection point, String title, String creator, BigInteger likes, BigInteger bookmark, BigDecimal correctness, BigDecimal randomNumber, BigDecimal interestingess, String person, String building, String location, Date notBefore, Date notAfter, Set categories, Set keywords) {
         this.id = id;
         this.type = type;
         this.edition = edition;
@@ -211,11 +236,11 @@ public class Object  implements java.io.Serializable {
     public void setObjVersion(BigDecimal objVersion) {
         this.objVersion = objVersion;
     }
-    public Point getPoint() {
+    public Geometry getPoint() {
         return this.point;
     }
     
-    public void setPoint(Point point) {
+    public void setPoint(Geometry point) {
         this.point = point;
     }
     public String getTitle() {
@@ -290,35 +315,8 @@ public class Object  implements java.io.Serializable {
     }
 
 
-    @Override
-    public String toString() {
-        return "Object{" +
-                "id='" + id + '\'' +
-                ", type=" + type.getId() +
-                ", edition=" + edition.getId() +
-                ", mods='" + mods + '\'' +
-                ", lastModified='" + lastModified + '\'' +
-                ", deleted=" + deleted +
-                ", lastModifiedBy='" + lastModifiedBy + '\'' +
-                ", objVersion=" + objVersion +
-                ", point=" + point +
-                ", title='" + title + '\'' +
-                ", creator='" + creator + '\'' +
-                ", likes=" + likes +
-                ", bookmark=" + bookmark +
-                ", correctness=" + correctness +
-                ", randomNumber=" + randomNumber +
-                ", interestingess=" + interestingess +
-                ", person='" + person + '\'' +
-                ", building='" + building + '\'' +
-                ", location='" + location + '\'' +
-                ", notBefore=" + notBefore +
-                ", notAfter=" + notAfter +
-                ", categories=" + categories +
-                ", keywords=" + keywords +
-                ", comments=" + comments +
-                '}';
-    }
+
+
 }
 
 

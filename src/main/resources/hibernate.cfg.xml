@@ -1,6 +1,6 @@
 <hibernate-configuration>
     <session-factory>
-        <property name="hibernate.dialect">dk.kb.cop3.backend.crud.database.PostgreSQL95DialectWithPoint</property>
+        <property name="hibernate.dialect">org.hibernate.spatial.dialect.postgis.PostgisDialect</property>
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.connection.username">cop</property>
         <property name="hibernate.connection.password">cop123</property>
@@ -12,11 +12,12 @@
         <property name="hibernate.order_updates">true</property>
 
 
-        <property name="hbm2ddl.auto">validate</property>
+        <property name="hbm2ddl.auto">create</property>
 
         <property name="show_sql">false</property>
         <property name="format_sql">true</property>
         <property name="use_sql_comments">true</property>
+        <property name="hibernate.connection.autocommit">true</property>
         <!--  mapping files  -->
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Object.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Edition.hbm.xml"/>
@@ -24,7 +25,7 @@
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Tag.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Comment.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Type.hbm.xml"/>
-        <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/AuditTrail.hbm.xml"/>
+        <!-- mapping resource="dk/kb/cop3/backend/crud/database/hibernate/AuditTrail.hbm.xml"/ -->
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/User.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/UserRole.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/UserPermissions.hbm.xml"/>

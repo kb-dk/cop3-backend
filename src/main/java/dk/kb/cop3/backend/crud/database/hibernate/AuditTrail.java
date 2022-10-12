@@ -4,7 +4,8 @@ package dk.kb.cop3.backend.crud.database.hibernate;
 
 
 
-import dk.kb.cop3.backend.crud.database.type.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 
 import java.math.BigDecimal;
 
@@ -22,7 +23,7 @@ public class AuditTrail  implements java.io.Serializable {
      private char deleted;
      private String lastModifiedBy;
      private BigDecimal objVersion;
-     private Point point;
+     private Geometry point;
 
     public AuditTrail() {
     }
@@ -36,7 +37,7 @@ public class AuditTrail  implements java.io.Serializable {
         this.lastModifiedBy = lastModifiedBy;
         this.objVersion = objVersion;
     }
-    public AuditTrail(String id, String oid, String eid, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, Point point) {
+    public AuditTrail(String id, String oid, String eid, String mods, String lastModified, char deleted, String lastModifiedBy, BigDecimal objVersion, Geometry point) {
        this.id = id;
        this.oid = oid;
        this.eid = eid;
@@ -104,11 +105,11 @@ public class AuditTrail  implements java.io.Serializable {
     public void setObjVersion(BigDecimal objVersion) {
         this.objVersion = objVersion;
     }
-    public Point getPoint() {
+    public Geometry getPoint() {
         return this.point;
     }
     
-    public void setPoint(Point point) {
+    public void setPoint(GeometryCollection point) {
         this.point = point;
     }
 

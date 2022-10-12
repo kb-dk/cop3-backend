@@ -6,9 +6,13 @@ import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.database.type.Point;
 import org.apache.log4j.Logger;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.Session;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -158,7 +162,9 @@ public class BeanUtils {
             if(latlng != null && !latlng.equals("")){
                 String lat = latlng.split(",")[0];
                 String lon = latlng.split(",")[1];
-                copject.setPoint(new Point(Double.parseDouble(lat),Double.parseDouble(lon)));
+                GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
+                copject.setPoint(geoFactory.createPoint(new Coordinate(Double.valueOf(lat),Double.valueOf(lon))));
+
                 if(copject.getCorrectness() == null){
                     copject.setCorrectness(new BigDecimal(0)); // maybe we need this.
                 }

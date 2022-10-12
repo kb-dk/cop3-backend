@@ -5,8 +5,11 @@ import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.type.Point;
 import dk.kb.cop3.backend.crud.util.BeanUtils;
 import org.apache.log4j.Logger;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -285,8 +288,8 @@ public class HibernateMetadataWriter implements MetadataWriter {
                 existingCobject.setLastModified("" + new Date().getTime()); // set the new lastmodified to just now.
                 existingCobject.setObjVersion(existingCobject.getObjVersion().add(new BigDecimal("1")));
                 existingCobject.setInterestingess(existingCobject.getInterestingess().add(new BigDecimal("1")));
-                existingCobject.setPoint(new Point(lat,lon));
-                existingCobject.setLastModifiedBy(user);
+                GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
+                existingCobject.setPoint(geoFactory.createPoint(new Coordinate(Double.valueOf(lat),Double.valueOf(lon))));                existingCobject.setLastModifiedBy(user);
                 existingCobject.setCorrectness(new BigDecimal(correctness));
                 logger.debug("audit version " + audit.getObjVersion() + ", new version " + existingCobject.getObjVersion());
                 logger.debug(audit.toString());
