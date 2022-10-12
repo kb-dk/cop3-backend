@@ -21,31 +21,35 @@ public class MigrateObjects {
         Session oraSession = MigrationUtils.getOracleSession();
 
         SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
+                .setProperty("hibernate.jdbc.batch_size", "1000")
                 .buildSessionFactory();
-        int pageSize = 100000;
+        int pageSize = 100;
+
 
         List<ObjectOracle> objects = new ArrayList<>();
         for (int pageNo = 0; pageNo == 0 || !objects.isEmpty(); pageNo++) {
-            logger.info("migrating objects "+pageNo*pageSize);
+            logger.info("fetching object from oracle. Firstresult:"+pageNo*pageSize);
             objects = oraSession.createQuery("from ObjectOracle")
                     .setMaxResults(pageSize)
                     .setFirstResult(pageNo * pageSize)
                     .list();
+            Session psqlSession = psqlSessfac.openSession();
+            Transaction trans = psqlSession.beginTransaction();
+            logger.info("Saving objects");
             objects.stream()
                     .map(oraObject -> ObjectConverter.convertObject(oraObject))
                     .forEach(Object -> {
-                        saveObjectInPostgres(psqlSessfac, Object);
+                        saveObjectInPostgres(psqlSession, Object);
                     });
+            logger.info("Commiting");
+            trans.commit();
+            logger.info("closing");
+            psqlSession.close();
         }
     }
 
-    private static void saveObjectInPostgres(SessionFactory psqlSessFac, Object object) {
-        logger.info("Saving Object "+object.getId());
-        Session psqlSession = psqlSessFac.openSession();
-        Transaction trans = psqlSession.beginTransaction();
-        psqlSession.save(object);
-        trans.commit();
-        psqlSession.close();
+    private static void saveObjectInPostgres(Session session, Object object) {
+        session.save(object);
     }
 
 }
