@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.locationtech.jts.geom.GeometryCollection;
 
 
 import java.math.BigDecimal;
@@ -40,7 +41,7 @@ public class TestDBWrite {
         edition.setVisiblePublic('j');
         session.save(edition);
         Object object = new Object();
-        Point p = new Point(10,20);
+        GeometryCollection p = new Point(10,20);
         object.setId("test1234");
         object.setPoint(p);
         object.setType(type);
