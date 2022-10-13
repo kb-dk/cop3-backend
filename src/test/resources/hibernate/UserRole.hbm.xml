@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.crud.database.hibernate.UserRole" table="USER_ROLE" >
+        <id name="roleId" type="integer">
+            <column name="ROLE_ID"/>
+            <generator class="assigned"/>
+        </id>
+        <property name="roleName" column="ROLE_NAME"/>
+        <set name="permissions" table="USER_ROLE_PERMISSIONS"  lazy="false">
+            <key column="ROLE_ID" foreign-key="ROLE_ID"/>
+            <many-to-many class="dk.kb.cop3.backend.crud.database.hibernate.UserPermissions">
+                <column name="PERMISSION_ID"/>
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

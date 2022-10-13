@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 27, 2011 3:35:31 PM by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.crud.database.hibernate.AuditTrail" table="AUDIT_TRAIL" >
+        <id name="id" type="string">
+            <column name="ID" length="1024" />
+            <generator class="assigned" />
+        </id>
+        <property name="oid" type="string">
+            <column name="OID" length="1024" not-null="true" />
+        </property>
+        <property name="eid" type="string">
+            <column name="EID" length="256" />
+        </property>
+        <property name="mods" type="string">
+            <column name="MODS" />
+        </property>
+        <property name="lastModified" type="string">
+            <column name="LAST_MODIFIED" length="1024" not-null="true" />
+        </property>
+        <property name="deleted" type="char">
+            <column name="DELETED" length="1" not-null="true" />
+        </property>
+        <property name="lastModifiedBy" type="string">
+            <column name="LAST_MODIFIED_BY" length="4000" not-null="true" />
+        </property>
+        <property name="objVersion" type="big_decimal">
+            <column name="OBJ_VERSION" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="point" type="jts_geometry">
+            <column name="POINT" />
+        </property>
+    </class>
+</hibernate-mapping>
