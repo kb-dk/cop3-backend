@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class ObjectConverter {
@@ -46,6 +47,71 @@ public class ObjectConverter {
             return edition;
     }
 
+
+    public static User convertUser(UserOracle oraUser) {
+        User user = new User();
+        user.setPid(oraUser.getPid());
+        user.setId(oraUser.getId());
+        user.setGivenName(oraUser.getGivenName());
+        user.setSurName(oraUser.getSurName());
+        user.setCommonName(oraUser.getCommonName());
+        user.setRoleId(oraUser.getRoleId());
+        UserRole userRole = createUserRole(oraUser);
+        user.setRole(userRole);
+        user.setEmail(oraUser.getEmail());
+        user.setUserScore(oraUser.getUserScore());
+        user.setUserScore1(oraUser.getUserScore1());
+        user.setUserScore2(oraUser.getUserScore2());
+        user.setUserScore3(oraUser.getUserScore3());
+        user.setUserScore4(oraUser.getUserScore4());
+        user.setUserScore5(oraUser.getUserScore5());
+        user.setUserScore6(oraUser.getUserScore6());
+        user.setUserScore7(oraUser.getUserScore7());
+        user.setUserScore8(oraUser.getUserScore8());
+        user.setUserScore9(oraUser.getUserScore9());
+        user.setLastActive(oraUser.getLastActive());
+        return user;
+    }
+
+    private static UserRole createUserRole(UserOracle oraUser) {
+        UserRole userRole = new UserRole();
+        userRole.setRoleId(oraUser.getRole().getRoleId());
+        userRole.setRoleName(oraUser.getRole().getRoleName());
+        return userRole;
+    }
+
+    public static UserPermissions convertUserPermission(UserPermissionsOracle oraUserPermission) {
+        UserPermissions userPermission = new UserPermissions();
+        userPermission.setPermissionId(oraUserPermission.getPermissionId());
+        userPermission.setPermissionName(oraUserPermission.getPermissionName());
+//        userPermission.set
+        return userPermission;
+    }
+
+    public static UserRolePermissions convertUserRolePermissions(UserRolePermissionsOracle oraUserRolePermissions) {
+        UserRolePermissions userRolePermissions = new UserRolePermissions();
+        userRolePermissions.setPermissionId(oraUserRolePermissions.getPermissionId());
+        userRolePermissions.setRoleId(oraUserRolePermissions.getRoleId());
+        return userRolePermissions;
+    }
+
+    public static UserRole convertUserRole(UserRoleOracle oraUserRole) {
+        UserRole userRole = new UserRole();
+        userRole.setRoleId(oraUserRole.getRoleId());
+        userRole.setRoleName(oraUserRole.getRoleName());
+        final Set<UserPermissionsOracle> oraUserPermissions = oraUserRole.getPermissions();
+        Set<UserPermissions> userPermissions = new TreeSet<UserPermissions>();
+/*
+        oraUserPermissions.forEach(oraPermission -> {
+            UserPermissions permission = new UserPermissions();
+            permission.setPermissionId(oraPermission.getPermissionId());
+            permission.setPermissionName(oraPermission.getPermissionName());
+            userPermissions.add(permission);
+        });
+*/
+        userRole.setPermissions(userPermissions);
+        return userRole;
+    }
     public static Category convertCategory(CategoryOracle categoryOracle) {
         Category category = new Category();
         category.setId(categoryOracle.getId());
@@ -102,7 +168,7 @@ public class ObjectConverter {
         GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
         double lat = point.getPoint()[0];
         double lon = point.getPoint()[1];
-        return geoFactory.createPoint(new Coordinate(Double.valueOf(lat),Double.valueOf(lon)));
+        return geoFactory.createPoint(new Coordinate(lat, lon));
     }
 
     public static Tag convertTag(TagOracle tagOracle) {

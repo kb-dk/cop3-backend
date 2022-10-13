@@ -27,11 +27,11 @@
         <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Comment.hbm.xml"/>
         <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Type.hbm.xml"/>
         <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/AuditTrail.hbm.xml"/>
-<!--        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/User.hbm.xml"/>-->
-<!--        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/UserRole.hbm.xml"/>-->
-<!--        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/UserPermissions.hbm.xml"/>-->
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/User.hbm.xml"/>
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/UserRole.hbm.xml"/>
+        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/UserPermissions.hbm.xml"/>
 <!--        <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/UserRolePermissions.hbm.xml"/>-->
-    </session-factory>
+      </session-factory>
 
 </hibernate-configuration>
 
