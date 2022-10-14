@@ -190,4 +190,17 @@ public class ObjectConverter {
         comment.setHost_uri(commentOracle.getHost_uri());
         return comment;
     }
+
+    public static XLink convertXLink(XLinkOracle xlinkOracle) {
+        XLink xlink = new XLink();
+        xlink.setId(xlinkOracle.getId());
+        xlink.setXlink_from(xlinkOracle.getXlink_from());
+        xlink.setXlink_to(xlinkOracle.getXlink_to());
+        xlink.setXlink_type(xlinkOracle.getXlink_type());
+        xlink.setXlink_role(xlinkOracle.getXlink_role());
+        xlink.setCreator(xlinkOracle.getCreator());
+        xlink.setTimestamp(xlinkOracle.getTimestamp());
+        xlink.setXlink_title(xlinkOracle.getXlink_title());
+        return xlink;
+    }
 }
