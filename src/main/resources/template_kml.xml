@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+    <Document>
+        <Style id="balloon-style">
+            <BalloonStyle>
+                <text>
+                    <![CDATA[
+                          <img src='$[subjectThumbnailSrc]' /><br />
+                          <b>Navn:</b> $[subjectName]<br />
+                          <b>Årstal:</b> $[subjectCreationDate]<br />
+                          <b>Sted:</b> $[subjectGeographic]<br />
+                          <br />
+                          <a href='$[subjectLink]'>Mere info</a>
+                    ]]>
+                </text>
+            </BalloonStyle>
+        </Style>
+    </Document>
+</kml>

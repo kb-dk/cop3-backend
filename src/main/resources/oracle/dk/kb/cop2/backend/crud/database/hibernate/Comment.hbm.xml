@@ -15,5 +15,8 @@
         <property name="xlink_to" type="string">
             <column name="XLINK_TO" length="200" not-null="true" />
         </property>
+        <property name="host_uri" type="string">
+            <column name="HOST_URI" length="220"/>
+        </property>
     </class>
 </hibernate-mapping>

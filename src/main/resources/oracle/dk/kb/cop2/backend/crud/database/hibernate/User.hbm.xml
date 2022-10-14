@@ -4,7 +4,7 @@
 <hibernate-mapping>
     <class name="dk.kb.cop3.backend.migrate.hibernate.UserOracle" table="USERS" schema="COP2">
         <id name="pid" type="string">
-            <column name="USER_PID"/>
+            <column name="USER_PID" length="1024"/>
             <generator class="assigned"/>
         </id>
         <property name="id" type="string" column="USER_ID" not-null="true" />
@@ -44,7 +44,6 @@
         <property name="userScore9" type="big_integer">
             <column name="USERSCORE9"  not-null="false" default="0" />
         </property>
-
 
         <property name="lastActive" type="timestamp" column="LAST_ACTIVE_DATE" not-null="true" />
     </class>

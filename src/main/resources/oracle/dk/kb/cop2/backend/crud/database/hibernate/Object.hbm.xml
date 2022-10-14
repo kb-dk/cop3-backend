@@ -74,7 +74,7 @@
         <property name="notAfter" type="date">
             <column name="NOT_AFTER" length="7" />
         </property>
-        <set name="categories" table="CATEGORY_JOIN" inverse="false" lazy="true" fetch="select">
+        <set name="categories" table="CATEGORY_JOIN" lazy="false" fetch="select" batch-size="10">
             <key>
                 <column name="OID" length="1024" not-null="true" />
             </key>
@@ -83,7 +83,7 @@
             </many-to-many>
         </set>
 
-        <set name="keywords" table="TAG_JOIN" inverse="false" lazy="true" fetch="select">
+        <set name="keywords" table="TAG_JOIN"  lazy="false" fetch="select" batch-size="10">
             <key>
                 <column name="OID" length="1024" not-null="false" />
             </key>
@@ -92,7 +92,7 @@
             </many-to-many>
         </set>
 
-        <set name="comments" table="COMMENTS" inverse="false" lazy="true" fetch="select">
+        <set name="comments" table="COMMENTS"  lazy="false" fetch="select" batch-size="100">
             <key>
                 <column name="XLINK_TO" length="1024" not-null="true" />
             </key>

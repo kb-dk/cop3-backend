@@ -11,7 +11,7 @@ import java.sql.Timestamp;
  * @author jatr
  * @since 21/11/11
  */
-public class UserOracle implements Serializable {
+public class UserOracle implements java.io.Serializable {
 
     private String pid;//library user id - corresponds to primary key in the USERS table, generated from an external source
     private String id;//CPR id used for logging into the system
