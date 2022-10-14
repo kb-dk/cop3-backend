@@ -23,11 +23,14 @@ public class MigrateObjects {
         SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
                 .setProperty("hibernate.jdbc.batch_size", "1000")
                 .buildSessionFactory();
-        int pageSize = 100;
-
+        int pageSize = 1000;
+        int startPage = 0;
+        if (args.length > 0) {
+            startPage = Integer.parseInt(args[0]);
+        }
 
         List<ObjectOracle> objects = new ArrayList<>();
-        for (int pageNo = 0; pageNo == 0 || !objects.isEmpty(); pageNo++) {
+        for (int pageNo = startPage; pageNo == startPage || !objects.isEmpty(); pageNo++) {
             logger.info("fetching object from oracle. Firstresult:"+pageNo*pageSize);
             objects = oraSession.createQuery("from ObjectOracle")
                     .setMaxResults(pageSize)
@@ -45,11 +48,13 @@ public class MigrateObjects {
             trans.commit();
             logger.info("closing");
             psqlSession.close();
+            logger.info("clearing");
+            oraSession.clear();
         }
     }
 
     private static void saveObjectInPostgres(Session session, Object object) {
-        session.save(object);
+        session.saveOrUpdate(object);
     }
 
 }
