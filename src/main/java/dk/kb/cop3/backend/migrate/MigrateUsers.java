@@ -1,7 +1,5 @@
 package dk.kb.cop3.backend.migrate;
 
-import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
-import dk.kb.cop3.backend.migrate.hibernate.ObjectOracle;
 import dk.kb.cop3.backend.migrate.hibernate.UserOracle;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
