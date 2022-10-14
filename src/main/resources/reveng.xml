@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC 
+	"-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+
+	<type-mapping>
+		<sql-type jdbc-type="OTHER" hibernate-type="dk.kb.cop2.backend.crud.database.type.JGeometryType" />
+		<sql-type jdbc-type="CLOB" hibernate-type="string" />
+	</type-mapping>
+
+
+	<table-filter match-name="OBJECT" ></table-filter>
+	<table-filter match-name="EDITION" ></table-filter>
+	<table-filter match-name="TYPE" ></table-filter>
+	<table-filter match-name="CATEGORY" ></table-filter>
+	<table-filter match-name="CATEGORY_JOIN" ></table-filter>
+	<table-filter match-name="AUDIT_TRAIL"></table-filter>
+    	<table name="OBJECT">
+        	<column name="point" type="dk.kb.cop2.backend.crud.database.type.JGeometryType" exclude="false"/>
+		<column name="mods" type="string" exclude="false"/>
+    	</table>
+</hibernate-reverse-engineering>
