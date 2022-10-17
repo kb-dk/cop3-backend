@@ -19,6 +19,7 @@
         <property name="use_sql_comments">true</property>
         <property name="hibernate.connection.autocommit">true</property>
         <!--  mapping files  -->
+        <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/AreasInDenmark.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Object.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Edition.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Category.hbm.xml"/>

@@ -19,7 +19,7 @@
         <property name="show_sql">false</property>
         <property name="format_sql">false</property>
 
-
+        <mapping resource="oracle/dk/kb/cop3/backend/crud/database/hibernate/AreasInDenmark.hbm.xml"/>
         <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Object.hbm.xml"/>
         <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Edition.hbm.xml"/>
         <mapping resource="oracle/dk/kb/cop2/backend/crud/database/hibernate/Category.hbm.xml"/>

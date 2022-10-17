@@ -73,6 +73,13 @@ public class ObjectConverter {
         return user;
     }
 
+    private static AreasInDenmark createAreasInDenmark(AreasInDenmarkOracle oraArea) {
+	AreasInDenmark area = new AreasInDenmark();
+	area.setId(oraArea.getId());
+	area.setNameOfArea(oraArea.getNameOfArea());
+	area.setPolygon(oraArea.getPolygon());
+    }
+    
     private static UserRole createUserRole(UserOracle oraUser) {
         UserRole userRole = new UserRole();
         userRole.setRoleId(oraUser.getRole().getRoleId());
