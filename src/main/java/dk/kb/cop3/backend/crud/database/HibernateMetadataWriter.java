@@ -2,8 +2,7 @@ package dk.kb.cop3.backend.crud.database;
 
 import dk.kb.cop3.backend.crud.database.hibernate.AuditTrail;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.database.type.Point;
-import dk.kb.cop3.backend.crud.util.BeanUtils;
+import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import org.apache.log4j.Logger;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.HibernateException;
@@ -152,7 +151,7 @@ public class HibernateMetadataWriter implements MetadataWriter {
             SQLQuery sqlQuery = hibSession.createSQLQuery("alter session set optimizer_mode=first_rows");
             sqlQuery.executeUpdate();
             logger.debug("id " + id);
-            BeanUtils bu = BeanUtils.getInstance();
+            ObjectFromModsExtractor bu = ObjectFromModsExtractor.getInstance();
             if (!id.equals(bu.getIdFromMods(mods))) {
                 logger.debug("id does not correspond to mods");
                 logger.debug(id + " != " + bu.getIdFromMods(mods));

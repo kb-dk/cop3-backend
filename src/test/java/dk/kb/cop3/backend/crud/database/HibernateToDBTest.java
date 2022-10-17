@@ -2,7 +2,7 @@ package dk.kb.cop3.backend.crud.database;
 
 import dk.kb.cop3.backend.constants.Types;
 import dk.kb.cop3.backend.crud.database.hibernate.*;
-import dk.kb.cop3.backend.crud.util.BeanUtils;
+import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -142,7 +142,7 @@ public class HibernateToDBTest {
     @Test
        public void opretMagicCopject() {
         dk.kb.cop3.backend.crud.database.hibernate.Object copject = new dk.kb.cop3.backend.crud.database.hibernate.Object();
-        BeanUtils beanUtils = BeanUtils.getInstance();
+        ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
 
         String mods = null;
         try {
@@ -151,7 +151,7 @@ public class HibernateToDBTest {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        copject = beanUtils.extractFromMods(copject, mods, session);
+        copject = objectFromModsExtractor.extractFromMods(copject, mods, session);
 
            assertEquals(copject.getId(), "/images/luftfo/2011/maj/luftfoto/object62138");
        }
