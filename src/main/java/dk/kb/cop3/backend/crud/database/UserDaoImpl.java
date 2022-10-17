@@ -4,9 +4,9 @@ import dk.kb.cop3.backend.constants.Areas;
 import dk.kb.cop3.backend.constants.DSFLAreas;
 import dk.kb.cop3.backend.crud.database.hibernate.User;
 import org.hibernate.*;
+import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
@@ -28,9 +28,10 @@ public class UserDaoImpl implements UserDao {
 
     private SessionFactory sessionFactory;
 
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public UserDaoImpl(){
+        this.sessionFactory = new Configuration().configure("hibernate.cfg.xml")
+                .buildSessionFactory();
+
     }
 
     /**
@@ -84,7 +85,8 @@ public class UserDaoImpl implements UserDao {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
 
-            Query query = session.createSQLQuery(" select user0_.USER_PID as USER1_8_0_, user0_.USER_ID as USER2_8_0_, user0_.USER_GIVEN_NAME as USER3_8_0_, user0_.USER_SURNAME as USER4_8_0_, user0_.USER_COMMON_NAME as USER5_8_0_, user0_.USER_ROLE_ID as USER6_8_0_, user0_.USER_EMAIL as USER7_8_0_, user0_.USER_SCORE as USER8_8_0_, user0_.USERSCORE1 as USERSCORE9_8_0_, user0_.LAST_ACTIVE_DATE as LAST10_8_0_  from COP2.USERS user0_  where user0_.USER_PID='"+userPid+"'");
+            Query query = session.createSQLQuery(" select user from users  where user_pid='"+userPid+"'");
+//OLD:            Query query = session.createSQLQuery(" select user0_.USER_PID as USER1_8_0_, user0_.USER_ID as USER2_8_0_, user0_.USER_GIVEN_NAME as USER3_8_0_, user0_.USER_SURNAME as USER4_8_0_, user0_.USER_COMMON_NAME as USER5_8_0_, user0_.USER_ROLE_ID as USER6_8_0_, user0_.USER_EMAIL as USER7_8_0_, user0_.USER_SCORE as USER8_8_0_, user0_.USERSCORE1 as USERSCORE9_8_0_, user0_.LAST_ACTIVE_DATE as LAST10_8_0_  from COP2.USERS user0_  where user0_.USER_PID='"+userPid+"'");
             query.list();
             User user = (User) session.get(User.class, userPid);
             transaction.commit();

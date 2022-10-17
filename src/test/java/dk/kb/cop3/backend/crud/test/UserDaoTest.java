@@ -1,13 +1,14 @@
 package dk.kb.cop3.backend.crud.test;
 
-import dk.kb.cop3.backend.crud.database.UserDao;
+import dk.kb.cop3.backend.crud.database.UserDaoImpl;
 import dk.kb.cop3.backend.crud.database.hibernate.User;
 import dk.kb.cop3.backend.crud.database.hibernate.UserPermissions;
 import dk.kb.cop3.backend.crud.database.hibernate.UserRole;
 import org.apache.log4j.Logger;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.runners.MethodSorters;
 import org.springframework.util.Assert;
 
 import java.sql.Timestamp;
@@ -16,18 +17,24 @@ import java.util.Set;
 /**
  * Unit test class for the UserDao
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserDaoTest {
 
     private static Logger LOGGER = Logger.getLogger(UserDaoTest.class);
+    private static UserDaoImpl userDao;
 
-    @Autowired
-    private UserDao userDao;
+    @BeforeClass
+    public static void initDao(){
+        userDao = new UserDaoImpl();
+    }
+
+
 
     /**
      * Test that a new user can be saved to the database
     */
     @Test
-    public void testCreateUser() {
+    public void test1CreateUser() {
 
         String userId = userDao.addUser(getTestUser());
         Assert.notNull(userId);
@@ -38,13 +45,14 @@ public class UserDaoTest {
      * Test that a user can be retrieved from the database
      */
     @Test
-    public void testGetUserByPid(){
+    public void test2GetUserByPid(){
 
         User user = userDao.getUser("PID000999999");
         Assert.notNull(user);
         Assert.isTrue(user.getCommonName().equals("John"));
 
-        Set<UserPermissions> userPermissions = user.getRole().getPermissions();
+        final UserRole role = user.getRole();
+        Set<UserPermissions> userPermissions = role.getPermissions();
         Assert.isTrue(userPermissions.size() == 9);
         for (UserPermissions userPermission : userPermissions) {
             System.out.println("userPermission.toString() = " + userPermission.toString());
@@ -55,7 +63,7 @@ public class UserDaoTest {
      * Test that a user retrieved from the database can be modified and the change saved to the database
     */
     @Test
-    public void testModifyUser() {
+    public void test3ModifyUser() {
 
         User user = userDao.getUser("PID000999999");
         UserRole userRole = new UserRole();
@@ -72,7 +80,7 @@ public class UserDaoTest {
      * Test that a user can be deleted from the database
     */
     @Test
-    public void testDeleteUser() {
+    public void test4DeleteUser() {
 
         User user = userDao.getUser("PID000999999");
         userDao.deleteUser(user);
@@ -81,7 +89,7 @@ public class UserDaoTest {
 
     }
 
-    private User getTestUser() {
+    public static User getTestUser() {
 
         User user = new User();
         user.setId("08011981-3175");
