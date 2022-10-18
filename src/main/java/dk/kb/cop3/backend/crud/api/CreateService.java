@@ -6,7 +6,7 @@ import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataWriter;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
-import dk.kb.cop3.backend.crud.util.BeanUtils;
+import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import dk.kb.cop3.backend.crud.util.JMSProducer;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
@@ -74,7 +74,7 @@ public class CreateService {
         Object cobject =
                 new Object();
 
-        BeanUtils bu = BeanUtils.getInstance();
+        ObjectFromModsExtractor bu = ObjectFromModsExtractor.getInstance();
         SessionFactory fact = HibernateUtil.getSessionFactory();
         Session ses = fact.getCurrentSession();
         ses.beginTransaction();

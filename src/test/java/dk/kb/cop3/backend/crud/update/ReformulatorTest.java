@@ -4,6 +4,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/*
+Test af reformulators xslt
+Opdaterer specifikke felter i mods dokument
+ */
 public class ReformulatorTest {
 
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(ReformulatorTest.class);
@@ -17,6 +21,7 @@ public class ReformulatorTest {
     public void runTest() {
 	this.text = this.getDocument();
 	Reformulator rf = new Reformulator(text);
+    // TODO: tilføj manglende felter
 	rf.changeField("title","This is the new title");
     rf.changeField("note","This is a note");
     rf.changeField("name","this is the new name");
@@ -61,6 +66,7 @@ public class ReformulatorTest {
     }
 */
 
+    //TODO: udskift eksempel med luftfoto eksempel
     private static final String document ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "\n" +
             "<md:mods xmlns:md=\"http://www.loc.gov/mods/v3\" \n" +

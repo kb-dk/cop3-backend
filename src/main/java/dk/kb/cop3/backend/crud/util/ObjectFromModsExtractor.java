@@ -10,9 +10,7 @@ import org.apache.log4j.Logger;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -43,11 +41,11 @@ import java.util.Locale;
  * Time: 12:46
  * Implemented as a singleton
  */
-public class BeanUtils {
+public class ObjectFromModsExtractor {
     /**
      * The logger called logger
      */
-    private static Logger logger = Logger.getLogger(BeanUtils.class);
+    private static Logger logger = Logger.getLogger(ObjectFromModsExtractor.class);
 
     private static XPathFactory factory = XPathFactory.newInstance();
     private static XPath xPath = factory.newXPath();
@@ -73,13 +71,13 @@ public class BeanUtils {
     private DateFormat dfYearOnly = new SimpleDateFormat("yyyy", Locale.US);
 
 
-    private static BeanUtils ourInstance = new BeanUtils();
+    private static ObjectFromModsExtractor ourInstance = new ObjectFromModsExtractor();
 
-    public static BeanUtils getInstance() {
+    public static ObjectFromModsExtractor getInstance() {
         return ourInstance;
     }
 
-    private BeanUtils() {
+    private ObjectFromModsExtractor() {
         try {
             builder = builderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -107,10 +105,173 @@ public class BeanUtils {
             throw new IllegalArgumentException("copject cannot be null");
         }
 
-        Document modsDocument = null;
-        Date dateNotAfter = null;
-        Date dateNotBefore = null;
+        Document modsDocument = parseModsString(modsString);
+        try {
+            // Extract simple strings
+            populateCopjectWithSimpleFields(copject, version, modsDocument);
+            setLatLng(copject, modsDocument);
+            setDates(copject, modsDocument);
+            
+            setTypeAndEdition(copject, session, modsDocument);
+            setCategories(copject, session, modsDocument);
 
+            copject.setLastModified(getCurrentTimestamp());
+            copject.setMods(modsString);
+            
+/* should be initalized in (c)object constructor
+            copject.setRandomNumber(new BigDecimal(Math.random()));
+            copject.setInterestingess(new BigDecimal(0));
+            copject.setCorrectness(new BigDecimal(0));
+            copject.setBookmark(new BigInteger(String.valueOf(0)));
+            copject.setLikes(new BigInteger(String.valueOf(0)));
+*/
+            
+        } catch (XPathExpressionException e) {
+            logger.error("Error evaluating XPath. Error is: " + e.getMessage());
+        }
+        return copject;
+    }
+
+    private static String getCurrentTimestamp() {
+        return "" + new Date().getTime();
+    }
+
+    private void populateCopjectWithSimpleFields(Object copject, BigDecimal version, Document modsDocument) throws XPathExpressionException {
+        String creator = extract(CREATOR_XPATH, modsDocument);
+        String geographic = extract(GEOGRAPHIC_XPATH, modsDocument);
+        String id = extract(ID_XPATH, modsDocument);
+        String person = extract(PERSON_XPATH, modsDocument);
+        String building = extract(BUILDING_XPATH, modsDocument);
+        String modifiedBy = extract(MODIFIED_BY_XPATH, modsDocument);
+        String title = extract(TITLE_XPATH, modsDocument);
+
+        if (creator != null) {
+            copject.setCreator(creator);
+        }
+        if (title != null && !title.equals("")) {
+            copject.setTitle(title);
+        }
+        if (title.equals("") && building != null && !building.equals("")) {  // no title provided,  BUT building is present,create a new title
+            logger.warn("No title provided in MODS record, auto generating a title: " + building);
+            copject.setTitle(building);
+        }
+        if (building != null) {
+            copject.setBuilding(building);
+        }
+        if (geographic != null) {
+            copject.setLocation(geographic);
+        }
+        if (person != null) {
+            copject.setPerson(person);
+        }
+        copject.setId(id);
+        copject.setLastModifiedBy(modifiedBy);
+        copject.setObjVersion(version);
+    }
+
+    private String getEditionString(Object copject) {
+        return copject.getId().substring(0, copject.getId().indexOf("/object"));
+
+    }
+
+    private void setDates(Object copject, Document modsDocument) throws XPathExpressionException {
+        String extractedDate = extract(DATE_NOT_AFTER_XPATH, modsDocument);
+        Date dates[] = extractInDifferentFormats(extractedDate);
+        try {
+            if (dates[1] != null) {
+                copject.setNotAfter(dates[1]);
+            }
+            if (dates[0] != null) {
+                copject.setNotBefore(dates[0]);
+            }
+        } catch (NullPointerException e) {
+            logger.warn("No correct date could be entered for this copject id: " + copject.getId());
+        }
+    }
+
+    private void setLatLng(Object copject, Document modsDocument) throws XPathExpressionException {
+        String latlng = extract(GEO_LAT_LONG_XPATH, modsDocument);
+        if(latlng != null && !latlng.equals("")){
+            String lat = latlng.split(",")[0];
+            String lon = latlng.split(",")[1];
+            GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
+            copject.setPoint(geoFactory.createPoint(new Coordinate(Double.valueOf(lat),Double.valueOf(lon))));
+
+            if(copject.getCorrectness() == null){
+                copject.setCorrectness(new BigDecimal(0)); // maybe we need this.
+            }
+        }
+    }
+
+    private void setTypeAndEdition(Object copject, Session session, Document modsDocument) throws XPathExpressionException {
+        String editionString = getEditionString(copject);
+        String typeString = extract(TYPE_XPATH, modsDocument);
+        
+        long startTime = 0;
+        if (logger.isDebugEnabled()) {
+            startTime = System.nanoTime();
+        }
+        Edition edition = HibernateUtil.getEditionById(session, editionString);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Got edition by ID took"+(System.nanoTime()-startTime)/1000 + " ms");
+        }
+        copject.setEdition(edition);
+        logger.debug("Setting edition: " + edition.getId());
+        if (typeString.isEmpty()) {
+            typeString = "Unknown";
+        }
+
+        logger.debug("Setting type: " + typeString);
+
+        if (logger.isDebugEnabled()) {
+            startTime = System.nanoTime();
+        }
+        Type type = HibernateUtil.getTypeById(session, Types.getTypeByName(typeString));
+        if (logger.isDebugEnabled()) {
+            logger.debug("Got edition by ID took"+(System.nanoTime()-startTime)/1000 + " ms");
+        }
+        copject.setType(type);
+    }
+
+    private void setCategories(Object copject, Session session, Document modsDocument) {
+        String editionString = getEditionString(copject);
+        // Extract Subjects, and create category objects
+        NodeList subjectNodes = null;
+        try {
+            subjectNodes = (NodeList) xPath.evaluate(EXTENSION_XPATH, (java.lang.Object) modsDocument, XPathConstants.NODESET);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException(e);
+        }
+
+        // remove all categories
+        copject.getCategories().clear();
+
+        // And insert them again...
+        // .... avoiding those that are no longer relevant
+        try {
+            for (int j = 0; j < subjectNodes.getLength(); j++) {
+                NodeList subjectsList = subjectNodes.item(j).getChildNodes();
+                for (int i = 0; i < subjectsList.getLength(); i++) {
+                    Node subject = subjectsList.item(i);
+                    if (subject.getAttributes() != null) {
+                        String name = subject.getTextContent();
+                        String subId = subject.getAttributes().getNamedItem("href").getTextContent();
+                        if (!subId.contains("subject0") && subId.contains("subject")) {
+                            String absoluteSubjectId = editionString + subId.replace("../..", "");
+                            logger.debug("Setting category: " + absoluteSubjectId);
+                            Category tempCat = HibernateUtil.getCategoryElseCreate(session, absoluteSubjectId, name);
+                            copject.getCategories().add(tempCat);
+                        }
+                    }
+                }
+            }
+        } catch (NullPointerException n) {
+            logger.warn("No subject elements. I Guess this is a Theme: " + n.getLocalizedMessage());
+        }
+    }
+
+    private static Document parseModsString(String modsString) {
+        Document modsDocument = null;
         try {
             InputSource is = new InputSource(new StringReader(modsString));
             modsDocument = builder.parse(is);
@@ -119,141 +280,7 @@ public class BeanUtils {
         } catch (IOException e) {
             logger.error("IOException: " + e.getMessage());
         }
-
-        try {
-            // Extract simple strings
-            String creator = extract(CREATOR_XPATH, modsDocument);
-            String geographic = extract(GEOGRAPHIC_XPATH, modsDocument);
-            String typeString = extract(TYPE_XPATH, modsDocument);
-            String id = extract(ID_XPATH, modsDocument);
-            String person = extract(PERSON_XPATH, modsDocument);
-            String building = extract(BUILDING_XPATH, modsDocument);
-            String modifiedBy = extract(MODIFIED_BY_XPATH, modsDocument);
-            String title = extract(TITLE_XPATH, modsDocument);
-            String latlng = extract(GEO_LAT_LONG_XPATH, modsDocument);
-
-
-            String editionString = id.substring(0, id.indexOf("/object"));
-            String extractedDate = extract(DATE_NOT_AFTER_XPATH, modsDocument);
-
-
-            Date dates[] = extractInDifferentFormats(extractedDate);
-
-
-            if (creator != null) {
-                copject.setCreator(creator);
-            }
-            if (title != null && !title.equals("")) {
-                copject.setTitle(title);
-            }
-            if (title.equals("") && building != null && !building.equals("")) {  // no title provided,  BUT building is present,create a new title
-                logger.warn("No title provided in MODS record, auto generating a title: " + building + " - " + df.format(dates[0]));
-                copject.setTitle(building + " - " + df.format(dates[0]));
-            }
-            if (building != null) {
-                copject.setBuilding(building);
-            }
-            if (geographic != null) {
-                copject.setLocation(geographic);
-            }
-            if (person != null) {
-                copject.setPerson(person);
-            }
-            if(latlng != null && !latlng.equals("")){
-                String lat = latlng.split(",")[0];
-                String lon = latlng.split(",")[1];
-                GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
-                copject.setPoint(geoFactory.createPoint(new Coordinate(Double.valueOf(lat),Double.valueOf(lon))));
-
-                if(copject.getCorrectness() == null){
-                    copject.setCorrectness(new BigDecimal(0)); // maybe we need this.
-                }
-            }
-
-            copject.setLastModifiedBy(modifiedBy);
-            try {
-                if (dates[1] != null) {
-                    copject.setNotAfter(dates[1]);
-                }
-                if (dates[0] != null) {
-                    copject.setNotBefore(dates[0]);
-                }
-            } catch (NullPointerException e) {
-                logger.warn("No correct date could be entered for this copject id: " + id + " edition: " + editionString);
-            }
-
-            copject.setId(id);
-            copject.setMods(modsString);
-            copject.setLastModified("" + new java.util.Date().getTime());
-            copject.setObjVersion(version);
-/* should be initalized in (c)object constructor
-            copject.setRandomNumber(new BigDecimal(Math.random()));
-            copject.setInterestingess(new BigDecimal(0));
-            copject.setCorrectness(new BigDecimal(0));
-            copject.setBookmark(new BigInteger(String.valueOf(0)));
-            copject.setLikes(new BigInteger(String.valueOf(0)));
-*/
-
-            // Extract Subjects, and create category objects
-            NodeList subjectNodes =
-                    (NodeList) xPath.evaluate(EXTENSION_XPATH, (java.lang.Object) modsDocument, XPathConstants.NODESET);
-
-            // remove all categories
-            copject.getCategories().clear();
-
-            // And insert them again...
-            // .... avoiding those that are no longer relevant
-            try {
-                for (int j = 0; j < subjectNodes.getLength(); j++) {
-                    NodeList subjectsList = subjectNodes.item(j).getChildNodes();
-                    for (int i = 0; i < subjectsList.getLength(); i++) {
-                        Node subject = subjectsList.item(i);
-                        if (subject.getAttributes() != null) {
-                            String name = subject.getTextContent();
-                            String subId = subject.getAttributes().getNamedItem("href").getTextContent();
-                            if (!subId.contains("subject0") && subId.contains("subject")) {
-                                String absoluteSubjectId = editionString + subId.replace("../..", "");
-                                logger.debug("Setting category: " + absoluteSubjectId);
-                                Category tempCat = HibernateUtil.getCategoryElseCreate(session, absoluteSubjectId, name);
-                                copject.getCategories().add(tempCat);
-                            }
-                        }
-                    }
-                }
-            } catch (NullPointerException n) {
-                logger.warn("No subject elements. I Guess this is a Theme: " + n.getLocalizedMessage());
-            }
-
-            // set Type og Edition
-            long startTime = 0;
-            if (logger.isDebugEnabled()) {
-                startTime = System.nanoTime();
-            }
-            Edition edition = HibernateUtil.getEditionById(session, editionString);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Got edition by ID took"+(System.nanoTime()-startTime)/1000 + " ms");
-            }
-            copject.setEdition(edition);
-            logger.debug("Setting edition: " + edition.getId());
-            if (typeString.isEmpty()) {
-                typeString = "Unknown";
-            }
-
-            logger.debug("Setting type: " + typeString);
-
-            if (logger.isDebugEnabled()) {
-                startTime = System.nanoTime();
-            }
-            Type type = HibernateUtil.getTypeById(session, Types.getTypeByName(typeString));
-            if (logger.isDebugEnabled()) {
-                logger.debug("Got edition by ID took"+(System.nanoTime()-startTime)/1000 + " ms");
-            }
-            copject.setType(type);
-
-        } catch (XPathExpressionException e) {
-            logger.error("Error evaluating XPath. Error is: " + e.getMessage());
-        }
-        return copject;
+        return modsDocument;
     }
 
     public String getIdFromMods(String modsString) {
@@ -276,7 +303,7 @@ public class BeanUtils {
     }
 
     private String extract(String xPath, Document document) throws XPathExpressionException {
-        String result = BeanUtils.xPath.evaluate(xPath, document);
+        String result = ObjectFromModsExtractor.xPath.evaluate(xPath, document);
         if (result != null) {
             result = result.trim();
         }
@@ -350,33 +377,5 @@ public class BeanUtils {
         }
         return null;
     }
-
-    /*
-  public static void main(String[] args) {
-      System.out.println("testExtractInDifferentFormats");
-      BeanUtils beanUtils = new BeanUtils();
-
-            Date result[] = beanUtils.extractInDifferentFormats("1950");
-            System.out.println("dateNotBefore = " + result[0].toString());
-            System.out.println("dateNotAfter = " + result[1].toString());
-
-      result =  beanUtils.extractInDifferentFormats("1950-1952");
-      System.out.println("dateNotBefore = " + result[0].toString());
-       System.out.println("dateNotAfter = " + result[1].toString());
-
-
-
-      result =  beanUtils.extractInDifferentFormats("1950/1951");
-      System.out.println("dateNotBefore = " + result[0].toString());
-       System.out.println("dateNotAfter = " + result[1].toString());
-
-
-      result = beanUtils.extractInDifferentFormats("1945-12-03");
-      System.out.println("dateNotBefore = " + result[0].toString());
-       System.out.println("dateNotAfter = " + result[1].toString());
-
-
-
-  }  */
 
 }

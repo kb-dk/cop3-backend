@@ -64,12 +64,12 @@ public class HibernateMetadataSourceTest{
             dk.kb.cop3.backend.crud.database.hibernate.Object cObject = mds.getAnother();
             logger.info("object: "+cObject.getId()+" - "+cObject.getRandomNumber());
         } */
-         logger.info("4th run");
+        logger.info("4th run");
         mds = new HibernateMetadataSource(session);
-       mds.setSearchterms("id","/images/luftfo/2011/maj/luftfoto/object60810");
+        mds.setSearchterms("id","/images/luftfo/2011/maj/luftfoto/object60810");
         mds.execute();
-       logger.info("Total number of hits "+mds.getNumberOfHits());
-         while (mds.hasMore()) {
+        logger.info("Total number of hits "+mds.getNumberOfHits());
+        while (mds.hasMore()) {
             dk.kb.cop3.backend.crud.database.hibernate.Object cObject = mds.getAnother();
             logger.info("object: "+cObject.getId()+" - "+cObject.getRandomNumber());
         }
