@@ -77,9 +77,6 @@ public class ContentService {
                 // Get the object(s) from database
                 session = HibernateUtil.getSessionFactory().getCurrentSession();
                 session.beginTransaction();
-                // workaround to fix oracle bug
-                SQLQuery sqlQuery = session.createSQLQuery("alter session set optimizer_mode=first_rows");
-                sqlQuery.executeUpdate();
                 MetadataSource mds = new SolrMetadataSource(session);
 
                 if (objectId != null){

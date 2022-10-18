@@ -64,9 +64,6 @@ public class ConfigurationService {
             SessionFactory fact = HibernateUtil.getSessionFactory();
             Session ses = fact.getCurrentSession();
             ses.beginTransaction();
-            // workaround to fix oracle bug
-                SQLQuery sqlQuery = ses.createSQLQuery("alter session set optimizer_mode=first_rows");
-                sqlQuery.executeUpdate();
             Properties configuration = new Properties();
 
             try {

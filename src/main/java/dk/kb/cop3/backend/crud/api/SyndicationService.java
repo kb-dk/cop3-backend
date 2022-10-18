@@ -7,7 +7,6 @@ import dk.kb.cop3.backend.crud.database.MetadataSource;
 import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.format.*;
 import org.apache.log4j.Logger;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.w3c.dom.Document;
@@ -121,9 +120,6 @@ public class SyndicationService {
             session = sessionFactory.openSession();
 
             session.beginTransaction();
-            // workaround to fix oracle bug
-            SQLQuery sqlQuery = session.createSQLQuery("alter session set optimizer_mode=first_rows");
-            sqlQuery.executeUpdate();
 
             MetadataSource mds = new SolrMetadataSource(session);
             // give the parameters to the metadatasource

@@ -298,8 +298,6 @@ public class UpdateService {
     private String getCurrentMods(String uri) {
         Session ses = HibernateUtil.getSessionFactory().getCurrentSession();
         ses.beginTransaction();
-        SQLQuery sqlQuery = ses.createSQLQuery("alter session set optimizer_mode=first_rows");
-        sqlQuery.executeUpdate();
         MetadataSource mds = new SolrMetadataSource(ses);
         mds.setSearchterms("id", uri);
         mds.execute();

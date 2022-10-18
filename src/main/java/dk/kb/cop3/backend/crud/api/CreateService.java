@@ -76,8 +76,6 @@ public class CreateService {
         ses.beginTransaction();
 
         try {
-            SQLQuery sqlQuery = ses.createSQLQuery("alter session set optimizer_mode=first_rows");
-            sqlQuery.executeUpdate();
             MetadataWriter mdw = new HibernateMetadataWriter(ses);
 
             if (lastModified != null) {
@@ -184,9 +182,6 @@ public class CreateService {
         SessionFactory fact = HibernateUtil.getSessionFactory();
         Session ses = fact.getCurrentSession();
         ses.beginTransaction();
-        // workaround to fix oracle bug
-        SQLQuery sqlQuery = ses.createSQLQuery("alter session set optimizer_mode=first_rows");
-        sqlQuery.executeUpdate();
         try {
             Edition editionObject = (Edition) ses.get(Edition.class, editionId);
             if (editionObject == null) {
