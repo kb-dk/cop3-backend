@@ -73,11 +73,12 @@ public class ObjectConverter {
         return user;
     }
 
-    private static AreasInDk createAreasInDk(AreasInDkOracle oraArea) {
+    public static AreasInDk convertArea(AreasInDkOracle oraArea) {
 	AreasInDk area = new AreasInDk();
-	area.setId(oraArea.getId());
+	area.setAreaId(oraArea.getAreaId());
 	area.setNameOfArea(oraArea.getNameOfArea());
-	area.setPolygon(oraArea.getPolygon());
+	area.setPolygonCol(oraArea.getPolygonCol());
+	return area;
     }
     
     private static UserRole createUserRole(UserOracle oraUser) {

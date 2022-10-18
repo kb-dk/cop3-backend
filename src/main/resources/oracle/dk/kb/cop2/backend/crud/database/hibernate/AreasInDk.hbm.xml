@@ -4,7 +4,7 @@
 <!-- written by slu@kb.dk 13/10 2022 -->
 <hibernate-mapping>
     <class name="dk.kb.cop3.backend.migrate.hibernate.AreasInDkOracle" table="areas_in_dk">
-        <id name="id">
+        <id name="areaId">
             <column name="AREA_ID"/>
             <generator class="assigned" />
         </id>

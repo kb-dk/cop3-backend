@@ -17,11 +17,11 @@ public class AreasInDkOracle implements Serializable {
     private String nameOfArea;
     private JGeometry polygonCol;
 
-    public int getAreaID() {
+    public int getAreaId() {
         return areaID;
     }
 
-    public void setAreaID(int areaID) {
+    public void setAreaId(int areaID) {
         this.areaID = areaID;
     }
 
