@@ -11,7 +11,7 @@ import java.io.Serializable;
  *         Date: 09/10/13
  *         Time: 17:06
  */
-public class AreasInDK implements Serializable {
+public class AreasInDk implements Serializable {
 
     private int areaID;
     private String nameOfArea;

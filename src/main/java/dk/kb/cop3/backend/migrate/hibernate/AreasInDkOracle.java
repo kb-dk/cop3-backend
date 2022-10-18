@@ -11,7 +11,7 @@ import java.io.Serializable;
  *         Date: 09/10/13
  *         Time: 17:06
  */
-public class AreasInDKOracle implements Serializable {
+public class AreasInDkOracle implements Serializable {
 
     private int areaID;
     private String nameOfArea;
