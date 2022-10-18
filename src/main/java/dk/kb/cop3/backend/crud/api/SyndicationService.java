@@ -218,10 +218,9 @@ public class SyndicationService {
 
         } finally {
             logger.debug("In finally block, attempting to close Hibernate resources...");
-            logger.debug("session != null: " + session != null);
             if (session != null && session.isConnected()) {
                 logger.debug("Closing Hibernate session as we're still connected");
-                session.cancelQuery();
+//                session.cancelQuery(); TODO: check this
                 session.close();
             }
             logger.debug("Exiting finally block...");
