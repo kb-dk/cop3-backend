@@ -62,7 +62,6 @@ public class SolrizeEdition {
 
 					numfound = mds.getNumberOfHits();
 					logger.info("Found "+numfound+" objects");
-					logger.debug(consts.getConstants().getProperty("cop2.solrizr.queue.host") + " " +consts.getConstants().getProperty("cop2.solrizr.queue.update"));
 					while(mds.hasMore()) {
 						Object cobject = mds.getAnother();
 						JMSProducer producer = null;
@@ -92,10 +91,8 @@ public class SolrizeEdition {
 					session.getTransaction().commit();
 					session.clear();
 					offset += limit;
-					logger.debug("offset is "+offset);
 					mds = null;
 					System.gc();
-					logger.debug("gc done");
 				} catch (org.hibernate.HibernateException ex) {
 					logger.error("Error "+ex.getMessage());
 					ex.printStackTrace();

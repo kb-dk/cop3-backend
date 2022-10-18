@@ -1,13 +1,17 @@
 package dk.kb.cop3.backend.crud.database;
 
 import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 
 
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.database.type.Point;
+import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import org.apache.log4j.Logger;
+import org.apache.zookeeper.Op;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.*;
 
 import org.apache.solr.client.solrj.SolrServerException;
@@ -16,9 +20,11 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrDocument;
+import org.hibernate.query.Query;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -30,11 +36,224 @@ import java.util.*;
  * data, respectively
  *
  */
-public class SolrMetadataSource extends HibernateMetadataSource {
+public class SolrMetadataSource implements MetadataSource {
 
-    private static Logger logger = Logger.getLogger(SolrMetadataSource.class);
+    private static final Logger logger = Logger.getLogger(SolrMetadataSource.class);
 
-    private ConfigurableConstants consts = ConfigurableConstants.getInstance();
+    private final ConfigurableConstants consts = ConfigurableConstants.getInstance();
+
+    protected static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+    protected org.hibernate.Session session;
+
+    protected Category category = null;
+    protected Edition edition = null;
+    protected Type type = null;
+    protected String boundingBox = null;
+    protected String notBefore = null;
+    protected String notAfter = null;
+    protected String modifiedBefore = null;
+    protected String modifiedAfter = null;
+    protected char visible_to_public = '1';
+
+    private Set<String> allowedSearchTerms = new HashSet<>();
+    public  Map<String, String> searchterms = new HashMap<>();
+
+    private int offset = 0;
+    private int numberPerPage = -1; //-1 means get me everything
+    protected String sortcolumn;
+    protected int sortorder;
+    private double random = 0.0;
+
+    protected BigDecimal correctness = null;
+
+    long numberOfHits;
+
+    private List<Object> hibernateResultSet = null;
+    private Iterator<Object> hibernateResultIterator = null;
+
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    @Override
+    public void setCategory(String id) {
+        logger.debug("setting category "+id);
+        try {
+            this.category = session.load(Category.class, id);
+        } catch (HibernateException ex) {
+            logger.error("setCategory(" + id + ") error:" + ex.getMessage());
+            throw new NullPointerException("setCategory(" + id + ") error:" + ex.getMessage());
+        }
+    }
+
+    @Override
+    public Category getCategory() {
+        return this.category;
+    }
+
+    @Override
+    public Edition getEdition() {
+        return edition;
+    }
+
+    @Override
+    public void setEdition(String id) {
+        try {
+            this.edition = session.load(Edition.class, id);
+        } catch (HibernateException ex) {
+            logger.error("setEdition(" + id + ") error:" + ex.getMessage());
+            throw new NullPointerException("setEdition(" + id + ") error:" + ex.getMessage());
+        }
+    }
+
+    @Override
+    public Type getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(String id) {
+        try {
+            this.type = session.load(Type.class, new java.math.BigDecimal(id));
+        } catch (HibernateException ex) {
+            logger.error("setType(" + id + ") error:" + ex.getMessage());
+            throw new NullPointerException("setType(" + id + ") error:" + ex.getMessage());
+        }
+    }
+
+    @Override
+    public String getBoundingBox() {
+        return boundingBox;
+    }
+
+    @Override
+    public void setBoundingBox(String boundingBox) {
+        this.boundingBox = boundingBox;
+    }
+
+    @Override
+    public String getNotBefore() {
+        return notBefore;
+    }
+
+    @Override
+    public void setNotBefore(String notBefore) {
+        this.notBefore = notBefore;
+    }
+
+    @Override
+    public String getNotAfter() {
+        return notAfter;
+    }
+
+    @Override
+    public void setNotAfter(String notAfter) {
+        this.notAfter = notAfter;
+    }
+
+    public String getModifiedBefore() {
+        return modifiedBefore;
+    }
+
+    @Override
+    public void setModifiedBefore(String modifiedBefore) {
+        this.modifiedBefore = modifiedBefore;
+    }
+
+    public String getModifiedAfter() {
+        return modifiedAfter;
+    }
+
+    @Override
+    public void setModifiedAfter(String modifiedAfter) {
+        this.modifiedAfter = modifiedAfter;
+    }
+
+    public char getVisible_to_public() {
+        return visible_to_public;
+    }
+
+    public void setVisible_to_public(char visible_to_public) {
+        this.visible_to_public = visible_to_public;
+    }
+
+    public Set<String> getAllowedSearchTerms() {
+        return allowedSearchTerms;
+    }
+
+    public void setAllowedSearchTerms(Set<String> allowedSearchTerms) {
+        this.allowedSearchTerms = allowedSearchTerms;
+    }
+
+
+    public void setSearchterms(Map<String, String> searchterms) {
+        this.searchterms = searchterms;
+    }
+
+    @Override
+    public int getOffset() {
+        return offset;
+    }
+
+    @Override
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public int getNumberPerPage() {
+        return numberPerPage;
+    }
+
+    @Override
+    public void setNumberPerPage(int numberPerPage) {
+        this.numberPerPage = numberPerPage;
+    }
+
+    @Override
+    public String getSortcolumn() {
+        return sortcolumn;
+    }
+
+    @Override
+    public void setSortcolumn(String sortcolumn) {
+        this.sortcolumn = sortcolumn;
+    }
+
+    @Override
+    public int getSortorder() {
+        return sortorder;
+    }
+
+    @Override
+    public void setSortorder(int sortorder) {
+        this.sortorder = sortorder;
+    }
+
+    @Override
+    public double getRandom() {
+        return random;
+    }
+
+    @Override
+    public void setRandom(double random) {
+        this.random = random;
+    }
+
+    @Override
+    public BigDecimal getCorrectness() {
+        return correctness;
+    }
+
+    @Override
+    public void setCorrectness(BigDecimal correctness) {
+        this.correctness = correctness;
+    }
 
     SolrDocumentList solrResults = null;
     java.util.ListIterator<SolrDocument> solrResultIterator = null;
@@ -46,12 +265,12 @@ public class SolrMetadataSource extends HibernateMetadataSource {
      * @param session an open hibernate session to use
      */
     public SolrMetadataSource(org.hibernate.Session session) {
-        super(session);
+        this.session = session;
     }
 
 
-    public java.lang.Long getNumberOfHits() {
-        if (isOracleSearch()) return super.getNumberOfHits();
+    public Long getNumberOfHits() {
+        if (getSingleObject()) return (long) hibernateResultSet.size();
         return solrResults.getNumFound();
     }
 
@@ -61,7 +280,7 @@ public class SolrMetadataSource extends HibernateMetadataSource {
      * @return true if there is at least one more metadata object to be retrieved
      */
     public boolean hasMore() {
-        if (isOracleSearch()) return super.hasMore();
+        if (getSingleObject()) return hibernateResultIterator.hasNext();
 
         if (this.solrResults == null) {
             logger.error("hasmore error: search has not been executed");
@@ -77,7 +296,12 @@ public class SolrMetadataSource extends HibernateMetadataSource {
      */
     public Object getAnother() {
 
-        if (isOracleSearch()) return super.getAnother();
+        if (getSingleObject()) {
+            if(hibernateResultIterator.hasNext()) {
+                return hibernateResultIterator.next();
+            }
+            return null;
+        }
 
         if (this.solrResults == null) {
             logger.error("Unable to get next object: search has not been executed");
@@ -97,7 +321,7 @@ public class SolrMetadataSource extends HibernateMetadataSource {
 	    String lon = latlng.split(",")[1];
 
         GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
-        copject.setPoint(geoFactory.createPoint(new Coordinate(Double.valueOf(lat),Double.valueOf(lon))));
+        copject.setPoint(geoFactory.createPoint(new Coordinate(Double.parseDouble(lat),Double.parseDouble(lon))));
 	} else {
         GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
         copject.setPoint(geoFactory.createPoint(new Coordinate(0,0)));
@@ -121,13 +345,19 @@ public class SolrMetadataSource extends HibernateMetadataSource {
 
 
     public void execute() {
-	if (isOracleSearch()) {
-	        super.execute();
+	if (getSingleObject()) {
+	        this.getSingleObjectFromDB();
 	    } else {
 	        this.solrSearch();
 	    }
     }
 
+    private void getSingleObjectFromDB() {
+        Query query = session.createQuery("from dk.kb.cop3.backend.crud.database.hibernate.Object where id ='"+this.searchterms.get("id")+"'");
+        this.hibernateResultSet = query.list();
+        this.hibernateResultIterator = this.hibernateResultSet.iterator();
+        this.numberOfHits = hibernateResultSet.size();
+    }
 
 
     private void solrSearch() {
@@ -230,7 +460,7 @@ public class SolrMetadataSource extends HibernateMetadataSource {
                 query.addFilterQuery("luftfo_type_ssim:"+this.type.getTypeText());
             }
             if (this.correctness != null) {
-                logger.debug("adding correctnes "+this.correctness.toString());
+                logger.debug("adding correctnes "+ this.correctness);
                 query.addFilterQuery("cobject_correctness_isi:\""+this.correctness.toString()+"\"");
             }
             if (this.category != null) {
@@ -263,17 +493,15 @@ public class SolrMetadataSource extends HibernateMetadataSource {
                     logger.debug("Excluding edition "+ed.getId());
                     query.addFilterQuery("!cobject_edition_ssi:\""+ed.getId()+"\"");
                 }
-                //criteria.add(Restrictions.eq("edition.visiblePublic", this.visible_to_public));
-                //countCriteria.add(Restrictions.eq("edition.visiblePublic", this.visible_to_public));
             }
 
             /*
                 Translate Hibernate columnnames into solr_fields for sorting
             */
-            if (this.sortColumn!=null && !"".equals(this.sortColumn)) {
-                logger.debug("sort column is "+this.sortColumn);
+            if (this.sortcolumn !=null && !"".equals(this.sortcolumn)) {
+                logger.debug("sort column is "+this.sortcolumn);
                 String sort_field = "cobject_interestingness_isi";
-                switch(this.sortColumn) {
+                switch(this.sortcolumn) {
                     case "correctness":
                         sort_field = "cobject_correctness_isi";
                         break;
@@ -294,7 +522,7 @@ public class SolrMetadataSource extends HibernateMetadataSource {
                         break;
                 }
 
-                if (this.sortOrder < 0) {
+                if (this.sortorder < 0) {
                     query.addSort(sort_field, SolrQuery.ORDER.desc);
                 } else {
                     query.addSort(sort_field, SolrQuery.ORDER.asc);
@@ -305,10 +533,10 @@ public class SolrMetadataSource extends HibernateMetadataSource {
 
             int start  =  this.getOffset();
             int number =  this.getNumberPerPage();
-            query.setStart(new Integer(start - 1 < 0 ? 0 : start - 1));
-            query.setRows(new Integer(number));
+            query.setStart(Math.max(start - 1, 0));
+            query.setRows(number);
             query.set("mm",0);
-	    logger.debug("solr_q" + solr_q);
+	        logger.debug("solr_q" + solr_q);
             query.setQuery(solr_q);
             logger.debug(query.toString());
             QueryResponse solrResponse = solr.query(query);
@@ -333,10 +561,41 @@ public class SolrMetadataSource extends HibernateMetadataSource {
         }
     }
 
-    /* Returns true if a search in oracle is required
-       We only search in oracle if the request is for a single object
-     */
-    private boolean isOracleSearch() {
-        return searchterms.keySet().contains("id");
+    protected boolean isAllowedSearchField(String field) {
+        return allowedSearchTerms.contains(field);
     }
+    /*
+    Returns true if the request is for a single object
+     */
+    private boolean getSingleObject() {
+        return searchterms.containsKey("id");
+    }
+
+    public String getModifiedBefore(String s) {
+        return this.modifiedAfter;
+    }
+
+    @Override
+    public String getModifiedAfter(String s) {
+        return this.getModifiedBefore();
+    }
+
+    public String getSearchterms() {
+        return this.searchterms.toString();
+    }
+
+    @Override
+    public void setConfiguration(java.util.Properties config) {
+    }
+
+    @Override
+    public void setSearchterms(String terms) {
+        this.searchterms.put("mods", terms);
+    }
+
+    @Override
+    public void setSearchterms(String field, String terms) {
+        this.searchterms.put(field, terms);
+    }
+
 }

@@ -23,6 +23,7 @@ import java.util.*;
  *
  * @author David Grove Jorgensen (dgj@kb.dk)
  */
+@Deprecated // Replace with SolerMetadataSource or database search in Reindexer
 public class HibernateMetadataSource implements MetadataSource {
 
     private static Logger logger = Logger.getLogger(HibernateMetadataSource.class);

@@ -2,8 +2,8 @@ package dk.kb.cop3.backend.crud.format;
 
 import dk.kb.cop3.backend.constants.ConfigurableConstants;
 import dk.kb.cop3.backend.crud.database.HibernateEditionSource;
-import dk.kb.cop3.backend.crud.database.HibernateMetadataSource;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
+import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -133,7 +133,7 @@ public class EditionMetadataFormulator extends MetadataFormulator {
 
 
                 MetadataSource modsSource =
-                        new HibernateMetadataSource(session);
+                        new SolrMetadataSource(session);
 
                 java.lang.String subjectId = edition.getCumulusTopCatagory();
                 java.lang.String retrieve_subject = 
@@ -142,7 +142,6 @@ public class EditionMetadataFormulator extends MetadataFormulator {
 		    subjectId   + 
 		    "/" + this.language + "/" ;
 
-                //modsSource.setCategory(retrieve_subject);
 		modsSource.setEdition( edition.getId() );
 
                 logger.debug(".. subject uri " + subject_uri);

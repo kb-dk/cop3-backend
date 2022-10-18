@@ -306,7 +306,7 @@ public class UpdateService {
         ses.beginTransaction();
         SQLQuery sqlQuery = ses.createSQLQuery("alter session set optimizer_mode=first_rows");
         sqlQuery.executeUpdate();
-        MetadataSource mds = new HibernateMetadataSource(ses);
+        MetadataSource mds = new SolrMetadataSource(ses);
         mds.setSearchterms("id", uri);
         mds.execute();
         if (!mds.hasMore())   {
@@ -315,7 +315,6 @@ public class UpdateService {
         }
 
         Object cObject = mds.getAnother();
-        String result = cObject.getMods();
         ses.getTransaction().commit();
         return cObject.getMods();
     }
