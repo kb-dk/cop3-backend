@@ -1,7 +1,6 @@
 package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.constants.ConfigurableConstants;
-import dk.kb.cop3.backend.crud.cache.CacheManager;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataWriter;
@@ -31,9 +30,6 @@ import java.net.URI;
 public class CreateService {
 
     private static Logger logger = Logger.getLogger(CreateService.class);
-
-    // The cache manager
-    private CacheManager manager = CacheManager.getInstance();
 
     private ConfigurableConstants consts = ConfigurableConstants.getInstance();
 
@@ -98,7 +94,6 @@ public class CreateService {
                 logger.debug("newLastModified: " + newLastModified);
 
                 if (newLastModified != null && !newLastModified.equals("")) {
-                    manager.flush(cacheKey);
                     ses.getTransaction().commit();
                     logger.debug("Object created ID: " + nytCobjectFraMods.getId());
                     this.sendToSolrizr(uri);

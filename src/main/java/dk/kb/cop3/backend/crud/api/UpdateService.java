@@ -1,7 +1,6 @@
 package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.constants.ConfigurableConstants;
-import dk.kb.cop3.backend.crud.cache.CacheManager;
 import dk.kb.cop3.backend.crud.database.*;
 import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.crud.util.JMSProducer;
@@ -23,9 +22,6 @@ import java.util.HashSet;
 @Path("/update")
 public class UpdateService {
     private static Logger logger = Logger.getLogger(UpdateService.class);
-
-    // The cache manager
-    private CacheManager manager = CacheManager.getInstance();
 
     private ConfigurableConstants consts = ConfigurableConstants.getInstance();
 
@@ -101,8 +97,6 @@ public class UpdateService {
 
 
         // Do the housekeeping update the geo position of the object
-        manager.flush(cacheId);
-
         if ((user == null) || "".equals(user)) {
             // no user given
             logger.warn("update service no user given");

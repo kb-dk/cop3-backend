@@ -1,6 +1,5 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.crud.cache.CacheManager;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
 import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
@@ -29,9 +28,6 @@ import javax.ws.rs.core.UriInfo;
 public class ContentService {
 
     private static Logger logger = Logger.getLogger(ContentService.class);
-
-    // The Cache manager
-    private CacheManager manager = CacheManager.getInstance();
 
     /**
      *
