@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.migrate;
 
-import dk.kb.cop3.backend.migrate.hibernate.AreasInDenmarkOracle;
+import dk.kb.cop3.backend.migrate.hibernate.AreasInDkOracle;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,8 +9,8 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.List;
 
-public class MigrateAreasInDenmark {
-    private static Logger logger = Logger.getLogger(MigrateAreasInDenmark.class);
+public class MigrateAreasInDk {
+    private static Logger logger = Logger.getLogger(MigrateAreasInDk.class);
 
     public static void main(String[] args) {
         Session oraSession = getOracleSession();
@@ -20,7 +20,7 @@ public class MigrateAreasInDenmark {
                 .buildSessionFactory();
 
 
-        List<AreasInDenmarkOracle> areas = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.AreasInDenmarkOracle").list();
+        List<AreasInDenmarkOracle> areas = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.AreasInDkOracle").list();
         areas.stream()
                 .map(oraArea -> {
                     return ObjectConverter.convertArea(oraArea);})
