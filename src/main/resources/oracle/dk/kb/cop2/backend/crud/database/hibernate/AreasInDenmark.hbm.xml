@@ -3,7 +3,7 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- written by slu@kb.dk 13/10 2022 -->
 <hibernate-mapping>
-    <class name="dk.kb.cop3.backend.migrate.hibernate.AreasInDenmarkOracle" table="areas_in_dk" schema="COP2">
+    <class name="dk.kb.cop3.backend.migrate.hibernate.AreasInDkOracle" table="areas_in_dk">
         <id name="id">
             <column name="AREA_ID"/>
             <generator class="assigned" />
