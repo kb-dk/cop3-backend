@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.format;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 
 public class SolrMetadataFormulator extends MetadataFormulator {
 
-    private ConfigurableConstants consts = ConfigurableConstants.getInstance();
+    private CopBackendProperties consts = CopBackendProperties.getInstance();
     private String copBaseUrl = this.consts.getConstants().getProperty("cop2_backend.baseurl");
     private String baseUrl = copBaseUrl + "/syndication";
     private String copIntBaseUrl = this.consts.getConstants().getProperty("cop2_backend.internal.baseurl");

@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.util;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -13,7 +13,7 @@ import java.util.Properties;
  */
 public class RetryFailed {
 
-    private static ConfigurableConstants consts = ConfigurableConstants.getInstance();
+    private static CopBackendProperties consts = CopBackendProperties.getInstance();
     Logger logger = configureLog4j();
 
 

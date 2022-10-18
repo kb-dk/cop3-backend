@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import org.apache.log4j.Logger;
@@ -129,7 +129,7 @@ public class NavigationService {
                     }
 
                     java.util.Properties constants =
-			        ConfigurableConstants.getInstance().getConstants();
+			        CopBackendProperties.getInstance().getConstants();
                     String baseUrl = constants.getProperty("cop2_backend.baseurl");
                     String guiUri = constants.getProperty("gui.uri");
                     String base_url = baseUrl;

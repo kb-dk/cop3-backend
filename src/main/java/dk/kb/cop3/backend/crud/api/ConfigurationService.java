@@ -1,11 +1,10 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.util.ValidatorPathParam;
 import org.apache.log4j.Logger;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -72,7 +71,7 @@ public class ConfigurationService {
                 Edition editionObject = (Edition) ses.get(Edition.class,editionId);
 
                 if (editionObject != null) {
-                    Properties constants = ConfigurableConstants.getInstance().getConstants();
+                    Properties constants = CopBackendProperties.getInstance().getConstants();
                     String baseUrl = constants.getProperty("cop2_backend.baseurl");
                     configuration.setProperty("template",constants.getProperty("template.default"));
                     configuration.setProperty("default_mode","thumbnail");

@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.database;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 
@@ -8,7 +8,6 @@ import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import org.apache.log4j.Logger;
-import org.apache.zookeeper.Op;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -40,7 +39,7 @@ public class SolrMetadataSource implements MetadataSource {
 
     private static final Logger logger = Logger.getLogger(SolrMetadataSource.class);
 
-    private final ConfigurableConstants consts = ConfigurableConstants.getInstance();
+    private final CopBackendProperties consts = CopBackendProperties.getInstance();
 
     protected static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 

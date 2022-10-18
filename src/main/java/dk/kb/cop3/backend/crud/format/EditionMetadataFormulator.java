@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.format;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateEditionSource;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
 import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
@@ -23,8 +23,8 @@ import javax.xml.parsers.ParserConfigurationException;
 public class EditionMetadataFormulator extends MetadataFormulator {
 
 
-    private ConfigurableConstants constants =
-	ConfigurableConstants.getInstance();
+    private CopBackendProperties constants =
+	CopBackendProperties.getInstance();
 
     private java.lang.String xslt = "/build_edition_rss.xsl";
     private java.lang.String template = "/template_edition_rss.xml";

@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.util;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
@@ -29,7 +29,7 @@ import java.io.InputStream;
  */
 public class RunSolrizer {
 
-    private static ConfigurableConstants consts = ConfigurableConstants.getInstance();
+    private static CopBackendProperties consts = CopBackendProperties.getInstance();
 
     public static void main(String args[]) {
 

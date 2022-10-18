@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.format;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Tag;
@@ -47,7 +47,7 @@ public abstract class MetadataFormulator {
 
     private String lastModifiedTimeStamp = "";
     private java.lang.String language = "da";
-    private ConfigurableConstants consts = ConfigurableConstants.getInstance();
+    private CopBackendProperties consts = CopBackendProperties.getInstance();
     protected String currentRawMods;
 
     org.apache.log4j.Logger logger =
