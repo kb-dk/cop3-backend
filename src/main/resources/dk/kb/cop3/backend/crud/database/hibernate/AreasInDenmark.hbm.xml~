@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- written by slu@kb.dk 13/10 2022 -->
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.migrate.hibernate.AreasInDenmarkOracle" table="areas_in_dk" schema="COP2">
+        <id name="id" type="string">
+            <column name="AREA_ID" length="1024" />
+            <generator class="assigned" />
+        </id>
+
+    </class>
+</hibernate-mapping>

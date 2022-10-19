@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- written by slu@kb.dk 14/10 2022 -->
-<hibernate-mapping>                                   
+<hibernate-mapping>
     <class name="dk.kb.cop3.backend.migrate.hibernate.AreasInDenmark" table="AREAS_IN_DK">
         <id name="id">
             <column name="AREA_ID"/>
