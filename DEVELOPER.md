@@ -1,7 +1,35 @@
 # Developer documentation
 
+## COP database
 
-## Use a local postgres docker image
+
+## COP Api description
+https://github.com/kb-dk/access-digital-objects/blob/master/cop-backend.md
+
+## Implementation 
+All webservices are implemented as using jersey and placed in the package
+dk.kb.cop3.backend.crud.api;
+
+Services that reads data uses a MetadataSource implementation to fetch data from the Database 
+and parses the result to a MetadataFormulator implementation, which transforms the result to the requested format.
+
+Services that write data uses a MetadataWriter implementtion, to write data to the database.
+If the service receives mods to create/update an object, the class ObjectFromModsExtractor to transform the mods to 
+a java object
+
+
+
+Webservices for reading data uses a (Meta)dataSource for read date from the database or perform a search in solr
+The result is then given to a formulator located in 
+
+
+
+
+
+
+
+## Local development environemt
+### Use a local postgres docker image
 Go to src/docker
 
 Build with: docker-compose up -d
