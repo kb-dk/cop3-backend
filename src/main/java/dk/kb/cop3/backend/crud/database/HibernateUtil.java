@@ -7,6 +7,7 @@ package dk.kb.cop3.backend.crud.database;
  */
 
 import ORG.oclc.oai.server.verb.OAIInternalServerError;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
@@ -14,6 +15,7 @@ import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import org.hibernate.criterion.Restrictions;
 
 import java.math.BigDecimal;
@@ -29,9 +31,12 @@ public class HibernateUtil {
 
     private static SessionFactory buildSessionFactory() {
         try {
-            System.out.println("buildSessionFactory! X");
-            SessionFactory x = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
-            return x;
+            Configuration configuration = new Configuration();
+            configuration.configure("hibernate.cfg.xml")
+                    .setProperty(Environment.URL, CopBackendProperties.getInstance().getDatabaseUrl())
+                    .setProperty(Environment.USER,CopBackendProperties.getInstance().getDatabaseUser())
+                    .setProperty(Environment.PASS,CopBackendProperties.getInstance().getDatabasePassword());
+            return configuration.buildSessionFactory();
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             ex.printStackTrace();
