@@ -1,7 +1,6 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
-import dk.kb.cop3.backend.crud.cache.CacheManager;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataWriter;
@@ -11,7 +10,6 @@ import dk.kb.cop3.backend.crud.util.JMSProducer;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -32,10 +30,7 @@ public class CreateService {
 
     private static Logger logger = Logger.getLogger(CreateService.class);
 
-    // The cache manager
-    private CacheManager manager = CacheManager.getInstance();
-
-    private ConfigurableConstants consts = ConfigurableConstants.getInstance();
+    private CopBackendProperties consts = CopBackendProperties.getInstance();
 
 
     /**
@@ -80,8 +75,6 @@ public class CreateService {
         ses.beginTransaction();
 
         try {
-            SQLQuery sqlQuery = ses.createSQLQuery("alter session set optimizer_mode=first_rows");
-            sqlQuery.executeUpdate();
             MetadataWriter mdw = new HibernateMetadataWriter(ses);
 
             if (lastModified != null) {
@@ -98,7 +91,6 @@ public class CreateService {
                 logger.debug("newLastModified: " + newLastModified);
 
                 if (newLastModified != null && !newLastModified.equals("")) {
-                    manager.flush(cacheKey);
                     ses.getTransaction().commit();
                     logger.debug("Object created ID: " + nytCobjectFraMods.getId());
                     this.sendToSolrizr(uri);
@@ -189,9 +181,6 @@ public class CreateService {
         SessionFactory fact = HibernateUtil.getSessionFactory();
         Session ses = fact.getCurrentSession();
         ses.beginTransaction();
-        // workaround to fix oracle bug
-        SQLQuery sqlQuery = ses.createSQLQuery("alter session set optimizer_mode=first_rows");
-        sqlQuery.executeUpdate();
         try {
             Edition editionObject = (Edition) ses.get(Edition.class, editionId);
             if (editionObject == null) {

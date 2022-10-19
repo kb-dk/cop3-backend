@@ -1,8 +1,5 @@
 package dk.kb.cop3.backend.crud.api;
 
-import com.opensymphony.oscache.base.CacheEntry;
-import dk.kb.cop3.backend.commonutils.CachebleResponse;
-import dk.kb.cop3.backend.crud.cache.CacheManager;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import org.apache.log4j.Logger;
@@ -44,7 +41,6 @@ import java.io.InputStream;
 @Path("/description")
 public class DescriptionService {
     private static Logger logger = Logger.getLogger(DescriptionService.class);
-    private CacheManager manager = CacheManager.getInstance();
 
     TransformerFactory trans_fact;
     private DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
@@ -75,126 +71,117 @@ public class DescriptionService {
         String cacheKey = "edition:" + editionId + ";" + "lang:" + lang + ";";
         logger.debug(cacheKey);
 
-        // Get the entry from cache. These objects should live at least 24 hours (CacheManager.LONG_LIVING_OBJECT)
-        CachebleResponse cachedResponse = manager.get(cacheKey, CacheManager.LONG_LIVING_OBJECT);
-
         Transformer transformer = this.makeTransformer();
 
         Document description = null;
         Document descriptionTemplate = null;
 
-        if (cachedResponse != null) { // We have the object in the cache, return it
-            return Response.ok(cachedResponse.getDoc()).build();
-        } else {
-            Session session = null;
+
+        Session session = null;
+        try {
+
             try {
+                dfactory.setNamespaceAware(true);
+                DocumentBuilder dBuilder = dfactory.newDocumentBuilder();
+                InputStream in = this.getClass().getResourceAsStream(template);
+                descriptionTemplate = dBuilder.parse(in);
+            } catch (ParserConfigurationException e) {
+                logger.error(e);
+            } catch (SAXException e) {
+                logger.error(e);
+            } catch (IOException e) {
+                logger.error(e);
+            }
 
-                try {
-                    dfactory.setNamespaceAware(true);
-                    DocumentBuilder dBuilder = dfactory.newDocumentBuilder();
-                    InputStream in = this.getClass().getResourceAsStream(template);
-                    descriptionTemplate = dBuilder.parse(in);
-                } catch (ParserConfigurationException e) {
-                    logger.error(e);
-                } catch (SAXException e) {
-                    logger.error(e);
-                } catch (IOException e) {
-                    logger.error(e);
-                }
+            DOMSource source = new DOMSource(descriptionTemplate);
+            DOMResult result = new DOMResult();
 
-                DOMSource source = new DOMSource(descriptionTemplate);
-                DOMResult result = new DOMResult();
+            SessionFactory fact = HibernateUtil.getSessionFactory();
+            session = fact.getCurrentSession();
+            session.beginTransaction();
+            Edition editionObj = (Edition) session.get(Edition.class, editionId);
+            session.getTransaction().commit();
+            logger.debug("EditionId is: " + editionId);
+            //String language = "";
 
-                SessionFactory fact = HibernateUtil.getSessionFactory();
-                session = fact.getCurrentSession();
-                session.beginTransaction();
-                Edition editionObj = (Edition) session.get(Edition.class, editionId);
-                session.getTransaction().commit();
-                logger.debug("EditionId is: " + editionId);
-                //String language = "";
-
-                // If no language is given for the edtion. Take the language parameter from the path
-                //if(editionObj.getUiLanguage()== null && (lang.equalsIgnoreCase("da") || lang.equalsIgnoreCase("en") )){
-                //   language = lang;  // use language from path
-                //}else{
-                //    language = editionObj.getUiLanguage();
-                //}
-                String collection = "";
-                String name = "";
-                String contactEmail = "";
-                String descriptionTxt = "";
-                if (!editionId.equalsIgnoreCase("/editions/any/2009/jul/editions")) {
-                    if (lang.equals("en")) {
-                        if (editionObj.getCollectionEn() != null) {
-                            collection = editionObj.getCollectionEn();
-                        }
-                    } else {
-                        if (editionObj.getCollectionDa() != null) {
-                            collection = editionObj.getCollectionDa();
-                        }
+            // If no language is given for the edtion. Take the language parameter from the path
+            //if(editionObj.getUiLanguage()== null && (lang.equalsIgnoreCase("da") || lang.equalsIgnoreCase("en") )){
+            //   language = lang;  // use language from path
+            //}else{
+            //    language = editionObj.getUiLanguage();
+            //}
+            String collection = "";
+            String name = "";
+            String contactEmail = "";
+            String descriptionTxt = "";
+            if (!editionId.equalsIgnoreCase("/editions/any/2009/jul/editions")) {
+                if (lang.equals("en")) {
+                    if (editionObj.getCollectionEn() != null) {
+                        collection = editionObj.getCollectionEn();
                     }
-                    if (lang.equals("da")) {
-                        if (editionObj.getName() != null) {
-                            name = editionObj.getName();
-                        }
-                    } else {
-                        if (editionObj.getDescription() != null) {
-                            name = editionObj.getDescription();
-                        }
-                    }
-                    logger.debug("Name is: " + name);
-                    logger.debug("Collection is: " + collection);
-                    logger.debug("Short name is: " + editionObj.getUrlName());
-                    logger.debug(".. description is " + descriptionTxt);
-                    logger.debug("Language is: " + lang);
-
-                    if (editionObj.getContactEmail() != null) {
-                        contactEmail = editionObj.getContactEmail();
-                    }
-                } else {    // Frontpage Description
-                    if (lang.equalsIgnoreCase("en")) {
-                        name = "KB's Digital Editions";
-                        contactEmail = "helpdesk@kb.dk";
-                        descriptionTxt = "The Royal Library's front page for its digital editions.";
-                        collection = "The Royal Library's front page for its digital editions.";
-                    } else {
-                        name = "KB's Digitale Udgivelser";
-                        contactEmail = "helpdesk@kb.dk";
-                        descriptionTxt = "Det Kongelige Biblioteks forside for digitale udgivelser";
-                        collection = "Det Kongelige Biblioteks forside for digitale udgivelser";
-                    }
-                }
-                transformer.setParameter("long_name", name);
-                transformer.setParameter("short_name", edition);
-                transformer.setParameter("contact", contactEmail);
-                transformer.setParameter("description", descriptionTxt);
-                transformer.setParameter("developer", collection);
-
-                transformer.setParameter("language", lang);
-                logger.debug("XSL parameters have been set");
-                transformer.transform(source, result);
-                logger.debug("The transformation is done");
-                description = (Document) result.getNode();
-
-                manager.put(cacheKey, new CachebleResponse(description, null)); // put it in the cache
-                return Response.ok(description).build();
-
-            } catch (Exception someEx) { // if getting from DB somehow fails, try to get an older entry from cache
-                logger.warn("Error getting description for: " + editionId, someEx);
-                cachedResponse = manager.get(cacheKey, CacheEntry.INDEFINITE_EXPIRY);
-                if (cachedResponse != null) {
-                    return Response.ok(cachedResponse.getDoc()).build(); // An older version existed. Return that
                 } else {
-                    logger.warn("We could neither deliver new content or reuse old document");
-                    return Response.noContent().build(); // This URI has no content.
+                    if (editionObj.getCollectionDa() != null) {
+                        collection = editionObj.getCollectionDa();
+                    }
                 }
-            } finally {
-                if (session != null && session.isConnected()) {
-                    logger.debug("Closing Hibernate session as we're still connected");
-                    session.close();
+                if (lang.equals("da")) {
+                    if (editionObj.getName() != null) {
+                        name = editionObj.getName();
+                    }
+                } else {
+                    if (editionObj.getDescription() != null) {
+                        name = editionObj.getDescription();
+                    }
+                }
+                logger.debug("Name is: " + name);
+                logger.debug("Collection is: " + collection);
+                logger.debug("Short name is: " + editionObj.getUrlName());
+                logger.debug(".. description is " + descriptionTxt);
+                logger.debug("Language is: " + lang);
+
+                if (editionObj.getContactEmail() != null) {
+                    contactEmail = editionObj.getContactEmail();
+                }
+            } else {    // Frontpage Description
+                if (lang.equalsIgnoreCase("en")) {
+                    name = "KB's Digital Editions";
+                    contactEmail = "helpdesk@kb.dk";
+                    descriptionTxt = "The Royal Library's front page for its digital editions.";
+                    collection = "The Royal Library's front page for its digital editions.";
+                } else {
+                    name = "KB's Digitale Udgivelser";
+                    contactEmail = "helpdesk@kb.dk";
+                    descriptionTxt = "Det Kongelige Biblioteks forside for digitale udgivelser";
+                    collection = "Det Kongelige Biblioteks forside for digitale udgivelser";
                 }
             }
+            transformer.setParameter("long_name", name);
+            transformer.setParameter("short_name", edition);
+            transformer.setParameter("contact", contactEmail);
+            transformer.setParameter("description", descriptionTxt);
+            transformer.setParameter("developer", collection);
+
+            transformer.setParameter("language", lang);
+            logger.debug("XSL parameters have been set");
+            transformer.transform(source, result);
+            logger.debug("The transformation is done");
+            description = (Document) result.getNode();
+
+            return Response.ok(description).build();
+
+        } catch (Exception someEx) { // if getting from DB somehow fails, try to get an older entry from cache
+            logger.warn("Error getting description for: " + editionId, someEx);
+
+            logger.warn("We could neither deliver new content or reuse old document");
+            return Response.noContent().build(); // This URI has no content.
+
+        } finally {
+            if (session != null && session.isConnected()) {
+                logger.debug("Closing Hibernate session as we're still connected");
+                session.close();
+            }
         }
+
     }
 
     private Transformer makeTransformer() {

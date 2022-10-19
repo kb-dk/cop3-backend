@@ -1,9 +1,7 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
-import dk.kb.cop3.backend.crud.database.HibernateUtil;
-import dk.kb.cop3.backend.crud.database.hibernate.Object;
 //import dk.kb.cop3.backend.datacontroller.util.DomUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.*;
@@ -34,7 +32,7 @@ public class ApiTest {
     static Server jettyServer;
 
     //The host + port the client will use
-    private final static String HOST_NAME = ConfigurableConstants.getInstance().getConstants().getProperty("cop3_backend.baseurl");
+    private final static String HOST_NAME = CopBackendProperties.getInstance().getConstants().getProperty("cop3_backend.baseurl");
 
     // Client methods
     static HttpClient client = new HttpClient();

@@ -148,9 +148,7 @@ public class HibernateMetadataWriter implements MetadataWriter {
 			 " mods:" + mods);
 
             hibSession.beginTransaction();
-            SQLQuery sqlQuery = hibSession.createSQLQuery("alter session set optimizer_mode=first_rows");
-            sqlQuery.executeUpdate();
-            logger.debug("id " + id);
+           logger.debug("id " + id);
             ObjectFromModsExtractor bu = ObjectFromModsExtractor.getInstance();
             if (!id.equals(bu.getIdFromMods(mods))) {
                 logger.debug("id does not correspond to mods");
@@ -258,8 +256,6 @@ public class HibernateMetadataWriter implements MetadataWriter {
     public String updateGeo(String id, double lat, double lon, String user, String lastModified, double correctness) {
         logger.debug(" opdaterer geo koordinat " + id + " forårsaget af bruger " + user + " lastmodified:" + lastModified + "nye coordinater (" + lat + "," + lon + ") correctness:" + correctness);
         hibSession.beginTransaction();
-        SQLQuery sqlQuery = hibSession.createSQLQuery("alter session set optimizer_mode=first_rows");
-        sqlQuery.executeUpdate();
         try {
             long startTime = 0;
             if (logger.isDebugEnabled()) {

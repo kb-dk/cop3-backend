@@ -1,9 +1,6 @@
 package dk.kb.cop3.backend.crud.api;
 
-import com.opensymphony.oscache.base.CacheEntry;
-import dk.kb.cop3.backend.commonutils.CachebleResponse;
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
-import dk.kb.cop3.backend.crud.cache.CacheManager;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import org.apache.log4j.Logger;
@@ -39,9 +36,6 @@ public class NavigationService {
     // TODO: move to configuration
     private static String opml_xslt = "/opml_massage.xsl";
     private static String opml_to_solr_xslt = "/opml2solr.xsl";
-
-    // The Cache manager
-    private CacheManager manager = CacheManager.getInstance();
 
     private DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
     private TransformerFactory trans_fact = new TransformerFactoryImpl();
@@ -100,14 +94,7 @@ public class NavigationService {
                 "mode:"+mode+";";
         logger.debug(cacheKey);
 
-
-        // Get the entry from cache. These objects should live at least 24 hours (CacheManager.LONG_LIVING_OBJECT)
-        CachebleResponse cachedResponse = manager.get(cacheKey, CacheManager.LONG_LIVING_OBJECT);
-
         Document opml = null;
-        if(cachedResponse != null){ // We have the object in the cache, return it
-            return Response.ok(cachedResponse.getDoc()).build();
-        } else {
             Session ses = null;
             try {
                 SessionFactory fact = HibernateUtil.getSessionFactory();
@@ -142,7 +129,7 @@ public class NavigationService {
                     }
 
                     java.util.Properties constants =
-			        ConfigurableConstants.getInstance().getConstants();
+			        CopBackendProperties.getInstance().getConstants();
                     String baseUrl = constants.getProperty("cop2_backend.baseurl");
                     String guiUri = constants.getProperty("gui.uri");
                     String base_url = baseUrl;
@@ -157,23 +144,15 @@ public class NavigationService {
                     opml = opmlResult;
                 }
 
-                manager.put(cacheKey, new CachebleResponse(opml,null)); // put it in the cache
                 return Response.ok(opml).build();
             } catch (Exception someEx){ // if getting from DB somehow fails, try to get an older entry from cache
                 logger.warn("Error getting opml for "+editionId,someEx);
-
-                cachedResponse = manager.get(cacheKey, CacheEntry.INDEFINITE_EXPIRY);
-                if(cachedResponse != null){
-                    return Response.ok(cachedResponse.getDoc()).build(); // An older version existed. Return that
-                } else {
-                    return Response.noContent().build(); // This URI has no content.
-                }
+                return Response.noContent().build(); // This URI has no content.
             } finally {
                 if (ses != null && ses.isConnected()){
                     logger.debug("Closing Hibernate session as we're still connected");
                     ses.close();
                 }
             }
-        }
     }
 }

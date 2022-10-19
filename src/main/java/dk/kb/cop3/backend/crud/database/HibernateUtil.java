@@ -28,23 +28,13 @@ public class HibernateUtil {
     private static Logger myLogger = Logger.getLogger(HibernateUtil.class);
 
     private static SessionFactory buildSessionFactory() {
-        //  myLogger.debug("Setting up a hibernateUtil SessionFactory!");
         try {
             System.out.println("buildSessionFactory! X");
-            // Create the SessionFactory from hibernate.cfg.xml
             SessionFactory x = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
             return x;
-
         } catch (Throwable ex) {
-
-            // Make sure you log the exception, as it might be swallowed
-
             System.err.println("Initial SessionFactory creation failed." + ex);
             ex.printStackTrace();
-            //System.exit(1);
-            //throw new ExceptionInInitializerError(ex);
-
-
         }
       return null;
     }

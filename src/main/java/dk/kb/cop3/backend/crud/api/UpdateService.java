@@ -1,14 +1,12 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
-import dk.kb.cop3.backend.crud.cache.CacheManager;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.*;
 import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.crud.util.JMSProducer;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 import javax.jms.JMSException;
@@ -24,10 +22,7 @@ import java.util.HashSet;
 public class UpdateService {
     private static Logger logger = Logger.getLogger(UpdateService.class);
 
-    // The cache manager
-    private CacheManager manager = CacheManager.getInstance();
-
-    private ConfigurableConstants consts = ConfigurableConstants.getInstance();
+    private CopBackendProperties consts = CopBackendProperties.getInstance();
 
     //
     private static final HashSet<String> EDITABLE_FIELDS =
@@ -101,8 +96,6 @@ public class UpdateService {
 
 
         // Do the housekeeping update the geo position of the object
-        manager.flush(cacheId);
-
         if ((user == null) || "".equals(user)) {
             // no user given
             logger.warn("update service no user given");
@@ -304,9 +297,7 @@ public class UpdateService {
     private String getCurrentMods(String uri) {
         Session ses = HibernateUtil.getSessionFactory().getCurrentSession();
         ses.beginTransaction();
-        SQLQuery sqlQuery = ses.createSQLQuery("alter session set optimizer_mode=first_rows");
-        sqlQuery.executeUpdate();
-        MetadataSource mds = new HibernateMetadataSource(ses);
+        MetadataSource mds = new SolrMetadataSource(ses);
         mds.setSearchterms("id", uri);
         mds.execute();
         if (!mds.hasMore())   {
@@ -315,7 +306,6 @@ public class UpdateService {
         }
 
         Object cObject = mds.getAnother();
-        String result = cObject.getMods();
         ses.getTransaction().commit();
         return cObject.getMods();
     }

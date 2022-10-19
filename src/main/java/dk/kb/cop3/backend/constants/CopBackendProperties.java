@@ -2,6 +2,8 @@ package dk.kb.cop3.backend.constants;
 
 import org.apache.log4j.Logger;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,19 +16,19 @@ import java.util.Properties;
  * Time: 1:03 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ConfigurableConstants{
+public class CopBackendProperties {
 
-     private static Logger logger = Logger.getLogger(ConfigurableConstants.class);
+     private static Logger logger = Logger.getLogger(CopBackendProperties.class);
 
     private Properties props = null;
 
-    private static ConfigurableConstants ourInstance = new ConfigurableConstants();
+    private static CopBackendProperties ourInstance = new CopBackendProperties();
 
-    public static ConfigurableConstants getInstance() {
+    public static CopBackendProperties getInstance() {
         return ourInstance;
     }
 
-    private ConfigurableConstants() {
+    private CopBackendProperties() {
         String propFile = "/cop_config.xml";
         this.setConstants(propFile);
     }

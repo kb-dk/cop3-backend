@@ -55,10 +55,6 @@ public class EditionService {
             Session session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            // workaround to fix oracle bug
-            SQLQuery sqlQuery = session.createSQLQuery("alter session set optimizer_mode=first_rows");
-            sqlQuery.executeUpdate();
-
             language = (language.equals("")) ? "da" : language;
 
 

@@ -2,7 +2,7 @@ package dk.kb.cop3.backend.crud.format;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 
 /**
  * Reads a MetadataSource returning mods data, creating a modsCollection document
@@ -13,7 +13,7 @@ import dk.kb.cop3.backend.constants.ConfigurableConstants;
 
 public class OsdMetadataFormulator extends MetadataFormulator {
 
-    private ConfigurableConstants consts = ConfigurableConstants.getInstance();
+    private CopBackendProperties consts = CopBackendProperties.getInstance();
     private String copBaseUrl = this.consts.getConstants().getProperty("cop2_backend.baseurl");
     private String baseUrl    = copBaseUrl + "/syndication";
 

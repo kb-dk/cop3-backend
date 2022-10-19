@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.util;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataSource;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
@@ -19,7 +19,7 @@ import java.util.Properties;
  */
 public class SolrizeEdition {
 
-	private static ConfigurableConstants consts = ConfigurableConstants.getInstance();
+	private static CopBackendProperties consts = CopBackendProperties.getInstance();
 
 	public static void main(String args[]) {
 
@@ -62,7 +62,6 @@ public class SolrizeEdition {
 
 					numfound = mds.getNumberOfHits();
 					logger.info("Found "+numfound+" objects");
-					logger.debug(consts.getConstants().getProperty("cop2.solrizr.queue.host") + " " +consts.getConstants().getProperty("cop2.solrizr.queue.update"));
 					while(mds.hasMore()) {
 						Object cobject = mds.getAnother();
 						JMSProducer producer = null;
@@ -92,10 +91,8 @@ public class SolrizeEdition {
 					session.getTransaction().commit();
 					session.clear();
 					offset += limit;
-					logger.debug("offset is "+offset);
 					mds = null;
 					System.gc();
-					logger.debug("gc done");
 				} catch (org.hibernate.HibernateException ex) {
 					logger.error("Error "+ex.getMessage());
 					ex.printStackTrace();

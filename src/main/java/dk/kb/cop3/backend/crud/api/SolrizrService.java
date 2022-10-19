@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.constants.ConfigurableConstants;
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.UriInfo;
 public class SolrizrService {
 
 	private static Logger logger = Logger.getLogger(SolrizrService.class);
-	private ConfigurableConstants consts = ConfigurableConstants.getInstance();
+	private CopBackendProperties consts = CopBackendProperties.getInstance();
 
 	// TODO: do we need this
 	@Context

@@ -1,9 +1,8 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.crud.cache.CacheManager;
-import dk.kb.cop3.backend.crud.database.HibernateMetadataSource;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
+import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.format.ContentMetadataFormulator;
 import dk.kb.cop3.backend.crud.format.MetadataFormulator;
 import org.apache.log4j.Logger;
@@ -29,9 +28,6 @@ import javax.ws.rs.core.UriInfo;
 public class ContentService {
 
     private static Logger logger = Logger.getLogger(ContentService.class);
-
-    // The Cache manager
-    private CacheManager manager = CacheManager.getInstance();
 
     /**
      *
@@ -81,10 +77,7 @@ public class ContentService {
                 // Get the object(s) from database
                 session = HibernateUtil.getSessionFactory().getCurrentSession();
                 session.beginTransaction();
-                // workaround to fix oracle bug
-                SQLQuery sqlQuery = session.createSQLQuery("alter session set optimizer_mode=first_rows");
-                sqlQuery.executeUpdate();
-                MetadataSource mds = new HibernateMetadataSource(session);
+                MetadataSource mds = new SolrMetadataSource(session);
 
                 if (objectId != null){
                         logger.debug("objid:  " + objectId);
