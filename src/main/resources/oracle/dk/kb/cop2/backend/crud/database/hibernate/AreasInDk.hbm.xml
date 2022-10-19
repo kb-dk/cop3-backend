@@ -11,7 +11,7 @@
         <property name="nameOfArea" type="string">
           <column name="name_of_area" length="255"/>
         </property>
-        <property name="polygon" type="dk.kb.cop3.backend.crud.database.type.JGeometryType">
+        <property name="polygonCol" type="dk.kb.cop3.backend.crud.database.type.JGeometryType">
           <column name="POLYGON_COL"/>
         </property>
     </class>

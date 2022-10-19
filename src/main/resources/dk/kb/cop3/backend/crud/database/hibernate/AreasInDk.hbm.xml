@@ -3,7 +3,7 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- written by slu@kb.dk 14/10 2022 -->
 <hibernate-mapping>                                   
-    <class name="dk.kb.cop3.backend.migrate.hibernate.AreasInDk" table="AREAS_IN_DK">
+    <class name="dk.kb.cop3.backend.crud.database.hibernate.AreasInDk" table="AREAS_IN_DK">
         <id name="areaId">
             <column name="AREA_ID"/>
             <generator class="assigned" />
@@ -11,7 +11,7 @@
         <property name="nameOfArea" type="string">
           <column name="NAME_OF_AREA" length="255"/>
         </property>
-        <property name="polygon" type="dk.kb.cop3.backend.crud.database.type.JGeometryType">
+        <property name="polygonCol" type="jts_geometry">
           <column name="POLYGON_COL"/>
         </property>
     </class>

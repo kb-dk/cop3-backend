@@ -75,7 +75,7 @@ public class ObjectConverter {
 
     public static AreasInDk convertArea(AreasInDkOracle oraArea) {
 	AreasInDk area = new AreasInDk();
-	area.setAreaId(oraArea.getAreaId());
+	area.setAreaId("" + oraArea.getAreaId());
 	area.setNameOfArea(oraArea.getNameOfArea());
 	area.setPolygonCol(oraArea.getPolygonCol());
 	return area;
