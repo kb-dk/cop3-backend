@@ -73,6 +73,7 @@ public class ObjectConverter {
         return user;
     }
 
+
     public static AreasInDk convertArea(AreasInDkOracle oraArea) {
 	AreasInDk area = new AreasInDk();
 	area.setAreaId("" + oraArea.getAreaId());

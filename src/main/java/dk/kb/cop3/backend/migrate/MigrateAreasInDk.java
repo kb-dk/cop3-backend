@@ -22,10 +22,12 @@ public class MigrateAreasInDk {
 
 
         List<AreasInDkOracle> areas = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.AreasInDkOracle").list();
+
         areas.stream()
                 .map(oraArea -> {
                     return ObjectConverter.convertArea(oraArea);})
                 .forEach(xlink-> {
+
 			//                    logger.info("Saving area "+oraArea.getAreaId());
                     Session psqlSession = psqlSessfac.openSession();
                     Transaction trans = psqlSession.beginTransaction();
