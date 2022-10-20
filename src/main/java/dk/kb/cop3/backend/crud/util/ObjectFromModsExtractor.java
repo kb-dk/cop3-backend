@@ -115,6 +115,7 @@ public class ObjectFromModsExtractor {
             setTypeAndEdition(copject, session, modsDocument);
             setCategories(copject, session, modsDocument);
 
+            copject.setDeleted('n');
             copject.setLastModified(getCurrentTimestamp());
             copject.setMods(modsString);
             
