@@ -3,20 +3,34 @@ package dk.kb.cop3.backend.migrate;
 import dk.kb.cop3.backend.crud.database.hibernate.*;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.database.type.JGeometryType;
+import oracle.jdbc.driver.OracleConnection;
 import dk.kb.cop3.backend.migrate.hibernate.*;
+import org.hibernate.Session;
+
+import dk.kb.cop3.backend.crud.database.type.JGeometryType;
+import java.awt.geom.Point2D;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+
+import oracle.spatial.geometry.JGeometry;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
+
 public class ObjectConverter {
 
+    private static Logger logger = Logger.getLogger(ObjectConverter.class);
+    
     public static Edition convertEdition(EditionOracle editionOracle) {
         Edition edition = new Edition();
             edition.setId(editionOracle.getId());
@@ -76,9 +90,24 @@ public class ObjectConverter {
 
     public static AreasInDk convertArea(AreasInDkOracle oraArea) {
 	AreasInDk area = new AreasInDk();
+
 	area.setAreaId("" + oraArea.getAreaId());
 	area.setNameOfArea(oraArea.getNameOfArea());
-	area.setPolygonCol(oraArea.getPolygonCol());
+
+	JGeometry     oraGeom   = oraArea.getPolygonCol().getJGeometry();
+	double[]      ordinates = oraGeom.getOrdinatesArray();
+	Coordinate[]  coords    = new Coordinate[ordinates.length/2];
+	
+	for(int i=0;i<ordinates.length;i=i+2) {
+	    coords[i/2] = new Coordinate(ordinates[i], ordinates[i+1]);
+	    System.out.println("coordinate " + i/2 + " " + ordinates[i] + " " +  ordinates[i+1]);
+	}
+	GeometryFactory geoFact = new GeometryFactory();
+
+	Polygon poly            = geoFact.createPolygon(coords);
+	
+	area.setPolygonCol(poly);
+	
 	return area;
     }
     

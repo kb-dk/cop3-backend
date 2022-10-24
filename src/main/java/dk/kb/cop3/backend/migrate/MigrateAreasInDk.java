@@ -26,12 +26,12 @@ public class MigrateAreasInDk {
         areas.stream()
                 .map(oraArea -> {
                     return ObjectConverter.convertArea(oraArea);})
-                .forEach(xlink-> {
-
-			//                    logger.info("Saving area "+oraArea.getAreaId());
+                .forEach(area-> {
+                    logger.debug("saving area "+ area.getPolygonCol());
+		    logger.debug("class of area  "+ area.getPolygonCol().getClass());
                     Session psqlSession = psqlSessfac.openSession();
                     Transaction trans = psqlSession.beginTransaction();
-                    psqlSession.save(xlink);
+                    psqlSession.save(area);
                     trans.commit();
                     psqlSession.close();
                 });

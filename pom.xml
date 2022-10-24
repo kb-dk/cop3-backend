@@ -36,16 +36,14 @@
     <log4j2-version>2.17.1</log4j2-version>
     <hibernate-version>5.4.24.Final</hibernate-version>
     <jersey-version>2.37</jersey-version>
+
+    <geotools.version>24.0</geotools.version>
+
+    
   </properties>
 
   <dependencies>
 
-    <!-- https://mvnrepository.com/artifact/org.geotools.data/refdataset-1.0 -->
-    <dependency>
-      <groupId>org.geotools.data</groupId>
-      <artifactId>refdataset-1.0</artifactId>
-      <version>1.0.7</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
@@ -171,11 +169,44 @@
       <artifactId>jts-core</artifactId>
       <version>1.19.0</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.geotools.data/refdataset-1.0
+    <dependency>
+      <groupId>org.geotools.data</groupId>
+      <artifactId>refdataset-1.0</artifactId>
+      <version>1.0.7</version>
+    </dependency>
+
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geometry</artifactId>
       <version>22.2</version>
-    </dependency>
+    </dependency -->
+
+    <!-- https://mvnrepository.com/artifact/org.locationtech.spatial4j/spatial4j 
+        <dependency>
+            <groupId>org.locationtech.spatial4j</groupId>
+            <artifactId>spatial4j</artifactId>
+            <version>0.8</version>
+        </dependency> -->
+        
+ <dependency>
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-geometry</artifactId>
+  <version>${geotools.version}</version>
+ </dependency>
+ <dependency>
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-epsg-hsql</artifactId>
+  <version>${geotools.version}</version>
+ </dependency>
+ <dependency>
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-epsg-wkt </artifactId>
+  <version>${geotools.version}</version>
+ </dependency>
+
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
