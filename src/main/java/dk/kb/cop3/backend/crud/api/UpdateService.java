@@ -3,13 +3,11 @@ package dk.kb.cop3.backend.crud.api;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.*;
 import dk.kb.cop3.backend.crud.update.Reformulator;
-import dk.kb.cop3.backend.crud.util.JMSProducer;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
-import javax.jms.JMSException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -268,30 +266,16 @@ public class UpdateService {
                     return Response.notModified("No lastmodified provided").build();
                 }
             }
-            try {
-                logger.debug("sending message to queue");
-                JMSProducer producer = new JMSProducer(
-                        this.consts.getConstants().getProperty("cop2.solrizr.queue.host"),
-                        this.consts.getConstants().getProperty("cop2.solrizr.queue.update"));
-                producer.sendMessage(uri);
-                producer.shutDownPRoducer();
-                if ("true".equals(this.consts.getConstants().getProperty("cop2.solrizr.queue.copy_messages"))) {
-                    producer = new JMSProducer(
-                            this.consts.getConstants().getProperty("cop2.solrizr.queue.host"),
-                            this.consts.getConstants().getProperty("cop2.solrizr.queue.update")+".copy");
-                    producer.sendMessage(uri);
-                    producer.shutDownPRoducer();
-                }
-                logger.debug("message send shutting down");
-                logger.debug("done");
-            } catch (JMSException ex) {
-                logger.error("Unable to connect to solrizr queue "+ex.getMessage());
-            }
+            sendToSolr(uri);
             return Response.ok("Updated").build();
         } catch (HibernateException ex) {
             logger.error("hibernate error in updateservice", ex);
             return Response.serverError().build();
         }
+    }
+
+    private void sendToSolr(String uri) {
+        //TODO call solrizr for uri
     }
 
     private String getCurrentMods(String uri) {
