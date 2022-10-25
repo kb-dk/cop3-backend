@@ -28,7 +28,6 @@ public class MigrateAreasInDk {
                     return ObjectConverter.convertArea(oraArea);})
                 .forEach(area-> {
                     logger.debug("saving area "+ area.getPolygonCol());
-		    logger.debug("class of area  "+ area.getPolygonCol().getClass());
                     Session psqlSession = psqlSessfac.openSession();
                     Transaction trans = psqlSession.beginTransaction();
                     psqlSession.save(area);

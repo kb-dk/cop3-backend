@@ -170,41 +170,14 @@
       <version>1.19.0</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.geotools.data/refdataset-1.0
-    <dependency>
-      <groupId>org.geotools.data</groupId>
-      <artifactId>refdataset-1.0</artifactId>
-      <version>1.0.7</version>
-    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.geolatte/geolatte-geom -->
+<dependency>
+    <groupId>org.geolatte</groupId>
+    <artifactId>geolatte-geom</artifactId>
+    <version>1.8.2</version>
+</dependency>
 
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-geometry</artifactId>
-      <version>22.2</version>
-    </dependency -->
 
-    <!-- https://mvnrepository.com/artifact/org.locationtech.spatial4j/spatial4j 
-        <dependency>
-            <groupId>org.locationtech.spatial4j</groupId>
-            <artifactId>spatial4j</artifactId>
-            <version>0.8</version>
-        </dependency> -->
-        
- <dependency>
-  <groupId>org.geotools</groupId>
-  <artifactId>gt-geometry</artifactId>
-  <version>${geotools.version}</version>
- </dependency>
- <dependency>
-  <groupId>org.geotools</groupId>
-  <artifactId>gt-epsg-hsql</artifactId>
-  <version>${geotools.version}</version>
- </dependency>
- <dependency>
-  <groupId>org.geotools</groupId>
-  <artifactId>gt-epsg-wkt </artifactId>
-  <version>${geotools.version}</version>
- </dependency>
 
     
     <dependency>
