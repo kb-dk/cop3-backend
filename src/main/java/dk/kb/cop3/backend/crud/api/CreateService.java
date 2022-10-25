@@ -93,7 +93,7 @@ public class CreateService {
                 if (newLastModified != null && !newLastModified.equals("")) {
                     ses.getTransaction().commit();
                     logger.debug("Object created ID: " + nytCobjectFraMods.getId());
-                    this.sendToSolrizr(uri);
+                    this.sendToSolr(uri);
                     return Response.ok("Updated").build();
 
                 } else {
@@ -114,7 +114,7 @@ public class CreateService {
                     try {
                         ses.getTransaction().commit();
                         logger.debug("Object created ID: " + nytFraMods.getId());
-                        sendToSolrizr(uri);
+                        sendToSolr(uri);
                         return Response.created(URI.create(nytFraMods.getId())).build();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -201,22 +201,8 @@ public class CreateService {
         return Response.status(201).build();
     }
 
-    private void sendToSolrizr(String id) {
-        try {
-            JMSProducer producer = new JMSProducer(
-                    this.consts.getConstants().getProperty("cop2.solrizr.queue.host"),
-                    this.consts.getConstants().getProperty("cop2.solrizr.queue.update"));
-            producer.sendMessage(id);
-            producer.shutDownPRoducer();
-            if ("true".equals(this.consts.getConstants().getProperty("cop2.solrizr.queue.copy_messages"))) {
-                producer = new JMSProducer(
-                        this.consts.getConstants().getProperty("cop2.solrizr.queue.host"),
-                        this.consts.getConstants().getProperty("cop2.solrizr.queue.update")+".copy");
-                producer.sendMessage(id);
-                producer.shutDownPRoducer();
-            }
-        } catch (JMSException ex) {
-            logger.error("Unable to connect to solrizr queue "+ex.getMessage());
-        }
+    private void sendToSolr(String id) {
+        //TODO
+        // call solrizerService
     }
 }

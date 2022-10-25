@@ -16,11 +16,11 @@ import java.util.List;
  */
 public class HibernateEditionSource {
 
-    private static Logger logger = Logger.getLogger(HibernateEditionSource.class);
+    private static final Logger logger = Logger.getLogger(HibernateEditionSource.class);
 
     Edition edition = null;
 
-    private Session session;
+    private final Session session;
     private List<Edition> resultSet = null;
     private Iterator<Edition> resultIterator = null;
 
@@ -35,7 +35,7 @@ public class HibernateEditionSource {
 
     public void setEdition(String id) {
         try {
-            this.edition = (Edition) session.load(Edition.class, id);
+            this.edition = session.load(Edition.class, id);
         } catch (HibernateException ex) {
             logger.error("Error when setting edition for id: " + id, ex);
             throw new NullPointerException("setEdition(" + id + ") error:" + ex.getMessage());
@@ -57,7 +57,7 @@ public class HibernateEditionSource {
                 // The second worst hack in history of modern Computing.
                 // DGJ and ABWE is the masterminds behinds this.
                 // Do not display editions where where visible to public is equal to 0.
-                resultSet = session.createQuery("from Edition where VISIBLE_TO_PUBLIC ='1'").list();
+                resultSet = (List<Edition>) session.createQuery("from Edition where VISIBLE_TO_PUBLIC ='1'").list();
                 resultIterator = resultSet.iterator();
             } catch (HibernateException ex) {
                 logger.error("The search failed", ex);
@@ -77,7 +77,7 @@ public class HibernateEditionSource {
             logger.error("Unable to get number of hits: search has not been executed");
             throw new NullPointerException("Unable to get number of hits: search has not been executed");
         }
-        return new Long("" + this.resultSet.size());
+        return Long.valueOf("" + this.resultSet.size());
     }
 
 
