@@ -170,12 +170,18 @@
       <version>1.19.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-geometry</artifactId>
+      <version>22.2</version>
+    </dependency>
+
     <!-- https://mvnrepository.com/artifact/org.geolatte/geolatte-geom -->
-<dependency>
-    <groupId>org.geolatte</groupId>
-    <artifactId>geolatte-geom</artifactId>
-    <version>1.8.2</version>
-</dependency>
+    <dependency>
+      <groupId>org.geolatte</groupId>
+      <artifactId>geolatte-geom</artifactId>
+      <version>1.8.2</version>
+    </dependency>
 
 
 
