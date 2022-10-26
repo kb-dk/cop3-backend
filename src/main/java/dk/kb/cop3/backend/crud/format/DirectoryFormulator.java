@@ -1,6 +1,6 @@
 package dk.kb.cop3.backend.crud.format;
 
-import dk.kb.cop3.backend.crud.database.HibernateEditionSource;
+import dk.kb.cop3.backend.crud.database.HibernateEditionTool;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 
 /**
@@ -18,7 +18,7 @@ public class DirectoryFormulator extends MetadataFormulator {
     private java.lang.String      language = "da";
     private org.hibernate.Session session  = null;
 
-    private HibernateEditionSource source = null;
+    private HibernateEditionTool source = null;
 
     private javax.xml.parsers.DocumentBuilderFactory dfactory =
             javax.xml.parsers.DocumentBuilderFactory.newInstance();
@@ -26,7 +26,7 @@ public class DirectoryFormulator extends MetadataFormulator {
     public DirectoryFormulator() {
     }
 
-    public void setDataSource(HibernateEditionSource source) {
+    public void setDataSource(HibernateEditionTool source) {
 	this.source = source;
 	this.source.execute();
     }

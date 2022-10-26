@@ -4,6 +4,7 @@ import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.lang.Long;
 import java.util.Iterator;
@@ -14,9 +15,9 @@ import java.util.List;
  *
  * @author Sigfrid Lundberg based on code by David Grove Jorgensen (dgj@kb.dk)
  */
-public class HibernateEditionSource {
+public class HibernateEditionTool {
 
-    private static final Logger logger = Logger.getLogger(HibernateEditionSource.class);
+    private static final Logger logger = Logger.getLogger(HibernateEditionTool.class);
 
     Edition edition = null;
 
@@ -29,13 +30,13 @@ public class HibernateEditionSource {
      *
      * @param session an open hibernate session to use
      */
-    public HibernateEditionSource(Session session) {
+    public HibernateEditionTool(Session session) {
         this.session = session;
     }
 
     public void setEdition(String id) {
         try {
-            this.edition = session.load(Edition.class, id);
+            this.edition = session.get(Edition.class, id);
         } catch (HibernateException ex) {
             logger.error("Error when setting edition for id: " + id, ex);
             throw new NullPointerException("setEdition(" + id + ") error:" + ex.getMessage());
@@ -74,7 +75,6 @@ public class HibernateEditionSource {
      */
     public Long getNumberOfHits() {
         if (this.resultSet == null) {
-            logger.error("Unable to get number of hits: search has not been executed");
             throw new NullPointerException("Unable to get number of hits: search has not been executed");
         }
         return Long.valueOf("" + this.resultSet.size());
@@ -106,5 +106,18 @@ public class HibernateEditionSource {
         }
         return this.resultIterator.next();
     }
+
+    public Edition updateEditionOpml(String edition_id, String opml) throws HibernateException {
+        Transaction transaction = session.beginTransaction();
+        Edition editionFromDB = session.get(Edition.class,edition_id);
+        if (edition_id != null) {
+            editionFromDB.setOpml(opml);
+            session.saveOrUpdate(editionFromDB);
+        }
+        transaction.commit();
+        return editionFromDB;
+    }
+
+
 }
 

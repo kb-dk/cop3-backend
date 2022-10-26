@@ -1,10 +1,9 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.crud.database.HibernateEditionSource;
+import dk.kb.cop3.backend.crud.database.HibernateEditionTool;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.format.DirectoryFormulator;
 import org.apache.log4j.Logger;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.w3c.dom.Document;
 
@@ -35,7 +34,7 @@ public class DirectoryService {
 
         language = (language.equals("")) ? "da" : language;
 
-        HibernateEditionSource source = new HibernateEditionSource(session);
+        HibernateEditionTool source = new HibernateEditionTool(session);
 
         DirectoryFormulator formulator = new DirectoryFormulator();
 
