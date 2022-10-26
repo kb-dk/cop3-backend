@@ -2,7 +2,7 @@
 
 The COP gives backend services to frontends providing access to
 digital library objects for the benefit of the patrons of the [Royal
-Danish Library](https://www.kb.dk/).  this time there are two
+Danish Library](https://www.kb.dk/). At this time there are two
 frontends using it:
 
 * [Danmark set fra luften](https://www.kb.dk/danmarksetfraluften/)
