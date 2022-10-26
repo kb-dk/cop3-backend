@@ -31,9 +31,13 @@ to a formulator located in
 
 Go to src/docker
 
-* Build with: docker-compose up -d
+* Build with: 
 
-* Start/stop with: docker-compose start/stop
+```docker-compose up -d```
+
+* Start/stop with: 
+
+```docker-compose start/stop```
 
 * Connect to database
 
