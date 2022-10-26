@@ -58,7 +58,9 @@ public class HibernateEditionTool {
                 // The second worst hack in history of modern Computing.
                 // DGJ and ABWE is the masterminds behinds this.
                 // Do not display editions where where visible to public is equal to 0.
+                Transaction transaction = session.beginTransaction();
                 resultSet = (List<Edition>) session.createQuery("from Edition where VISIBLE_TO_PUBLIC ='1'").list();
+                transaction.commit();
                 resultIterator = resultSet.iterator();
             } catch (HibernateException ex) {
                 logger.error("The search failed", ex);

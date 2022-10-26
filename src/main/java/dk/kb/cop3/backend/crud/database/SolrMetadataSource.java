@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.*;
 
 import org.apache.solr.client.solrj.SolrServerException;
@@ -102,11 +103,14 @@ public class SolrMetadataSource implements MetadataSource {
 
     @Override
     public void setEdition(String id) {
+        Transaction transaction = session.beginTransaction();
         try {
-            this.edition = session.load(Edition.class, id);
+            this.edition = session.get(Edition.class, id);
         } catch (HibernateException ex) {
             logger.error("setEdition(" + id + ") error:" + ex.getMessage());
             throw new NullPointerException("setEdition(" + id + ") error:" + ex.getMessage());
+        } finally {
+            transaction.commit();
         }
     }
 
@@ -352,10 +356,12 @@ public class SolrMetadataSource implements MetadataSource {
     }
 
     private void getSingleObjectFromDB() {
+        Transaction transaction = session.beginTransaction();
         Query query = session.createQuery("from dk.kb.cop3.backend.crud.database.hibernate.Object where id ='"+this.searchterms.get("id")+"'");
         this.hibernateResultSet = query.list();
         this.hibernateResultIterator = this.hibernateResultSet.iterator();
         this.numberOfHits = hibernateResultSet.size();
+        transaction.commit();
     }
 
 

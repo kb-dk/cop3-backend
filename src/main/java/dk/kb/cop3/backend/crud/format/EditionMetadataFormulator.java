@@ -5,17 +5,23 @@ import dk.kb.cop3.backend.crud.database.HibernateEditionTool;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
 import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
+import org.hibernate.Session;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -30,17 +36,17 @@ import java.io.StringReader;
 public class EditionMetadataFormulator extends MetadataFormulator {
 
 
-    private CopBackendProperties constants = CopBackendProperties.getInstance();
+    private final CopBackendProperties constants = CopBackendProperties.getInstance();
 
     private java.lang.String xslt = "/build_edition_rss.xsl";
-    private java.lang.String template = "/template_edition_rss.xml";
-    private java.lang.String format = "rss";
-    private java.lang.String language = "da";
-    private org.hibernate.Session session = null;
+    private String template = "/template_edition_rss.xml";
+    private String format = "rss";
+    private final String language = "da";
+    private Session session = null;
 
     private HibernateEditionTool source = null;
 
-    private DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+    private final DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 
     public EditionMetadataFormulator() {
     }
@@ -50,7 +56,7 @@ public class EditionMetadataFormulator extends MetadataFormulator {
         this.source.execute();
     }
 
-    public void setSession(org.hibernate.Session session) {
+    public void setSession(Session session) {
         this.session = session;
     }
 
@@ -58,15 +64,12 @@ public class EditionMetadataFormulator extends MetadataFormulator {
     public Document formulate(String format,
                               String template,
                               String xsl) {
-
-        logger.debug("I'm going to use " + xsl + " on " + template);
-
-        org.w3c.dom.Document result = null;
-        javax.xml.parsers.DocumentBuilder dBuilder = null;
+        Document result = null;
+        DocumentBuilder dBuilder = null;
         try {
             dfactory.setNamespaceAware(true);
             dBuilder = dfactory.newDocumentBuilder();
-            java.io.InputStream in = this.getClass().getResourceAsStream(template);
+            InputStream in = this.getClass().getResourceAsStream(template);
             result = dBuilder.parse(in);
         } catch (ParserConfigurationException parserPrblm) {
             logger.warn(parserPrblm.getMessage());
@@ -90,30 +93,22 @@ public class EditionMetadataFormulator extends MetadataFormulator {
 
         Transformer transformer = null;
         try {
-            logger.debug("xsl path is :" + xsl);
-            javax.xml.transform.stream.StreamSource streamSource =
-                    new javax.xml.transform.stream.StreamSource(this.getClass().getResourceAsStream(xsl));
+            StreamSource streamSource = new StreamSource(this.getClass().getResourceAsStream(xsl));
             transformer = trans_fact.newTransformer(streamSource);
-
-            logger.debug("Transformer fra xsl " + xsl + " transformer.toString() " + transformer.toString());
-
-        } catch (javax.xml.transform.TransformerConfigurationException transformerPrblm) {
+        } catch (TransformerConfigurationException transformerPrblm) {
             logger.warn("problem might be: " + transformerPrblm.getMessage());
             transformerPrblm.printStackTrace();
         }
-        logger.debug(".. about to create a dom_result");
-        javax.xml.transform.dom.DOMResult dom_result =
-                new javax.xml.transform.dom.DOMResult(insert_here);
+        DOMResult dom_result = new DOMResult(insert_here);
 
         while (this.source.hasMore()) {
-
             try {
                 logger.debug("In while because more editions");
                 Edition edition = this.source.getAnother();
                 if (edition == null) {
                     return result;
                 }
-                java.lang.String subject_uri = edition.getId();
+                String subject_uri = edition.getId();
                 transformer.clearParameters();
                 transformer.setParameter("edition_name", edition.getName());
                 transformer.setParameter("base_uri", copGuiUri);
@@ -123,30 +118,16 @@ public class EditionMetadataFormulator extends MetadataFormulator {
                 } else {
                     transformer.setParameter("description", "");
                 }
+                transformer.setParameter("uri", subject_uri + "/" + this.language + "/");
 
 
                 MetadataSource modsSource =
                         new SolrMetadataSource(session);
-
-                String subjectId = edition.getCumulusTopCatagory();
-                String retrieve_subject =
-                        subject_uri +
-                                "/subject" +
-                                subjectId +
-                                "/" + this.language + "/";
-
                 modsSource.setEdition(edition.getId());
-
-                logger.debug(".. subject uri " + subject_uri);
-                logger.debug(".. subject " + subjectId);
-                logger.debug(".. retrieve subject " + retrieve_subject);
-
                 modsSource.setNumberPerPage(1);
                 modsSource.execute();
 
-                transformer.setParameter("uri", subject_uri + "/" + this.language + "/");
-
-                String mods = "";
+                String mods;
                 if (modsSource.hasMore()) {
                     logger.debug(".. There are hits");
                     mods = modsSource.getAnother().getMods();
@@ -158,23 +139,15 @@ public class EditionMetadataFormulator extends MetadataFormulator {
                     DOMSource source_dom = null;
                     try {
                         Reader reader = new StringReader(mods);
-                        Document source_mods =
-                                dBuilder.parse(new org.xml.sax.InputSource(reader));
+                        Document source_mods = dBuilder.parse(new InputSource(reader));
                         source_dom = new DOMSource(source_mods);
-                        logger.debug(".. we've parsed the mods");
                     } catch (SAXException flawedMods) {
                         logger.warn(flawedMods.getMessage());
                     } catch (IOException ioPrblms) {
                         logger.warn(ioPrblms.getMessage());
                     }
 
-                    if (source_dom == null) {
-                        logger.debug(".. source_dom is null");
-                    } else {
-                        logger.debug(".. source_dom is OK");
-                    }
                     transformer.transform(source_dom, dom_result);
-                    logger.debug(".. tranforme OK");
                 }
             } catch (TransformerException trnsFrmPrblm) {
                 logger.warn(trnsFrmPrblm.getMessage());
