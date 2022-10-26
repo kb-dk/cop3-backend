@@ -2,6 +2,7 @@
 
 ## COP database
 
+![COP entity relation diagram](cop_er.svg)
 
 ## COP API description
 
