@@ -166,15 +166,5 @@ public class HibernateToDBTest {
         assertEquals(Long.parseLong(output)>0, true);
     }
 
-    @Test
-    public void findAnEditionList() {	
-	HibernateEditionTool eds = new HibernateEditionTool(session);
-	eds.execute();
-	if(eds.hasMore()) {
-	    Edition ed = eds.getAnother();
-	    //System.out.println("ID="+ed.getId());
-	}
-    }
-
 
 }
