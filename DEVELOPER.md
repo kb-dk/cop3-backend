@@ -33,11 +33,15 @@ Go to src/docker
 
 * Build with: 
 
-```docker-compose up -d```
+```
+docker-compose up -d
+```
 
 * Start/stop with: 
 
-```docker-compose start/stop```
+```
+docker-compose start/stop
+```
 
 * Connect to database
 
@@ -67,7 +71,7 @@ main/resources/oracle
 Oracle java klasser ligger i 
 main/java/dk/kb/cop3/backend/migrate/hibernate
 
-## Running at command line
+you can run the migrations in your IntelliJ or on the command line 
 
 ```
 java -cp  target/cop3-backend-jar-with-dependencies.jar  dk.kb.cop3.backend.migrate.MigrateAreasInDk
