@@ -36,9 +36,14 @@
     <log4j2-version>2.17.1</log4j2-version>
     <hibernate-version>5.4.24.Final</hibernate-version>
     <jersey-version>2.37</jersey-version>
+
+    <geotools.version>24.0</geotools.version>
+
+    
   </properties>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
@@ -164,11 +169,23 @@
       <artifactId>jts-core</artifactId>
       <version>1.19.0</version>
     </dependency>
+
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geometry</artifactId>
       <version>22.2</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.geolatte/geolatte-geom -->
+    <dependency>
+      <groupId>org.geolatte</groupId>
+      <artifactId>geolatte-geom</artifactId>
+      <version>1.8.2</version>
+    </dependency>
+
+
+
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

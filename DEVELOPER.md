@@ -61,9 +61,5 @@ main/java/dk/kb/cop3/backend/migrate/hibernate
 ## Running at command line
 
 ```
-java -cp `ls target/cop3-backend/WEB-INF/lib/*jar | perl -ne 's/\n/:/;print;'`:target/classes:src/main/resources/  dk/kb/cop3/backend/migrate/CreateDB
+java -cp  target/cop3-backend-jar-with-dependencies.jar  dk.kb.cop3.backend.migrate.MigrateAreasInDk
 ```
-
-
-
-
