@@ -25,7 +25,7 @@
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Tag.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Comment.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/Type.hbm.xml"/>
-        <!-- mapping resource="dk/kb/cop3/backend/crud/database/hibernate/AuditTrail.hbm.xml"/ -->
+        <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/AuditTrail.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/User.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/UserRole.hbm.xml"/>
         <mapping resource="dk/kb/cop3/backend/crud/database/hibernate/UserPermissions.hbm.xml"/>

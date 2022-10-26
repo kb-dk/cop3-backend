@@ -27,15 +27,11 @@ import java.net.URI;
 // The class binds to /create
 @Path("/create")
 public class CreateService {
-
     private static Logger logger = Logger.getLogger(CreateService.class);
-
     private CopBackendProperties consts = CopBackendProperties.getInstance();
-
 
     /**
      * Put-service. Receive som data, and try saving it to db.
-     * our first Jersey webservice which support GET and PUT
      * PUT http://localhost:8080/cop/syndication/SOMEOBJECT (the path is not final)
      *
      * @return
@@ -52,87 +48,51 @@ public class CreateService {
                          @Context HttpServletRequest httpServletRequest,
                          String doc) {
 
-        logger.debug("CREATE SERVICE");
-
         String uri = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
-        // This is what the edition looks like
         String editionId = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition;
-        String cacheKey = "syndication:edition:" + editionId + ";" +
-                "id:" + id + ";";
-        // logger.debug("cachekey: " + cacheKey);
-        logger.debug("*****       uri " + uri);
-        logger.debug("*****       mods: " + doc);
-        logger.debug("*****       Content type: " + httpServletRequest.getContentType());
-        logger.debug("*****       Char Encoding: " + httpServletRequest.getCharacterEncoding());
+        Object cobject = new Object();
 
-
-        Object cobject =
-                new Object();
-
-        ObjectFromModsExtractor bu = ObjectFromModsExtractor.getInstance();
+        ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
         SessionFactory fact = HibernateUtil.getSessionFactory();
-        Session ses = fact.getCurrentSession();
-        ses.beginTransaction();
+        Session session = fact.getCurrentSession();
+        session.beginTransaction();
 
         try {
-            MetadataWriter mdw = new HibernateMetadataWriter(ses);
-
+            MetadataWriter mdw = new HibernateMetadataWriter(session);
             if (lastModified != null) {
-                logger.debug("Trying to UPDATE object " + uri + ", at time: " + lastModified);
-
-                Object nytCobjectFraMods =
-                        bu.extractFromMods(cobject, doc, ses);
-
-                ses.evict(cobject);
-                cobject = null;
+                Object nytCobjectFraMods = objectFromModsExtractor.extractFromMods(cobject, doc, session);
+                session.evict(cobject);
                 String newLastModified = "";
-
                 newLastModified = mdw.updateCobject(nytCobjectFraMods, lastModified);
-                logger.debug("newLastModified: " + newLastModified);
 
                 if (newLastModified != null && !newLastModified.equals("")) {
-                    ses.getTransaction().commit();
-                    logger.debug("Object created ID: " + nytCobjectFraMods.getId());
+                    session.getTransaction().commit();
                     this.sendToSolr(uri);
                     return Response.ok("Updated").build();
-
                 } else {
-                    ses.getTransaction().rollback();
+                    session.getTransaction().rollback();
                     return Response.notModified("wrong lastModifiedDate provided").build();
                 }
-
             } else {
-                logger.debug("Trying to CREATE new object " + uri);
-
-                Object nytFraMods = bu.extractFromMods(cobject, doc, ses);
-
-
+                Object nytFraMods = objectFromModsExtractor.extractFromMods(cobject, doc, session);
                 String newLastModified = "";
                 newLastModified = mdw.create(nytFraMods);
-
                 if (newLastModified != null || !newLastModified.equals("")) {
                     try {
-                        ses.getTransaction().commit();
-                        logger.debug("Object created ID: " + nytFraMods.getId());
+                        session.getTransaction().commit();
                         sendToSolr(uri);
                         return Response.created(URI.create(nytFraMods.getId())).build();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        ses.getTransaction().rollback();
-                        logger.error("COULD NOT CREATE NEW COBJECT from mods: " +
-                                "\n***********\n "
-                                + nytFraMods.getMods() +
-                                "\n***********\n ");
+                        session.getTransaction().rollback();
+                        logger.error("COULD NOT CREATE NEW COBJECT from mods: " + "\n***********\n " + nytFraMods.getMods() + "\n***********\n ");
                         logger.error(e);
                         Response.ResponseBuilder res = Response.status(409);
                         return res.build();
                     }
                 } else {
-                    ses.getTransaction().rollback();
-                    logger.error("COULD NOT CREATE NEW COBJECT from mods: " +
-                            "\n***********\n "
-                            + nytFraMods.getMods() +
-                            "\n***********\n ");
+                    session.getTransaction().rollback();
+                    logger.error("COULD NOT CREATE NEW COBJECT from mods: " + "\n***********\n " + nytFraMods.getMods() + "\n***********\n ");
                     return Response.status(400).build();
                 }
             }
@@ -141,15 +101,10 @@ public class CreateService {
             Response.ResponseBuilder res = Response.status(500);
             return res.build();
         } finally {
-            logger.debug("In finally block, attempting to close Hibernate resources...");
-            logger.debug("session != null: " + ses != null);
-            logger.debug("session.isConnected(): " + ses.isConnected());
-            if (ses != null && ses.isConnected()){
-                logger.debug("Closing Hibernate session as we're still connected");
-                ses.cancelQuery();
-                ses.close();
+            if (session != null && session.isConnected()){
+                session.cancelQuery();
+                session.close();
             }
-            logger.debug("Exiting finally block...");
         }
     }
 

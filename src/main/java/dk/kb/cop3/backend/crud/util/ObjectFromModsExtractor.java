@@ -56,11 +56,11 @@ public class ObjectFromModsExtractor {
     private static final String EXTENSION_XPATH = "/mods/extension/div";
     private static final String BUILDING_XPATH = "/mods/subject/hierarchicalGeographic/area";
     private static final String MODIFIED_BY_XPATH = "/mods/name[@type='cumulus']/namePart";
-    private static final String ID_XPATH = "/mods/recordInfo/recordIdentifier";
+    public static final String ID_XPATH = "/mods/recordInfo/recordIdentifier";
     private static final String DATE_NOT_BEFORE_XPATH = "/mods/originInfo/dateCreated";
     private static final String DATE_NOT_AFTER_XPATH = "/mods/originInfo/dateCreated";
     private static final String TYPE_XPATH = "/mods/genre";
-    private static final String TITLE_XPATH = "/mods/titleInfo/title";
+    public static final String TITLE_XPATH = "/mods/titleInfo/title";
     private static final String GEO_LAT_LONG_XPATH = "/mods/subject/cartographics/coordinates";
 
 
@@ -77,7 +77,7 @@ public class ObjectFromModsExtractor {
         return ourInstance;
     }
 
-    private ObjectFromModsExtractor() {
+    public ObjectFromModsExtractor() {
         try {
             builder = builderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -149,10 +149,10 @@ public class ObjectFromModsExtractor {
         if (creator != null) {
             copject.setCreator(creator);
         }
-        if (title != null && !title.equals("")) {
+        if (title != null && !title.isEmpty()) {
             copject.setTitle(title);
         }
-        if (title.equals("") && building != null && !building.equals("")) {  // no title provided,  BUT building is present,create a new title
+        if (title.isEmpty() && building != null && !building.isEmpty()) {  // no title provided,  BUT building is present,create a new title
             logger.warn("No title provided in MODS record, auto generating a title: " + building);
             copject.setTitle(building);
         }
@@ -192,7 +192,7 @@ public class ObjectFromModsExtractor {
 
     private void setLatLng(Object copject, Document modsDocument) throws XPathExpressionException {
         String latlng = extract(GEO_LAT_LONG_XPATH, modsDocument);
-        if(latlng != null && !latlng.equals("")){
+        if(latlng != null && !latlng.isEmpty()){
             String lat = latlng.split(",")[0];
             String lon = latlng.split(",")[1];
             GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
@@ -207,30 +207,12 @@ public class ObjectFromModsExtractor {
     private void setTypeAndEdition(Object copject, Session session, Document modsDocument) throws XPathExpressionException {
         String editionString = getEditionString(copject);
         String typeString = extract(TYPE_XPATH, modsDocument);
-        
-        long startTime = 0;
-        if (logger.isDebugEnabled()) {
-            startTime = System.nanoTime();
-        }
         Edition edition = HibernateUtil.getEditionById(session, editionString);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Got edition by ID took"+(System.nanoTime()-startTime)/1000 + " ms");
-        }
         copject.setEdition(edition);
-        logger.debug("Setting edition: " + edition.getId());
         if (typeString.isEmpty()) {
             typeString = "Unknown";
         }
-
-        logger.debug("Setting type: " + typeString);
-
-        if (logger.isDebugEnabled()) {
-            startTime = System.nanoTime();
-        }
         Type type = HibernateUtil.getTypeById(session, Types.getTypeByName(typeString));
-        if (logger.isDebugEnabled()) {
-            logger.debug("Got edition by ID took"+(System.nanoTime()-startTime)/1000 + " ms");
-        }
         copject.setType(type);
     }
 
@@ -244,11 +226,11 @@ public class ObjectFromModsExtractor {
             throw new RuntimeException(e);
         }
 
-        // remove all categories
-        copject.getCategories().clear();
+        removeAllCaterories(copject);
+        insertPresentCategories(copject, session, editionString, subjectNodes);
+    }
 
-        // And insert them again...
-        // .... avoiding those that are no longer relevant
+    private void insertPresentCategories(Object copject, Session session, String editionString, NodeList subjectNodes) {
         try {
             for (int j = 0; j < subjectNodes.getLength(); j++) {
                 NodeList subjectsList = subjectNodes.item(j).getChildNodes();
@@ -271,7 +253,11 @@ public class ObjectFromModsExtractor {
         }
     }
 
-    private static Document parseModsString(String modsString) {
+    private void removeAllCaterories(Object copject) {
+        copject.getCategories().clear();
+    }
+
+    public Document parseModsString(String modsString) {
         Document modsDocument = null;
         try {
             InputSource is = new InputSource(new StringReader(modsString));
@@ -303,7 +289,7 @@ public class ObjectFromModsExtractor {
         return null;
     }
 
-    private String extract(String xPath, Document document) throws XPathExpressionException {
+    public String extract(String xPath, Document document) throws XPathExpressionException {
         String result = ObjectFromModsExtractor.xPath.evaluate(xPath, document);
         if (result != null) {
             result = result.trim();
@@ -312,11 +298,6 @@ public class ObjectFromModsExtractor {
     }
 
     /**
-     * 2014-03-11: JAC
-     * - adding support for YYYY-MM-dd/YYYY-MM-dd (1926-11-11/1926-12-02)
-     *
-     * Extracts two dates from a text string in the format   YYYY, YYYY-YYYY, YYYY/YYYY or YYYY-MM-dd/YYYY-MM-dd
-     *
      * @param extractedDate input string   YYYY, YYYY-YYYY, YYYY/YYYY or YYYY-MM-dd
      * @return an Date[] with two elements    new Date[]{dateNotBefore, dateNotAfter};
      */
@@ -324,49 +305,27 @@ public class ObjectFromModsExtractor {
         Date dateNotAfter = null;
         Date dateNotBefore = null;
         try {
-            if (extractedDate != null || !extractedDate.equals("")) {
-                if (extractedDate.trim().length() == 4) {    // the provided a year only, less than 4 digits.
+            if (extractedDate != null || !extractedDate.isEmpty()) {
+                if (extractedDate.trim().length() == 4) { // Only year
                     dateNotAfter = dfYearOnly.parse(extractedDate);
                     dateNotBefore = dfYearOnly.parse(extractedDate);
-
-                    logger.debug("dateNotAfter: " + dateNotAfter);
-                    logger.debug("dateNotBefore: " + dateNotBefore);
                     return new Date[]{dateNotBefore, dateNotAfter};
-
-                } else if (extractedDate.trim().length() == 9 && extractedDate.contains("-")) {
-                    logger.debug("Date in YYYY-YYYY format. Extracted Date: " + extractedDate);
+                } else if (extractedDate.trim().length() == 9 && extractedDate.contains("-")) { // YYYY-YYYY format
                     dateNotBefore = dfYearOnly.parse(extractedDate.substring(0, 4));
                     dateNotAfter = dfYearOnly.parse(extractedDate.substring(5, 9));
-
-                    logger.debug("dateNotBefore: " + dateNotBefore);
-                    logger.debug("dateNotAfter: " + dateNotAfter);
-
                     return new Date[]{dateNotBefore, dateNotAfter};
-
-                } else if (extractedDate.trim().length() == 9 && extractedDate.contains("/")) {
-                    logger.debug("Date in YYYY/YYYY format. Extracted Date: " + extractedDate);
+                } else if (extractedDate.trim().length() == 9 && extractedDate.contains("/")) { // YYYY/YYYY format
                     dateNotBefore = dfYearOnly.parse(extractedDate.substring(0, 4));
                     dateNotAfter = dfYearOnly.parse(extractedDate.substring(5, 9));
-
-                    logger.debug("dateNotBefore: " + dateNotBefore);
-                    logger.debug("dateNotAfter: " + dateNotAfter);
-
                     return new Date[]{dateNotBefore, dateNotAfter};
-
-                } else if (extractedDate.trim().length() == 10) {
-                    logger.debug("Date in YYYY-MM-dd format. Extracted Date: " + extractedDate);
-
+                } else if (extractedDate.trim().length() == 10) { // YYYY-MM-dd format
                     dateNotAfter = df.parse(extractedDate);
                     dateNotBefore = df.parse(extractedDate);
-                    logger.debug("dateNotAfter: " + dateNotAfter);
-                    logger.debug("dateNotBefore: " + dateNotBefore);
                     return new Date[]{dateNotBefore, dateNotAfter};
-                } else if(extractedDate.trim().length() == 21 && extractedDate.contains("/")) {
-                    logger.debug("Date in YYYY-MM-DD/YYYY-MM-DD format. Extracted Date: " + extractedDate);
+                } else if(extractedDate.trim().length() == 21 && extractedDate.contains("/")) { // YYYY-MM-DD/YYYY-MM-DD format
                     dateNotBefore = df.parse(extractedDate.split("/")[0]);
                     dateNotAfter = df.parse(extractedDate.split("/")[1]);
                     return new Date[]{dateNotBefore, dateNotAfter};
-
                 } else {
                     logger.warn("No correct formatted date format supplied. Formats accepted yyyy, yyyy-yyyy, yyyy/yyyy and yyyy-MM-dd. Received: " + extractedDate);
                 }

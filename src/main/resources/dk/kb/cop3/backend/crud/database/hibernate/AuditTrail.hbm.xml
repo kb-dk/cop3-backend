@@ -14,7 +14,7 @@
         <property name="eid" type="string">
             <column name="EID" length="256" />
         </property>
-        <property name="mods" type="string">
+        <property name="mods" type="text">
             <column name="MODS" />
         </property>
         <property name="lastModified" type="string">

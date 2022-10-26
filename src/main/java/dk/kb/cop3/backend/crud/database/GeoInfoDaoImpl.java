@@ -2,7 +2,7 @@ package dk.kb.cop3.backend.crud.database;
 
 import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
