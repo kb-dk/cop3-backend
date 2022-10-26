@@ -60,19 +60,8 @@ public class EditionService {
             session.close();
             return Response.ok()
                     .type(formulator.mediaType())
-                    .entity(getStringFromDoc(responseDoc))
+                    .entity(formulator.serialize(responseDoc))
                     .build();
         }
-    }
-
-    public static String getStringFromDoc(Document doc) throws TransformerException {
-        DOMSource domSource = new DOMSource(doc);
-        StringWriter writer = new StringWriter();
-        StreamResult result = new StreamResult(writer);
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.transform(domSource, result);
-        writer.flush();
-        return writer.toString();
     }
 }

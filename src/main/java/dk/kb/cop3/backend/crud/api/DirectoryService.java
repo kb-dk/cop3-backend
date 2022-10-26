@@ -39,7 +39,7 @@ public class DirectoryService {
         formulator.setFormat(format);
         formulator.setDataSource(source);
         Document responseDoc = formulator.formulate();
-        Response.ResponseBuilder res = Response.ok(EditionService.getStringFromDoc(responseDoc));
+        Response.ResponseBuilder res = Response.ok(formulator.serialize(responseDoc));
         if (session.isConnected()){
             session.close();
         }
