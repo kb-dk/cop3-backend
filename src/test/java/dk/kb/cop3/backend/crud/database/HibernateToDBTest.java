@@ -168,7 +168,7 @@ public class HibernateToDBTest {
 
     @Test
     public void findAnEditionList() {	
-	HibernateEditionSource eds = new HibernateEditionSource(session);
+	HibernateEditionTool eds = new HibernateEditionTool(session);
 	eds.execute();
 	if(eds.hasMore()) {
 	    Edition ed = eds.getAnother();
