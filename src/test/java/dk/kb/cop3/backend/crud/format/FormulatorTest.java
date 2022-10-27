@@ -1,7 +1,18 @@
 package dk.kb.cop3.backend.crud.format;
 
+import dk.kb.cop3.backend.crud.database.HibernateUtil;
+import dk.kb.cop3.backend.crud.database.MetadataSource;
+import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
+import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
+import org.apache.commons.io.FileUtils;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.Test;
 import org.w3c.dom.Document;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * jUnit tests of formulators, using a fake metadatasource
@@ -100,78 +111,85 @@ public class FormulatorTest {
     }
     */
     @Test
-    public void testSolrFormulator() {
+    public void testSolrFormulator() throws IOException {
 
-    String id = "/images/luftfo/2011/maj/luftfoto/object203821";
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        String id = "/images/luftfo/2011/maj/luftfoto/object182167";
+        String mods = FileUtils.readFileToString(new File("src/test/resources/testdata/luftfoto_object182167.mods.xml"));
+        ObjectFromModsExtractor extractor = ObjectFromModsExtractor.getInstance();
+        Object object = new Object();
+        object = extractor.extractFromMods(object, mods, session);
+        session.saveOrUpdate(object);
+        transaction.commit();
 
-    org.hibernate.Session session = 
-	dk.kb.cop3.backend.crud.database.HibernateUtil.getSessionFactory().getCurrentSession();
-    session.beginTransaction();
+        MetadataSource source = new SolrMetadataSource(session);
+        source.setSearchterms("id", id);
+        source.execute();
 
-    dk.kb.cop3.backend.crud.database.MetadataSource source 
-	= new dk.kb.cop3.backend.crud.database.HibernateMetadataSource(session);
-    source.setSearchterms("id",id);
-    source.execute();
+        MetadataFormulator formulator = new SolrMetadataFormulator();
 
-    MetadataFormulator formulator = new SolrMetadataFormulator();
+        formulator.setDataSource(source);
+        formulator.setOutPutStream(System.out);
+        Document dom = formulator.formulate();
+        System.out.println(formulator.serialize(dom));
 
-    formulator.setDataSource(source);
-    formulator.setOutPutStream(System.out);
-    Document dom = formulator.formulate();
-    System.out.println(formulator.serialize(dom));
+        session.delete(object);
+        session.close();
 
-    if (session != null && session.isConnected()){
-	logger.debug("Closing Hibernate session as we're still connected");
-	session.cancelQuery();
-	session.close();
     }
 
-}
 
+    /*@Test
+      public void testAtomFormulator() {
+      dk.kb.cop3.backend.crud.database.MetadataSource source =
+      new dk.kb.cop3.backend.crud.database.TestMetadataSource();
 
-/*@Test
-  public void testAtomFormulator() {
-  dk.kb.cop3.backend.crud.database.MetadataSource source =
-  new dk.kb.cop3.backend.crud.database.TestMetadataSource();
+      MetadataFormulator formulator = new AtomMetadataFormulator();
 
-  MetadataFormulator formulator = new AtomMetadataFormulator();
+      formulator.setDataSource(source);
+      formulator.setOutPutStream(System.out);
+      Document dom = formulator.formulate();
+      System.out.println(formulator.serialize(dom));
+      }
+    */
+    @Test
+    public void testContentFormulator() throws IOException {
 
-  formulator.setDataSource(source);
-  formulator.setOutPutStream(System.out);
-  Document dom = formulator.formulate();
-  System.out.println(formulator.serialize(dom));
-  }
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        String id = "/images/luftfo/2011/maj/luftfoto/object182167";
+        String mods = FileUtils.readFileToString(new File("src/test/resources/testdata/luftfoto_object182167.mods.xml"));
+        ObjectFromModsExtractor extractor = ObjectFromModsExtractor.getInstance();
+        Object object = new Object();
+        object = extractor.extractFromMods(object, mods, session);
+        session.saveOrUpdate(object);
+        transaction.commit();
 
-@Test
-    public void testContentFormulator() {
+        MetadataSource source = new SolrMetadataSource(session);
+        source.setSearchterms("id", id);
+        source.execute();
 
-    String id = "/images/luftfo/2011/maj/luftfoto/object62173";
-    org.hibernate.Session session = 
-	dk.kb.cop3.backend.crud.database.HibernateUtil.getSessionFactory().getCurrentSession();
-    session.beginTransaction();
+        MetadataFormulator formulator = new ContentMetadataFormulator();
 
-    dk.kb.cop3.backend.crud.database.MetadataSource source 
-	= new dk.kb.cop3.backend.crud.database.HibernateMetadataSource(session);
-    source.setSearchterms("id",id);
-    source.execute();
+        formulator.setDataSource(source);
+        formulator.setOutPutStream(System.out);
+        Document dom = formulator.formulate();
+        System.out.println(formulator.serialize(dom));
 
-    MetadataFormulator formulator = new ContentMetadataFormulator();	
-
-    formulator.setDataSource(source);
-    formulator.setOutPutStream(System.out);
-    Document dom = formulator.formulate();
-    System.out.println(formulator.serialize(dom));
-}
-
+        session.delete(object);
+        session.close();
+    }
+/*
 @Test
 public void testEditionFormulator() {
 
-    org.hibernate.Session session = 
+    org.hibernate.Session session =
 	dk.kb.cop3.backend.crud.database.HibernateUtil.getSessionFactory().getCurrentSession();
     session.beginTransaction();
 
 
-    dk.kb.cop3.backend.crud.database.HibernateEditionSource source 
+    dk.kb.cop3.backend.crud.database.HibernateEditionSource source
 	= new dk.kb.cop3.backend.crud.database.HibernateEditionSource(session);
 
     EditionMetadataFormulator formulator = new EditionMetadataFormulator();

@@ -2,8 +2,19 @@ package dk.kb.cop3.backend.crud.format;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.xalan.processor.TransformerFactoryImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * Reads a MetadataSource returning mods data, creating SOLR an add document
@@ -21,43 +32,28 @@ public class SolrMetadataFormulator extends MetadataFormulator {
     private String copIntBaseUrl = this.consts.getConstants().getProperty("cop2_backend.internal.baseurl");
     private String internalBaseUrl = copIntBaseUrl + "/syndication";
 
-    org.apache.log4j.Logger logger =
-            org.apache.log4j.Logger.getLogger(SolrMetadataFormulator.class.getPackage().getName());
+    Logger logger = LogManager.getLogger(SolrMetadataFormulator.class.getPackage().getName());
 
-    private java.lang.String format = "mods";
-    private java.lang.String xslt = "/build_mods.xsl";
-    private java.lang.String template = "/template_mods_collection.xml";
+    private String format = "mods";
+    private String xslt = "/build_mods.xsl";
+    private String template = "/template_mods_collection.xml";
 
-    javax.xml.transform.TransformerFactory trans_fact = new org.apache.xalan.processor.TransformerFactoryImpl();
-    private javax.xml.transform.Transformer[] steps = new javax.xml.transform.Transformer[2];
+    TransformerFactory trans_fact = new TransformerFactoryImpl();
+    private Transformer[] steps = new Transformer[2];
 
     public SolrMetadataFormulator() {
-        logger.debug("constructing SolrMetadataFormulator");
         this.steps[0] = this.trInit("/mods2ese.xsl");
-        logger.debug("got first transform");
         this.steps[1] = this.trInit("/ese_solrizr.xsl");
-        logger.debug("done constructing SolrMetadataFormulator");
     }
 
-    public org.w3c.dom.Document formulate() {
-        logger.debug("before anything");
-
-        org.w3c.dom.Document solr_doc = (org.w3c.dom.Document) null;
-
-        org.w3c.dom.Document src = this.formulate(this.format, this.template, this.xslt);
-        logger.debug("transformed mods " + src);
-        javax.xml.transform.dom.DOMSource dom_source = new javax.xml.transform.dom.DOMSource(src);
-
-        javax.xml.transform.dom.DOMResult dom_result = new javax.xml.transform.dom.DOMResult();
-
-	    String exhibition = this.getRequest().getParameter("spotlight_exhibition") == null ? "" : this.getRequest().getParameter("spotlight_exhibition");
-
-        logger.debug("about to transform");
+    public Document formulate() {
+        Document solr_doc = null;
+        Document src = this.formulate(this.format, this.template, this.xslt);
+        DOMSource dom_source = new DOMSource(src);
+        DOMResult dom_result = new DOMResult();
 
         for (int i = 0; i < steps.length; i++) {
-            logger.debug("before step " + i);
             if (steps[i] == null) {
-                logger.debug("end of civilization: steps[" + i + "] is null");
                 return null;
             }
 
@@ -65,46 +61,33 @@ public class SolrMetadataFormulator extends MetadataFormulator {
             steps[i].setParameter("url_prefix", baseUrl);
             steps[i].setParameter("internal_url_prefix", internalBaseUrl);
             steps[i].setParameter("raw_mods", this.currentRawMods);
-            //	    steps[i].setParameter("url_prefix",copBaseUrl);
             steps[i].setParameter("content_context", this.consts.getConstants().getProperty("gui.uri"));
             try {
                 steps[i].transform(dom_source, dom_result);
-                solr_doc = (org.w3c.dom.Document) dom_result.getNode();
-                logger.debug("transformed solr_doc " + solr_doc);
+                solr_doc = (Document) dom_result.getNode();
                 if (i < steps.length) {
-                    dom_source = new javax.xml.transform.dom.DOMSource(solr_doc);
-                    dom_result = new javax.xml.transform.dom.DOMResult();
+                    dom_source = new DOMSource(solr_doc);
+                    dom_result = new DOMResult();
                 }
-            } catch (javax.xml.transform.TransformerException trnsFrmPrblm) {
+            } catch (TransformerException trnsFrmPrblm) {
                 logger.debug(trnsFrmPrblm.getMessage());
             }
         }
         return solr_doc;
     }
 
-    private javax.xml.transform.Transformer trInit(java.lang.String xsl) {
+    private Transformer trInit(String xsl) {
 
         String xfile = xsl;
-        logger.debug("initializing transform for " + xfile);
-
-        // getResource() returns a file URL
-
-        logger.debug("xsl_path_is :" + this.getClass().getResource(xfile));
-
-        javax.xml.transform.Transformer transform = null;
+        Transformer transform = null;
 
         try {
-            logger.debug("about to make transform for " + xfile);
-
-            // this.getClass().getResource(xfile).toString() the URL object as a systemID
-
-            javax.xml.transform.stream.StreamSource source =
-                    new javax.xml.transform.stream.StreamSource(this.getClass().getResource(xfile).toString());
+            StreamSource source =
+                    new StreamSource(this.getClass().getResource(xfile).toString());
 
             transform =
                     trans_fact.newTransformer(source);
-            logger.debug("hopefully made transform for " + xfile);
-        } catch (javax.xml.transform.TransformerConfigurationException transformerPrblm) {
+        } catch (TransformerConfigurationException transformerPrblm) {
             logger.debug("problem might be: " + transformerPrblm.getMessage());
             transformerPrblm.printStackTrace();
         }
@@ -112,15 +95,11 @@ public class SolrMetadataFormulator extends MetadataFormulator {
         if (transform == null) {
             logger.debug("transform for " + xfile + " didn't work as expected");
         }
-
         return transform;
-
     }
 
     @Override
     protected Element insertElementAt(Document resultSet, Element root) {
         return root;
     }
-
-
 }
