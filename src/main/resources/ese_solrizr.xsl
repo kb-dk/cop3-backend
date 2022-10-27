@@ -18,7 +18,6 @@
   <xsl:param name="iiif_thumb_nail"><xsl:text>/full/!400,/0/native.jpg</xsl:text></xsl:param>
   <xsl:param name="iiif_square_thumb_nail"><xsl:text>/100,100,1000,1000/!100,100/0/native.jpg</xsl:text></xsl:param>
   <xsl:param name="raw_mods" select="''"/>
-  <xsl:param name="spotlight_exhibition" select="''"/>
   <xsl:param name="comments" select ="''" />
 
 
@@ -398,13 +397,6 @@
       <xsl:element name="field">
 	<xsl:attribute name="name">read_direction_ssi</xsl:attribute>
 	<xsl:value-of select="$mods//md:mods/md:physicalDescription/md:note[@type='pageOrientation']"/>
-      </xsl:element>
-    </xsl:if>
-
-    <xsl:if test="$spotlight_exhibition">
-      <xsl:element name="field">
-	<xsl:attribute name="name">spotlight_exhibition_ssi</xsl:attribute>
-	<xsl:value-of select="$spotlight_exhibition"/>
       </xsl:element>
     </xsl:if>
 

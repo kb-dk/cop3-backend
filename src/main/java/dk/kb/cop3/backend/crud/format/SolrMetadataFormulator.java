@@ -64,7 +64,6 @@ public class SolrMetadataFormulator extends MetadataFormulator {
             steps[i].setParameter("metadata_context", copBaseUrl);
             steps[i].setParameter("url_prefix", baseUrl);
             steps[i].setParameter("internal_url_prefix", internalBaseUrl);
-            steps[i].setParameter("spotlight_exhibition",exhibition);
             steps[i].setParameter("raw_mods", this.currentRawMods);
             //	    steps[i].setParameter("url_prefix",copBaseUrl);
             steps[i].setParameter("content_context", this.consts.getConstants().getProperty("gui.uri"));

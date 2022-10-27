@@ -34,7 +34,6 @@ public class SolrizrService {
 	@GET
 	@Path("/editions/")
 	public Response edition(@DefaultValue("") @QueryParam("solr_baseurl") String solr_baseurl,
-				@DefaultValue("") @QueryParam("spotlight_exhibition") String spotlight_exhibition,
 							@Context HttpServletRequest httpServletRequest,
 							@Context ServletContext servletContext)
 	{
@@ -79,7 +78,6 @@ public class SolrizrService {
 						@PathParam("id") String id,
 						@PathParam("lang") String language,
 						@DefaultValue("") @QueryParam("solr_baseurl") String solr_baseurl,
-			                        @DefaultValue("") @QueryParam("spotlight_exhibition") String spotlight_exhibition,
 						@Context HttpServletRequest httpServletRequest,
 						@Context ServletContext servletContext)
 	{
@@ -87,13 +85,11 @@ public class SolrizrService {
 		String cop_id          = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
 		String source_data_url = this.consts.getConstants().getProperty("cop2_backend.internal.baseurl");
 
-		String exhibition =  "".equals(spotlight_exhibition) ? "" : "&spotlight_exhibition=" + spotlight_exhibition;
 
-		logger.debug("spotlight_exhibition argument: " + exhibition);
 		if (id.startsWith("object"))
-			source_data_url += "/syndication" + cop_id + "?format=solr" + exhibition;
+			source_data_url += "/syndication" + cop_id + "?format=solr";
 		else
-			source_data_url += "/navigation"  + cop_id + "?format=solr" + exhibition;
+			source_data_url += "/navigation"  + cop_id + "?format=solr";
 
 		String solr_doc = "";
 
