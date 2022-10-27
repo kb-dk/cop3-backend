@@ -10,6 +10,7 @@ public class MigrateDB {
         MigrateCategories.main(args);
         MigrateUserRole.main(args);
         MigrateUsers.main(args);
+        MigrateAreasInDk.main(args);
         MigrateObjects.main(args);
         MigrateComments.main(args);
     }
