@@ -73,7 +73,7 @@ public class ConfigurationService {
                 if (editionObject != null) {
                     Properties constants = CopBackendProperties.getInstance().getConstants();
                     String baseUrl = constants.getProperty("cop2_backend.baseurl");
-                    configuration.setProperty("template",constants.getProperty("template.default"));
+//                    configuration.setProperty("template",constants.getProperty("template.default"));
                     configuration.setProperty("default_mode","thumbnail");
                     configuration.setProperty("itemsPerPage","40");
                     configuration.setProperty("root_category",editionObject.getCumulusTopCatagory());
