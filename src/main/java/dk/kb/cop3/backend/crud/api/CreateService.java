@@ -55,7 +55,7 @@ public class CreateService {
         ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
         SessionFactory fact = HibernateUtil.getSessionFactory();
         Session session = fact.getCurrentSession();
-        session.beginTransaction();
+//        session.beginTransaction();
 
         try {
             MetadataWriter mdw = new HibernateMetadataWriter(session);
@@ -118,6 +118,16 @@ public class CreateService {
      * @param edition
      * @param opml
      * @return
+     *
+     * Example:
+     * PUT http://localhost:8080/cop/create/letters/judsam/2011/mar/dsa
+     * Content-Type: application/xml
+     *
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <opml version="2.0">
+     * ...
+     * </opml>
+     *
      */
 
     @PUT

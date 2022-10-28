@@ -131,14 +131,17 @@ public class HibernateUtil {
 
 
     public static Edition getEditionById(Session ses, String id) {
-        Edition ed = (Edition) ses.load(Edition.class, id);
-
+        Transaction transaction = ses.beginTransaction();
+        Edition ed = (Edition) ses.get(Edition.class, id);
+        transaction.commit();
         myLogger.debug("Found " + id + " edition " + ed.getName());
         return ed;
     }
 
     public static Type getTypeById(Session ses, int id) {
+        Transaction transaction = ses.beginTransaction();
         Type t = (Type) ses.load(Type.class, new BigDecimal(id));
+        transaction.commit();
 
         myLogger.debug("Found " + id + " type " + t);
         return t;
