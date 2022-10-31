@@ -168,21 +168,6 @@
       <version>2.1</version>
     </dependency>
 
-
-    
-    <!-- dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-runtime</artifactId>
-      <version>4.0.0-M4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-jaxb</artifactId>
-      <version>3.0.4</version>
-    </dependency -->
-
-    
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
