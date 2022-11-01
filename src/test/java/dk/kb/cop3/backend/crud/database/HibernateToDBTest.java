@@ -39,6 +39,7 @@ public class HibernateToDBTest {
     private static final double ORIGINAL_LON = 10.177794479921577;
     private static final double ORIGINAL_LAT = 55.275795018274586;
 
+    private static MetadataSource mds;
 
     @BeforeClass
     public static void before() {
@@ -72,18 +73,18 @@ public class HibernateToDBTest {
     public void opretEnKategori() {
         Category nyCat = new Category(HIBERNATE_TEST_CATEGORY, KATEGORI_TEKST);
         session.save(nyCat);
-        hibernateMetadataSource.setCategory(HIBERNATE_TEST_CATEGORY);
-        assertEquals(nyCat.getCategoryText(), hibernateMetadataSource.getCategory().getCategoryText());
+        mds.setCategory(HIBERNATE_TEST_CATEGORY);
+        assertEquals(nyCat.getCategoryText(), mds.getCategory().getCategoryText());
         //findCategory
-        hibernateMetadataSource.setCategory(HIBERNATE_TEST_CATEGORY);
-        Category cat = hibernateMetadataSource.getCategory();
+        mds.setCategory(HIBERNATE_TEST_CATEGORY);
+        Category cat = mds.getCategory();
         assertEquals(cat.getCategoryText(), KATEGORI_TEKST);
     }
 
     @Test
     public void findEdition() {
-        hibernateMetadataSource.setEdition("/images/luftfo/2011/maj/luftfoto");
-        Edition ed = hibernateMetadataSource.getEdition();
+        mds.setEdition("/images/luftfo/2011/maj/luftfoto");
+        Edition ed = mds.getEdition();
         assertEquals(ed.getName(), "Luftfoto");
     }
 
@@ -100,13 +101,6 @@ public class HibernateToDBTest {
         lon = pointForTest.getCoordinate().getY();
         Assert.assertTrue(lat == NEW_LAT);
         Assert.assertTrue(lon == NEW_LOM);
-    }
-
-    @Test
-    public void findEditionList() {
-        HibernateEditionSource hibernateEditionSource = new HibernateEditionSource(session);
-        hibernateEditionSource.execute();
-        Assert.assertTrue(hibernateEditionSource.getNumberOfHits()>1);
     }
 
 
