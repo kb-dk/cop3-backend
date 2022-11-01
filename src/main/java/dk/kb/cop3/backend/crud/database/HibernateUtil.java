@@ -95,7 +95,7 @@ public class HibernateUtil {
 
     @Deprecated
     public static Object getCobject(Session ses, String id) {
-        Object cobject = (Object) ses.load(Object.class, id);
+        Object cobject =  ses.get(Object.class, id);
         myLogger.debug(cobject);
         return cobject;
     }
@@ -131,17 +131,13 @@ public class HibernateUtil {
 
 
     public static Edition getEditionById(Session ses, String id) {
-        Transaction transaction = ses.beginTransaction();
-        Edition ed = (Edition) ses.get(Edition.class, id);
-        transaction.commit();
+        Edition ed = ses.get(Edition.class, id);
         myLogger.debug("Found " + id + " edition " + ed.getName());
         return ed;
     }
 
     public static Type getTypeById(Session ses, int id) {
-        Transaction transaction = ses.beginTransaction();
-        Type t = (Type) ses.load(Type.class, new BigDecimal(id));
-        transaction.commit();
+        Type t = ses.get(Type.class, new BigDecimal(id));
 
         myLogger.debug("Found " + id + " type " + t);
         return t;
@@ -179,8 +175,6 @@ public class HibernateUtil {
             newCategory.setId(id);
             newCategory.setCategoryText(categoryText);
             ses.save(newCategory);
-            /* ses.getTransaction().commit();
-            ses.getTransaction().begin();*/
             myLogger.info("Create new category " + newCategory);
             return newCategory;
         } else {

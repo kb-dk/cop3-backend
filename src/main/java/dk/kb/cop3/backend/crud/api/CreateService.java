@@ -5,26 +5,24 @@ import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataWriter;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
-import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
-import dk.kb.cop3.backend.crud.util.JMSProducer;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
-import javax.jms.JMSException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 
 
 // The class binds to /create
+
 @Path("/create")
 public class CreateService {
     private static Logger logger = Logger.getLogger(CreateService.class);
@@ -38,97 +36,70 @@ public class CreateService {
      */
     @PUT
     @Path("/{medium}/{collection}/{year}/{month}/{edition}/{id}")
-    public Response post(@PathParam("medium") String medium,
+    public Response createCobjectFromMods(@PathParam("medium") String medium,
                          @PathParam("collection") String collection,
                          @PathParam("year") int year,
                          @PathParam("month") String month,
                          @PathParam("edition") String edition,
                          @PathParam("id") String id,
-                         @QueryParam("lastModified") String lastModified,
                          @Context HttpServletRequest httpServletRequest,
-                         String doc) {
-
-        String uri = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
-        String editionId = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition;
-        Object cobject = new Object();
-
-        ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
-        SessionFactory fact = HibernateUtil.getSessionFactory();
-        Session session = fact.getCurrentSession();
-//        session.beginTransaction();
-
+                         String mods) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             MetadataWriter mdw = new HibernateMetadataWriter(session);
-            if (lastModified != null) {
-                Object nytCobjectFraMods = objectFromModsExtractor.extractFromMods(cobject, doc, session);
-                session.evict(cobject);
-                String newLastModified = "";
-                newLastModified = mdw.updateCobject(nytCobjectFraMods, lastModified);
-
-                if (newLastModified != null && !newLastModified.equals("")) {
-                    session.getTransaction().commit();
-                    this.sendToSolr(uri);
-                    return Response.ok("Updated").build();
-                } else {
-                    session.getTransaction().rollback();
-                    return Response.notModified("wrong lastModifiedDate provided").build();
-                }
-            } else {
-                Object nytFraMods = objectFromModsExtractor.extractFromMods(cobject, doc, session);
-                String newLastModified = "";
-                newLastModified = mdw.create(nytFraMods);
-                if (newLastModified != null || !newLastModified.equals("")) {
-                    try {
-                        session.getTransaction().commit();
-                        sendToSolr(uri);
-                        return Response.created(URI.create(nytFraMods.getId())).build();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        session.getTransaction().rollback();
-                        logger.error("COULD NOT CREATE NEW COBJECT from mods: " + "\n***********\n " + nytFraMods.getMods() + "\n***********\n ");
-                        logger.error(e);
-                        Response.ResponseBuilder res = Response.status(409);
-                        return res.build();
-                    }
-                } else {
-                    session.getTransaction().rollback();
-                    logger.error("COULD NOT CREATE NEW COBJECT from mods: " + "\n***********\n " + nytFraMods.getMods() + "\n***********\n ");
-                    return Response.status(400).build();
-                }
+            String objectId = mdw.createFromMods(mods);
+            if ("conflict".equals(objectId)) {
+                return Response.status(HttpStatus.SC_CONFLICT)
+                        .entity("object allready exists")
+                        .build();
             }
-        } catch (Throwable e) {
-            logger.error("Unable to create object "+editionId+id,e);
-            Response.ResponseBuilder res = Response.status(500);
-            return res.build();
+            if ("error".equals(objectId)) {
+                return Response.serverError().entity("error creating object").build();
+            }
+            return  Response.created(URI.create(objectId)).build();
         } finally {
-            if (session != null && session.isConnected()){
-                session.cancelQuery();
-                session.close();
-            }
+            session.close();
         }
     }
 
-    /**
-     * This methos is related to the navigation service.
-     *
-     * @param medium
-     * @param collection
-     * @param year
-     * @param month
-     * @param edition
-     * @param opml
-     * @return
-     *
-     * Example:
-     * PUT http://localhost:8080/cop/create/letters/judsam/2011/mar/dsa
-     * Content-Type: application/xml
-     *
-     * <?xml version="1.0" encoding="UTF-8"?>
-     * <opml version="2.0">
-     * ...
-     * </opml>
-     *
-     */
+    @POST
+    @Path("/{medium}/{collection}/{year}/{month}/{edition}/{id}")
+    public Response updateExistingObjectFromMods(@PathParam("medium") String medium,
+                                          @PathParam("collection") String collection,
+                                          @PathParam("year") int year,
+                                          @PathParam("month") String month,
+                                          @PathParam("edition") String edition,
+                                          @PathParam("id") String id,
+                                          @QueryParam("lastmodified") String lastModified,
+                                          @QueryParam("user") String user,
+                                          @Context HttpServletRequest httpServletRequest,
+                                          String mods) {
+        String idFromRequest = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            MetadataWriter mdw = new HibernateMetadataWriter(session);
+            String objectId = mdw.updateFromMods(idFromRequest,mods,lastModified,user);
+            if (StringUtils.isEmpty(objectId) || "error".equals(objectId) ||
+                "ids-do-not-match".equals(objectId)) {
+                logger.error("unable to update from mods");
+                return Response.serverError().entity(objectId).build();
+            }
+            if (objectId.equals("out-of-date")) {
+                return Response.notModified("out-of-date").build();
+            }
+            if ("id-not-found".equals(objectId)) {
+                return Response.status(HttpStatus.SC_NOT_FOUND)
+                        .entity("object not found")
+                        .build();
+            }
+            return Response.ok("Updated").build();
+        } catch (HibernateException ex) {
+            logger.error("Cannot create object from mods",ex);
+            return Response.serverError().entity("error").build();
+        } finally {
+            session.close();
+        }
+    }
 
     @PUT
     @Path("/{medium}/{collection}/{year}/{month}/{edition}")

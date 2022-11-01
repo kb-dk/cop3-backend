@@ -50,6 +50,15 @@ public class HibernateMetadataWriterTest {
     }
 
     @Test
+    public void createFromMods() {
+        String testMods = TestUtil.getTestMods();
+        HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
+        String id = metadataWriter.createFromMods(testMods);
+        Assert.assertNotEquals("",id);
+        TestUtil.deleteFromDatabase(Object.class, "/images/luftfo/2011/maj/luftfoto/object182167", session);
+    }
+
+    @Test
     public void updateCobject() throws XPathExpressionException {//Updatefunktionen, som denne test dækker kaldes tilsyneladende reelt aldrig. Så måske skal både metode og test dø!
         final String TEST_LOCATION = "Testlocation";
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);

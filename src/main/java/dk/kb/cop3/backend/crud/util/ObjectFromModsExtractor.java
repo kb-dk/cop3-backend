@@ -8,7 +8,9 @@ import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.w3c.dom.Document;
@@ -106,6 +108,7 @@ public class ObjectFromModsExtractor {
         }
 
         Document modsDocument = parseModsString(modsString);
+        Transaction transaction = session.beginTransaction();
         try {
             // Extract simple strings
             populateCopjectWithSimpleFields(copject, version, modsDocument);
@@ -118,7 +121,7 @@ public class ObjectFromModsExtractor {
             copject.setDeleted('n');
             copject.setLastModified(getCurrentTimestamp());
             copject.setMods(modsString);
-            
+
 /* should be initalized in (c)object constructor
             copject.setRandomNumber(new BigDecimal(Math.random()));
             copject.setInterestingess(new BigDecimal(0));
@@ -129,6 +132,12 @@ public class ObjectFromModsExtractor {
             
         } catch (XPathExpressionException e) {
             logger.error("Error evaluating XPath. Error is: " + e.getMessage());
+        } catch (HibernateException e) {
+            logger.error("Database error while extracting cobject from mods",e);
+        } finally {
+            if(transaction.isActive()) {
+                transaction.commit();
+            }
         }
         return copject;
     }

@@ -8,12 +8,11 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.HibernateException;
 
 import org.hibernate.Transaction;
-import org.hibernate.engine.transaction.internal.TransactionImpl;
-import org.hibernate.query.NativeQuery;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
+import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -26,14 +25,40 @@ public class HibernateMetadataWriter implements MetadataWriter {
     }
 
     public String create(Object cobject) {
+        Transaction transaction = hibSession.beginTransaction();
         try {
-            Transaction transaction = hibSession.beginTransaction();
             hibSession.save(cobject);
-            transaction.commit();
             return cobject.getLastModified();
-        } catch (HibernateException ex) {
+        } catch (Exception ex) {
             logger.error("cannot create object: " + ex.getMessage());
+            transaction.rollback();
             throw ex;
+        } finally {
+            if (transaction.isActive()) {
+                transaction.commit();
+            }
+        }
+    }
+
+    public String createFromMods(String mods) {
+        ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
+        Object newObjectFromMods = objectFromModsExtractor.extractFromMods(new Object(), mods, hibSession);
+        Transaction trans = hibSession.beginTransaction();
+        try {
+            if (hibSession.get(Object.class, newObjectFromMods.getId()) != null) {
+                // object allready exists
+                trans.commit();
+                return "conflict";
+            }
+            hibSession.save(newObjectFromMods);
+            trans.commit();
+            return newObjectFromMods.getId();
+        } catch (Exception ex) {
+            logger.error("Error creating new cobject",ex);
+            if (trans != null && trans.isActive()) {
+                trans.rollback();
+            }
+            return "error";
         }
     }
 
@@ -59,7 +84,7 @@ public class HibernateMetadataWriter implements MetadataWriter {
                         "Provided " + lastmodified + " but found " + existingCobject.getLastModified() + " in db");
                 return "";
             }
-        } catch (HibernateException ex) {
+        } catch (Exception ex) {
             logger.error("cannot create object: " + ex.getMessage());
             throw ex;
         }
@@ -69,46 +94,43 @@ public class HibernateMetadataWriter implements MetadataWriter {
     public String updateFromMods(String id, String mods, String lastModified, String user) {
         ObjectFromModsExtractor bu = ObjectFromModsExtractor.getInstance();
         if (!id.equals(bu.getIdFromMods(mods))) {
-            return null;
+            return "ids-do-not-match";
         }
-        try {
-            hibSession.beginTransaction();
-            Object existingCobject = (Object) hibSession.get(Object.class, id);
-            if (existingCobject != null) {
-                    if (existingCobject.getLastModified().equals(lastModified)) {
-                        AuditTrail auditTrail = createAuditTrail(existingCobject, false);
-                        existingCobject = bu.extractFromMods(existingCobject,
-							     mods,
-							     existingCobject.getObjVersion().add(new BigDecimal("1")),
-							     hibSession);
-                        existingCobject.setInterestingess(existingCobject.getInterestingess().add(new BigDecimal("1")));
-                        existingCobject.setLastModified("" + new Date().getTime()); // set the new lastmodified to just now.
-                        existingCobject.setLastModifiedBy(user);
+        Object existingCobject = hibSession.get(Object.class, id);
+        if (existingCobject != null) {
+                if (existingCobject.getLastModified().equals(lastModified)) {
+                    AuditTrail auditTrail = createAuditTrail(existingCobject, false);
+                    existingCobject = bu.extractFromMods(existingCobject,
+                             mods,
+                             existingCobject.getObjVersion().add(new BigDecimal("1")),
+                             hibSession);
+                    existingCobject.setInterestingess(existingCobject.getInterestingess().add(new BigDecimal("1")));
+                    existingCobject.setLastModified("" + new Date().getTime()); // set the new lastmodified to just now.
+                    existingCobject.setLastModifiedBy(user);
+                    Transaction trans = hibSession.beginTransaction();
+                    try {
                         hibSession.update(existingCobject);
                         hibSession.save(auditTrail);
-                        return existingCobject.getLastModified();
-                    }else {
-                        logger.error(" Updating cobject " + id + " failed! Out-of-date. Copject have been updated since retrievel.\n " +
-                                "Provided " + lastModified + " but found " + existingCobject.getLastModified() + " in db");
-                        return "out-of-date";
+                        trans.commit();
+                    } catch (Exception e) {
+                        logger.error("Unable to update cobject",e);
+                        trans.rollback();
+                        return "error";
                     }
-            }else {
-                return null;
-            }
-        } catch (HibernateException ex) {
-            hibSession.getTransaction().rollback();
-            logger.error(" Opdatering af cobjectets metadata kunne ikke udføres " + ex.getMessage());
-            throw ex;
-        } finally {
-            if (hibSession.getTransaction().isActive()){
-                hibSession.getTransaction().commit();
-            }
+                    return existingCobject.getLastModified();
+                }else {
+                    logger.error(" Updating cobject " + id + " failed! Out-of-date. Copject have been updated since retrievel.\n " +
+                            "Provided " + lastModified + " but found " + existingCobject.getLastModified() + " in db");
+                    return "out-of-date";
+                }
+        }else {
+            return "id-not-found";
         }
     }
 
     @Override
     public String updateGeo(String id, double lat, double lon, String user, String lastModified, double correctness) {
-        hibSession.beginTransaction();
+        Transaction trans = hibSession.beginTransaction();
 /*
         NativeQuery sqlQuery = hibSession.createSQLQuery("alter session set optimizer_mode=first_rows");
         sqlQuery.executeUpdate();
@@ -128,13 +150,13 @@ public class HibernateMetadataWriter implements MetadataWriter {
                         "Provided " + lastModified +  " but found " + existingCobject.getLastModified() + " in db");
                 return "out-of-date";
             }
-        } catch (HibernateException ex) {
+        } catch (Exception ex) {
             logger.error(" Opdatering af cobjectets geokoordinater kunne ikke udføres " + ex.getMessage());
-            hibSession.getTransaction().rollback();
-            return null;
+            trans.rollback();
+            return "error";
         } finally {
-            if (hibSession.getTransaction().isActive()){
-                hibSession.getTransaction().commit();
+            if (trans.isActive()){
+                trans.commit();
             }
         }
     }

@@ -11,6 +11,8 @@ public interface MetadataWriter {
      */
     public String create(Object cobject);
 
+    public String createFromMods(String mods);
+
     /*
          updates mods for the object given by cobject
      */
