@@ -1,6 +1,6 @@
-package dk.kb.cop3.backend.migrate.hibernate;
+package dk.kb.cop3.backend.crud.database.hibernate;
 
-import oracle.spatial.geometry.JGeometry;
+import org.locationtech.jts.geom.Polygon;
 
 import java.io.Serializable;
 
@@ -11,17 +11,17 @@ import java.io.Serializable;
  *         Date: 09/10/13
  *         Time: 17:06
  */
-public class AreasInDKOracle implements Serializable {
+public class AreasInDk implements Serializable {
 
-    private int areaID;
-    private String nameOfArea;
-    private JGeometry polygonCol;
+    private String  areaID;
+    private String  nameOfArea;
+    private Polygon polygonCol;
 
-    public int getAreaID() {
+    public String getAreaId() {
         return areaID;
     }
 
-    public void setAreaID(int areaID) {
+    public void setAreaId(String areaID) {
         this.areaID = areaID;
     }
 
@@ -33,11 +33,11 @@ public class AreasInDKOracle implements Serializable {
         this.nameOfArea = nameOfArea;
     }
 
-    public JGeometry getPolygonCol() {
+    public Polygon getPolygonCol() {
         return polygonCol;
     }
 
-    public void setPolygonCol(JGeometry polygonCol) {
+    public void setPolygonCol(Polygon polygonCol) {
         this.polygonCol = polygonCol;
     }
 

@@ -95,7 +95,6 @@ public class UpdateService {
 
         // Do the housekeeping update the geo position of the object
         if ((user == null) || "".equals(user)) {
-            // no user given
             logger.warn("update service no user given");
             return Response.status(400).build();
         }

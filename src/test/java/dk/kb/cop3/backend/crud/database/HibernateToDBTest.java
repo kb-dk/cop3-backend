@@ -1,16 +1,19 @@
 package dk.kb.cop3.backend.crud.database;
 
 import dk.kb.cop3.backend.constants.Types;
-import dk.kb.cop3.backend.crud.database.hibernate.*;
+import dk.kb.cop3.backend.crud.database.hibernate.Category;
+import dk.kb.cop3.backend.crud.database.hibernate.Edition;
+import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
+import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+import org.locationtech.jts.geom.Geometry;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,6 +22,7 @@ import java.math.BigDecimal;
 import java.sql.Clob;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,68 +30,19 @@ public class HibernateToDBTest {
 
     private static Session session;
     private static final String LODFOTO = "Lodfoto";
-    private static HibernateMetadataSource mds;
+    private static HibernateMetadataSource hibernateMetadataSource;
      private static HibernateMetadataWriter mdw;
     private static final String HIBERNATE_TEST_CATEGORY = "Hibernate-test-category";
     private static final String KATEGORI_TEKST = "slet denne test";
-       private static final String MODS_FILE = "testdata/cumulus-export/Luftfoto_OM/205/master_records/L0717_04.tif-mods.xml";
+    private static final String MODS_FILE = "testdata/cumulus-ex/_OM/205/master_records/L0717_04.tif-mods.xml";
+    private static final String TEST_ID = "/images/luftfo/2011/maj/luftfoto/objectTest";
+    private static final double ORIGINAL_LON = 10.177794479921577;
+    private static final double ORIGINAL_LAT = 55.275795018274586;
 
-    private static String clob2string(Clob clob) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        String s;
-        BufferedReader br = new BufferedReader(clob.getCharacterStream());
-        while ((s = br.readLine()) != null)
-            sb.append(s);
-        return sb.toString();
-    }
-
-
-    private static void testGet(Session session) throws Exception {
-/*		
-		List result = session.createSQLQuery("select mods from OBJECT").list();
-		Iterator<org.hibernate.lob.SerializableClob> iter = result.iterator();
-
-		while (iter.hasNext()) {
-			org.hibernate.lob.SerializableClob mods = iter.next();
-			StringBuffer sb = new StringBuffer();
-       			String s;
-			BufferedReader br = new BufferedReader(mods.getCharacterStream());
-			while ((s=br.readLine())!=null)
-        			sb.append(s);
-			System.out.println(sb.toString());
-		}
-*/
-        List result2 = session.createSQLQuery("SELECT {obj.*} FROM OBJECT {obj}")
-                .addEntity("obj", dk.kb.cop3.backend.crud.database.hibernate.Object.class)
-                .list();
-        Iterator<java.lang.Object> iter2 = result2.iterator();
-        dk.kb.cop3.backend.crud.database.hibernate.Object o = null;
-        while (iter2.hasNext()) {
-            o = (dk.kb.cop3.backend.crud.database.hibernate.Object) iter2.next();
-            //System.out.println(o.getMods());
-         //   double[] p = o.getPoint().getPoint();
-            //System.out.println("("+p[0]+","+p[1]+")");
-        }
-        if (o != null) {
-            dk.kb.cop3.backend.crud.database.hibernate.Object o2 = new dk.kb.cop3.backend.crud.database.hibernate.Object("test1234", o.getType(), o.getEdition(), o.getMods(), "last monday", '0', "someUser", new BigDecimal(1), new BigDecimal(0.5), new BigDecimal(1));
-
-            //dk.kb.cop3.backend.crud.database.hibernate.Object("test1234",o.getType(),o.getEdition(),o.getMods(),new Date(),'0',"someuser",new BigDecimal(1));
-
-
-            Transaction tx = session.beginTransaction();
-            o2.getCategories().add(session.load(Category.class, new java.math.BigDecimal(1)));
-            String id = (String) session.save(o2);
-            //System.out.println("saved " + id);
-            tx.commit();
-        }
-
-    }
 
     @BeforeClass
     public static void before() {
         Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
-
-
         SessionFactory sessions = cfg.buildSessionFactory();
         session = sessions.openSession();
         mds = new HibernateMetadataSource(session);
@@ -117,53 +72,59 @@ public class HibernateToDBTest {
     public void opretEnKategori() {
         Category nyCat = new Category(HIBERNATE_TEST_CATEGORY, KATEGORI_TEKST);
         session.save(nyCat);
-        mds.setCategory(HIBERNATE_TEST_CATEGORY);
-
-
-        assertEquals(nyCat.getCategoryText(), mds.getCategory().getCategoryText());
-    }
-    @Test
-    public void findEnKategori() {
-
-        mds.setCategory(HIBERNATE_TEST_CATEGORY);
-
-        Category cat = mds.getCategory();
+        hibernateMetadataSource.setCategory(HIBERNATE_TEST_CATEGORY);
+        assertEquals(nyCat.getCategoryText(), hibernateMetadataSource.getCategory().getCategoryText());
+        //findCategory
+        hibernateMetadataSource.setCategory(HIBERNATE_TEST_CATEGORY);
+        Category cat = hibernateMetadataSource.getCategory();
         assertEquals(cat.getCategoryText(), KATEGORI_TEKST);
     }
 
     @Test
-    public void findEnEdition() {
-        mds.setEdition("/images/luftfo/2011/maj/luftfoto");
-        Edition ed = mds.getEdition();
+    public void findEdition() {
+        hibernateMetadataSource.setEdition("/images/luftfo/2011/maj/luftfoto");
+        Edition ed = hibernateMetadataSource.getEdition();
         assertEquals(ed.getName(), "Luftfoto");
     }
 
+    private void changeAndTestGeoPoint(MetadataWriter metadataWriter, Object cobject) {
+        double lon;
+        Geometry pointForTest;
+        double lat;
+        final double NEW_LAT = 60.90d;
+        final double NEW_LOM = 750.60d;
+        metadataWriter.updateGeo(TEST_ID, NEW_LAT, NEW_LOM, "test user", cobject.getLastModified(), 0.0);
+        TestUtil.getCobject(TEST_ID, session);
+        pointForTest = cobject.getPoint();
+        lat = pointForTest.getCoordinate().getX();
+        lon = pointForTest.getCoordinate().getY();
+        Assert.assertTrue(lat == NEW_LAT);
+        Assert.assertTrue(lon == NEW_LOM);
+    }
 
     @Test
-       public void opretMagicCopject() {
-        dk.kb.cop3.backend.crud.database.hibernate.Object copject = new dk.kb.cop3.backend.crud.database.hibernate.Object();
-        ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
+    public void findEditionList() {
+        HibernateEditionSource hibernateEditionSource = new HibernateEditionSource(session);
+        hibernateEditionSource.execute();
+        Assert.assertTrue(hibernateEditionSource.getNumberOfHits()>1);
+    }
 
-        String mods = null;
-        try {
-            mods = FileUtils.readFileToString(new File(MODS_FILE), "UTF-8");
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
 
-        copject = objectFromModsExtractor.extractFromMods(copject, mods, session);
+    private static String clob2string(Clob clob) throws Exception {
+        StringBuffer stringBuffer = new StringBuffer();
+        String s;
+        BufferedReader br = new BufferedReader(clob.getCharacterStream());
+        while ((s = br.readLine()) != null)
+            stringBuffer.append(s);
+        return stringBuffer.toString();
+    }
 
-           assertEquals(copject.getId(), "/images/luftfo/2011/maj/luftfoto/object62138");
-       }
-
-    @Test
-    public void opdaterGeoKoordinatForCopject() {
-        MetadataWriter mdw = new HibernateMetadataWriter(session);
-        // /images/luftfo/2011/maj/luftfoto/object74174
-        String output = mdw.updateGeo("/images/luftfo/2011/maj/luftfoto/object74174", 60.90d, 750.60d, "test user","", 0.0);
-        //String output = mdw.updateGeo("/images/luftfo/2011/maj/luftfoto/object62138", 60.90d, 750.60d);
-        //System.out.println("output = " + output);
-        assertEquals(Long.parseLong(output)>0, true);
+    @Test // Den her giver vist ikke mening, men pyt
+    public void testGet(){
+        List<Edition> editions = session.createSQLQuery("select * from edition")
+                .addEntity("edi", Edition.class)
+                .list();
+        Assert.assertTrue(editions.size()>0);
     }
 
 

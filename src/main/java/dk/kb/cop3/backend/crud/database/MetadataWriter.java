@@ -11,21 +11,14 @@ public interface MetadataWriter {
      */
     public String create(Object cobject);
 
+    public String createFromMods(String mods);
+
     /*
          updates mods for the object given by cobject
      */
     public String updateCobject(Object cobject, String lastmodified);
 
-
-    /*
-         updates mods for the object given by cobject
-     */
-    public void updateMods(Object cobject);
-
-    public String createFromMods(String id, String mods, String user); // only create object with id, if it does not exist
     public String updateFromMods(String id, String mods, String lastModified,String user); //only  update existing objects
-    public String createOrUpdateFromMods(String id, String mods, String lastModified, String user); // update existing object and create of not exist
-
 
 
     /**

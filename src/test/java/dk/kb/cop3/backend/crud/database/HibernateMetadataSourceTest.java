@@ -1,12 +1,16 @@
 package dk.kb.cop3.backend.crud.database;
 
+import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import javax.validation.constraints.AssertTrue;
 
 
 /**
@@ -30,52 +34,16 @@ public class HibernateMetadataSourceTest{
         mds = new HibernateMetadataSource(session);
     }
 
-
     @Test
-    public void testPaging() {
-
-        mds.setSearchterms("hansen");
-        mds.setNumberPerPage(5);
-        mds.setOffset(0);
-        mds.execute();
-        logger.info("Total number of hits "+mds.getNumberOfHits());
-        while (mds.hasMore()) {
-            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = mds.getAnother();
-            logger.info("object: "+cObject.getId() +" - "+cObject.getRandomNumber());
-        }
-        logger.info("2nd run");
-        mds = new HibernateMetadataSource(session);
-        mds.setSearchterms("hansen");
-        mds.setNumberPerPage(5);
-        mds.setOffset(5);
-        mds.execute();
-        logger.info("Total number of hits "+mds.getNumberOfHits());
-        while (mds.hasMore()) {
-            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = mds.getAnother();
-            logger.info("object: "+cObject.getId()+" - "+cObject.getRandomNumber());
-        }
-/*         logger.info("3rd run");
-        mds = new HibernateMetadataSource(session);
-        mds.setSearchterms("hansen");
-       mds.setCategory("/images/luftfo/2011/maj/luftfoto/subject205/da/");
-        mds.execute();
-       logger.info("Total number of hits "+mds.getNumberOfHits());
-         while (mds.hasMore()) {
-            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = mds.getAnother();
-            logger.info("object: "+cObject.getId()+" - "+cObject.getRandomNumber());
-        } */
-        logger.info("4th run");
+    public void testSearch() {
         mds = new HibernateMetadataSource(session);
         mds.setSearchterms("id","/images/luftfo/2011/maj/luftfoto/object60810");
         mds.execute();
-        logger.info("Total number of hits "+mds.getNumberOfHits());
-        while (mds.hasMore()) {
-            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = mds.getAnother();
-            logger.info("object: "+cObject.getId()+" - "+cObject.getRandomNumber());
-        }
+        final Long numberOfHits = mds.getNumberOfHits();
+        Assert.assertTrue(numberOfHits == 1);
+        final Object cobject = mds.getAnother();
+        Assert.assertTrue(cobject.getLocation().equalsIgnoreCase("Danmark, Fyn, Strandhuse"));
     }
-
-
 
 
     @AfterClass

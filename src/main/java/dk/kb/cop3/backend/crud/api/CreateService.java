@@ -5,165 +5,101 @@ import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataWriter;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
-import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
-import dk.kb.cop3.backend.crud.util.JMSProducer;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
-import javax.jms.JMSException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 
 
 // The class binds to /create
+
 @Path("/create")
 public class CreateService {
-
     private static Logger logger = Logger.getLogger(CreateService.class);
-
     private CopBackendProperties consts = CopBackendProperties.getInstance();
-
 
     /**
      * Put-service. Receive som data, and try saving it to db.
-     * our first Jersey webservice which support GET and PUT
      * PUT http://localhost:8080/cop/syndication/SOMEOBJECT (the path is not final)
      *
      * @return
      */
     @PUT
     @Path("/{medium}/{collection}/{year}/{month}/{edition}/{id}")
-    public Response post(@PathParam("medium") String medium,
+    public Response createCobjectFromMods(@PathParam("medium") String medium,
                          @PathParam("collection") String collection,
                          @PathParam("year") int year,
                          @PathParam("month") String month,
                          @PathParam("edition") String edition,
                          @PathParam("id") String id,
-                         @QueryParam("lastModified") String lastModified,
                          @Context HttpServletRequest httpServletRequest,
-                         String doc) {
-
-        logger.debug("CREATE SERVICE");
-
-        String uri = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
-        // This is what the edition looks like
-        String editionId = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition;
-        String cacheKey = "syndication:edition:" + editionId + ";" +
-                "id:" + id + ";";
-        // logger.debug("cachekey: " + cacheKey);
-        logger.debug("*****       uri " + uri);
-        logger.debug("*****       mods: " + doc);
-        logger.debug("*****       Content type: " + httpServletRequest.getContentType());
-        logger.debug("*****       Char Encoding: " + httpServletRequest.getCharacterEncoding());
-
-
-        Object cobject =
-                new Object();
-
-        ObjectFromModsExtractor bu = ObjectFromModsExtractor.getInstance();
-        SessionFactory fact = HibernateUtil.getSessionFactory();
-        Session ses = fact.getCurrentSession();
-        ses.beginTransaction();
-
+                         String mods) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            MetadataWriter mdw = new HibernateMetadataWriter(ses);
-
-            if (lastModified != null) {
-                logger.debug("Trying to UPDATE object " + uri + ", at time: " + lastModified);
-
-                Object nytCobjectFraMods =
-                        bu.extractFromMods(cobject, doc, ses);
-
-                ses.evict(cobject);
-                cobject = null;
-                String newLastModified = "";
-
-                newLastModified = mdw.updateCobject(nytCobjectFraMods, lastModified);
-                logger.debug("newLastModified: " + newLastModified);
-
-                if (newLastModified != null && !newLastModified.equals("")) {
-                    ses.getTransaction().commit();
-                    logger.debug("Object created ID: " + nytCobjectFraMods.getId());
-                    this.sendToSolr(uri);
-                    return Response.ok("Updated").build();
-
-                } else {
-                    ses.getTransaction().rollback();
-                    return Response.notModified("wrong lastModifiedDate provided").build();
-                }
-
-            } else {
-                logger.debug("Trying to CREATE new object " + uri);
-
-                Object nytFraMods = bu.extractFromMods(cobject, doc, ses);
-
-
-                String newLastModified = "";
-                newLastModified = mdw.create(nytFraMods);
-
-                if (newLastModified != null || !newLastModified.equals("")) {
-                    try {
-                        ses.getTransaction().commit();
-                        logger.debug("Object created ID: " + nytFraMods.getId());
-                        sendToSolr(uri);
-                        return Response.created(URI.create(nytFraMods.getId())).build();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        ses.getTransaction().rollback();
-                        logger.error("COULD NOT CREATE NEW COBJECT from mods: " +
-                                "\n***********\n "
-                                + nytFraMods.getMods() +
-                                "\n***********\n ");
-                        logger.error(e);
-                        Response.ResponseBuilder res = Response.status(409);
-                        return res.build();
-                    }
-                } else {
-                    ses.getTransaction().rollback();
-                    logger.error("COULD NOT CREATE NEW COBJECT from mods: " +
-                            "\n***********\n "
-                            + nytFraMods.getMods() +
-                            "\n***********\n ");
-                    return Response.status(400).build();
-                }
+            MetadataWriter mdw = new HibernateMetadataWriter(session);
+            String objectId = mdw.createFromMods(mods);
+            if ("conflict".equals(objectId)) {
+                return Response.status(HttpStatus.SC_CONFLICT)
+                        .entity("object allready exists")
+                        .build();
             }
-        } catch (Throwable e) {
-            logger.error("Unable to create object "+editionId+id,e);
-            Response.ResponseBuilder res = Response.status(500);
-            return res.build();
+            if ("error".equals(objectId)) {
+                return Response.serverError().entity("error creating object").build();
+            }
+            return  Response.created(URI.create(objectId)).build();
         } finally {
-            logger.debug("In finally block, attempting to close Hibernate resources...");
-            logger.debug("session != null: " + ses != null);
-            logger.debug("session.isConnected(): " + ses.isConnected());
-            if (ses != null && ses.isConnected()){
-                logger.debug("Closing Hibernate session as we're still connected");
-                ses.cancelQuery();
-                ses.close();
-            }
-            logger.debug("Exiting finally block...");
+            session.close();
         }
     }
 
-    /**
-     * This methos is related to the navigation service.
-     *
-     * @param medium
-     * @param collection
-     * @param year
-     * @param month
-     * @param edition
-     * @param opml
-     * @return
-     */
+    @POST
+    @Path("/{medium}/{collection}/{year}/{month}/{edition}/{id}")
+    public Response updateExistingObjectFromMods(@PathParam("medium") String medium,
+                                          @PathParam("collection") String collection,
+                                          @PathParam("year") int year,
+                                          @PathParam("month") String month,
+                                          @PathParam("edition") String edition,
+                                          @PathParam("id") String id,
+                                          @QueryParam("lastmodified") String lastModified,
+                                          @QueryParam("user") String user,
+                                          @Context HttpServletRequest httpServletRequest,
+                                          String mods) {
+        String idFromRequest = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            MetadataWriter mdw = new HibernateMetadataWriter(session);
+            String objectId = mdw.updateFromMods(idFromRequest,mods,lastModified,user);
+            if (StringUtils.isEmpty(objectId) || "error".equals(objectId) ||
+                "ids-do-not-match".equals(objectId)) {
+                logger.error("unable to update from mods");
+                return Response.serverError().entity(objectId).build();
+            }
+            if (objectId.equals("out-of-date")) {
+                return Response.notModified("out-of-date").build();
+            }
+            if ("id-not-found".equals(objectId)) {
+                return Response.status(HttpStatus.SC_NOT_FOUND)
+                        .entity("object not found")
+                        .build();
+            }
+            return Response.ok("Updated").build();
+        } catch (HibernateException ex) {
+            logger.error("Cannot create object from mods",ex);
+            return Response.serverError().entity("error").build();
+        } finally {
+            session.close();
+        }
+    }
 
     @PUT
     @Path("/{medium}/{collection}/{year}/{month}/{edition}")

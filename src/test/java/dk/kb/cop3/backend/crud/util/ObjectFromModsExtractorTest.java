@@ -53,8 +53,7 @@ public class ObjectFromModsExtractorTest {
     public void testExtractFromArealModsOK() throws IOException {
         String mods = FileUtils.readFileToString(new File(LUFTFOTO_MODS_FILE), "UTF-8");
         dk.kb.cop3.backend.crud.database.hibernate.Object copject = new Object();
-        Session ses = HibernateUtil.getSessionFactory().getCurrentSession();
-        ses.getTransaction().begin();
+        Session ses = HibernateUtil.getSessionFactory().openSession();
         copject = objectFromModsExtractor.extractFromMods(copject, mods, ses);
 
    //     assertEquals("Sylvest Jensen", copject.getCreator());
@@ -81,8 +80,7 @@ public class ObjectFromModsExtractorTest {
     public void testExtractFromBookModsOK() throws IOException {
         String mods = FileUtils.readFileToString(new File(BOOK_MODS_FILE), "UTF-8");
         dk.kb.cop3.backend.crud.database.hibernate.Object copject = new Object();
-        Session ses = HibernateUtil.getSessionFactory().getCurrentSession();
-        ses.getTransaction().begin();
+        Session ses = HibernateUtil.getSessionFactory().openSession();
         copject = objectFromModsExtractor.extractFromMods(copject, mods, ses);
 
         assertEquals("Torres Naharro, Bartolomé de", copject.getCreator());
