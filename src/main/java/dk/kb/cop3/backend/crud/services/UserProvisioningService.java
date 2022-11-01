@@ -212,7 +212,7 @@ public class UserProvisioningService {
         } else if (aSpecificArea == DSFLAreas.Sjælland) {
             user.setUserScore(user.getUserScore().add(new BigInteger(points)));  // Sjælland
             user.setUserScore8(user.getUserScore8().add(new BigInteger(points)));
-        } else if (aSpecificArea == DSFLAreas.Sønderjylland) {
+        } else if (aSpecificArea == DSFLAreas.Sydjylland) {
             user.setUserScore(user.getUserScore().add(new BigInteger(points)));  // Sønderjylland
             user.setUserScore9(user.getUserScore9().add(new BigInteger(points)));
         } else {
