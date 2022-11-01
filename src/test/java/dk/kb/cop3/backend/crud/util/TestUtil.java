@@ -1,5 +1,6 @@
 package dk.kb.cop3.backend.crud.util;
 
+import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
@@ -16,6 +17,8 @@ import org.junit.Assert;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,8 +52,14 @@ public class TestUtil {
 
     public static void deleteFromDatabase(Class entityClass, Serializable id, Session session) {
         Transaction trans = session.beginTransaction();
-        session.delete(session.load(entityClass, id));
-        trans.commit();
+        try {
+            session.delete(session.load(entityClass, id));
+        }catch (EntityNotFoundException entityNotFoundException){
+            System.out.println(entityNotFoundException.getMessage());
+            //do nothing - the entity is allready gone
+        } finally {
+            trans.commit();
+        }
     }
 
     public static void closeDatabaseSession(Session session) {
@@ -79,6 +88,24 @@ public class TestUtil {
         edition.setVisiblePublic('j');
         return edition;
     }
+
+    public static void createAndSaveDefaultTestCobject(String TEST_ID, HibernateMetadataWriter metadataWriter, Session session){
+        String testMods = TestUtil.getTestMods();
+        createAndSaveTestCobjectFromMods(TEST_ID, testMods, metadataWriter, session);
+    }
+
+    public static void createAndSaveTestCobjectFromMods(String TEST_ID, String mods, HibernateMetadataWriter metadataWriter, Session session){
+        Object cobject = TestUtil.extractCobjectFromMods(mods, session);
+        cobject.setId(TEST_ID);
+        try {
+            metadataWriter.create(cobject);
+        }catch (PersistenceException e) {
+            //Chances are an old test failed and (c)object is not deleted
+            TestUtil.deleteFromDatabase(Object.class, TEST_ID, session);
+            metadataWriter.create(cobject);
+        }
+    }
+
 
     public static Object createTestObject(Type type, Edition edition) {
         Object object = new Object();

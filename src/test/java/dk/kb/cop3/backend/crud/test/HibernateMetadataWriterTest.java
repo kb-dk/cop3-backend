@@ -12,7 +12,6 @@ import org.junit.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import javax.persistence.PersistenceException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -43,7 +42,7 @@ public class HibernateMetadataWriterTest {
     public void create() throws XPathExpressionException {
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
         String testMods = TestUtil.getTestMods();
-        createAndSaveTestCobject(TEST_ID, testMods, metadataWriter);
+        TestUtil.createAndSaveDefaultTestCobject(TEST_ID, metadataWriter, session);
         final Object savedCopject = TestUtil.getCobject(TEST_ID, session);
         Assert.assertEquals("Danmark, Fyn, Langsted", savedCopject.getLocation());
         TestUtil.deleteFromDatabase(Object.class,TEST_ID, session);
@@ -63,7 +62,7 @@ public class HibernateMetadataWriterTest {
         final String TEST_LOCATION = "Testlocation";
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
         String testMods = TestUtil.getTestMods();
-        createAndSaveTestCobject(TEST_ID, testMods, metadataWriter);
+        TestUtil.createAndSaveDefaultTestCobject(TEST_ID, metadataWriter, session);
         //Get created cobject
         Object savedCopject = TestUtil.getCobject(TEST_ID, session);
         Assert.assertFalse(savedCopject.getLocation().equalsIgnoreCase(TEST_LOCATION));
@@ -83,7 +82,7 @@ public class HibernateMetadataWriterTest {
         ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
         //If cobject and mods-recordIdentifier dosn't correspond, update will fail.
         final String modsWithTestId = changeIdInMods(TEST_ID, testMods, objectFromModsExtractor);
-        createAndSaveTestCobject(TEST_ID, modsWithTestId, metadataWriter);
+        TestUtil.createAndSaveTestCobjectFromMods(TEST_ID, modsWithTestId, metadataWriter, session);
         testUpdatedCobject(TEST_ID, NEW_TITLE, metadataWriter);
         TestUtil.deleteFromDatabase(Object.class, TEST_ID, session);
         TestUtil.deleteAuditTrail(TEST_ID, session);
@@ -93,7 +92,7 @@ public class HibernateMetadataWriterTest {
     public void updateGeo() throws XPathExpressionException {
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
         String testMods = TestUtil.getTestMods();
-        createAndSaveTestCobject(TEST_ID, testMods, metadataWriter);
+        TestUtil.createAndSaveDefaultTestCobject(TEST_ID, metadataWriter, session);
         final Object savedCopject = TestUtil.getCobject(TEST_ID, session);
         double x = savedCopject.getPoint().getCoordinate().getX();
         double y = savedCopject.getPoint().getCoordinate().getY();
@@ -156,20 +155,6 @@ public class HibernateMetadataWriterTest {
         cobject.setMods(stringFromDocument);
         metadataWriter.updateFromMods(TEST_ID, stringFromDocument, cobject.getLastModified(), TEST_ID);
         return cobject;
-    }
-
-
-    private void createAndSaveTestCobject(String TEST_ID, String mods, HibernateMetadataWriter metadataWriter) throws XPathExpressionException {
-        Object cobject = TestUtil.extractCobjectFromMods(mods, session);
-        Assert.assertEquals("Danmark, Fyn, Langsted", cobject.getLocation());
-        cobject.setId(TEST_ID);
-        try {
-            metadataWriter.create(cobject);
-        }catch (PersistenceException e) {
-            //Chances are an old test failed and (c)object is not deleted
-            TestUtil.deleteFromDatabase(Object.class, TEST_ID, session);
-            metadataWriter.create(cobject);
-        }
     }
 
     private String changeIdInMods(String TEST_ID, String testMods, ObjectFromModsExtractor objectFromModsExtractor) throws XPathExpressionException {
