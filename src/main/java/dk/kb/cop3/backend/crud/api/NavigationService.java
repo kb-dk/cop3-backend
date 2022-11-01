@@ -5,6 +5,7 @@ import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import org.apache.log4j.Logger;
 import org.apache.xalan.processor.TransformerFactoryImpl;
+import javax.xml.transform.stream.StreamSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.w3c.dom.Document;
@@ -15,6 +16,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.annotation.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -60,6 +62,7 @@ public class NavigationService {
      */
     @GET
     @Path("/{medium}/{collection}/{year}/{month}/{edition}{nn:(/)?}{id:(subject[0-9]+?)?}{nn2:(/)?}{lang:(da|en)?}")
+    //    @XmlRootElement
     @Produces("application/xml")
     public Response getNavigation(
             @PathParam("medium") String medium,
@@ -118,7 +121,7 @@ public class NavigationService {
 		    }
 
                     Transformer transformer =
-                            trans_fact.newTransformer(new javax.xml.transform.stream.StreamSource(this.getClass().getResourceAsStream(xsl_file)));
+                            trans_fact.newTransformer(new StreamSource(this.getClass().getResourceAsStream(xsl_file)));
 
                     if (id != null) {
                         logger.debug("setting id:"+id.replaceFirst("subject",""));
@@ -145,7 +148,7 @@ public class NavigationService {
                 }
 
                 return Response.ok(opml).build();
-            } catch (Exception someEx){ // if getting from DB somehow fails, try to get an older entry from cache
+            } catch (Exception someEx){ 
                 logger.warn("Error getting opml for "+editionId,someEx);
                 return Response.noContent().build(); // This URI has no content.
             } finally {
