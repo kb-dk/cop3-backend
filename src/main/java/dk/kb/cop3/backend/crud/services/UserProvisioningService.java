@@ -30,7 +30,7 @@ public class UserProvisioningService {
 
     Logger LOGGER = LoggerFactory.getLogger(UserProvisioningService.class);
 
-    private static final ApplicationContext COPII_CONTEXT = new ClassPathXmlApplicationContext("copII-dao-context.xml");
+    private static final ApplicationContext COPIII_CONTEXT = new ClassPathXmlApplicationContext("copIII-dao-context.xml");
 
     public UserProvisioningService() {}
 
@@ -43,7 +43,7 @@ public class UserProvisioningService {
      */
     public void createUser(User user) throws UserProvisioningServiceException {
 
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
+        UserDao userDao = (UserDao) COPIII_CONTEXT.getBean("userDao");
         LOGGER.trace("createUser successfully retrieved UserDao from Spring application context");
 
         try {
@@ -66,7 +66,7 @@ public class UserProvisioningService {
      */
     public User getUserByPid(String pid) throws UserProvisioningServiceException {
 
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
+        UserDao userDao = (UserDao) COPIII_CONTEXT.getBean("userDao");
         LOGGER.trace("getUserByPid successfully retrieved UserDao from Spring application context");
         User user;
         try {
@@ -91,7 +91,7 @@ public class UserProvisioningService {
      */
     public String getUserNameByPid(String pid) throws UserProvisioningServiceException {
 
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
+        UserDao userDao = (UserDao) COPIII_CONTEXT.getBean("userDao");
         LOGGER.trace("getUserByPid successfully retrieved UserDao from Spring application context");
         String userName = null;
         try {
@@ -117,7 +117,7 @@ public class UserProvisioningService {
      * @return the list of Hibernate Users.
      */
     public List<User> getUsersForTopList(int numberOfUsers) {
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
+        UserDao userDao = (UserDao) COPIII_CONTEXT.getBean("userDao");
         List<User> x = userDao.getUsers(numberOfUsers);
 
         return x;
@@ -131,7 +131,7 @@ public class UserProvisioningService {
      * @return the list of Hibernate Users.
      */
     public List<User> getUsersFromAreaForTopList(int numberOfUsers, DSFLAreas aSpecificArea) {
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
+        UserDao userDao = (UserDao) COPIII_CONTEXT.getBean("userDao");
         List<User> x = userDao.getUsers(numberOfUsers, aSpecificArea);
 
         return x;
@@ -147,7 +147,7 @@ public class UserProvisioningService {
      */
     public UserRole getUserRole(int userRoleId) throws UserProvisioningServiceException {
 
-        UserRoleDao userRoleDao = (UserRoleDao) COPII_CONTEXT.getBean("userRoleDao");
+        UserRoleDao userRoleDao = (UserRoleDao) COPIII_CONTEXT.getBean("userRoleDao");
         UserRole userRole;
         try {
             LOGGER.debug("Calling DAO layer to get user role {}", userRoleId);
@@ -163,7 +163,7 @@ public class UserProvisioningService {
     @Deprecated
     public void updateScore(String pid, String points) {
         LOGGER.debug("adding " + points + " points for user " + pid);
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
+        UserDao userDao = (UserDao) COPIII_CONTEXT.getBean("userDao");
 
         User user = userDao.getUser(pid);
         LOGGER.debug("user: " + user);
@@ -180,7 +180,7 @@ public class UserProvisioningService {
      */
     public void updateScore(String pid, String points, DSFLAreas aSpecificArea) {
         LOGGER.debug("adding " + points + " points for user " + pid);
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
+        UserDao userDao = (UserDao) COPIII_CONTEXT.getBean("userDao");
         LOGGER.debug("aSpecificArea = {}", aSpecificArea.toString());
 
         User user = userDao.getUser(pid);
