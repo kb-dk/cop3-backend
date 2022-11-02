@@ -7,11 +7,10 @@
     <entry key="gui.uri">http://dsfl-test-01.kb.dk</entry>
 
     <entry key="cop3_backend.baseurl">http://localhost:8080/cop3-backend</entry>
-    <entry key="cop2_backend.baseurl">http://cop-test-01.kb.dk/cop</entry>
-    <entry key="cop2_backend.internal.baseurl">http://cop-test-01.kb.dk/cop</entry>
+    <entry key="cop2_backend.baseurl">http://localhost:8080/cop3-backend</entry>
+    <entry key="cop2_backend.internal.baseurl">http://localhost:8080/cop3-backend</entry>
     <entry key="annotation.baseurl">http://cop-test-01.kb.dk/</entry>
     <entry key="cop2_solr.baseurl">http://index-test.kb.dk/solr/cop-editions</entry>
-
 
 </properties>
 
