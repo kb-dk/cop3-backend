@@ -18,5 +18,8 @@
         <property name="host_uri" type="string">
             <column name="HOST_URI" length="220"/>
         </property>
+        <property name="timestamp" type="timestamp">
+            <column name="TIMESTAMP" not-null="true" />
+        </property>
     </class>
 </hibernate-mapping>
