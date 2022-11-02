@@ -33,15 +33,15 @@
 
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
-    <bean id="userDao" class="dk.kb.cop2.backend.crud.database.UserDaoImpl">
+    <bean id="userDao" class="dk.kb.cop3.backend.crud.database.UserDaoImpl">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean id="userRoleDao" class="dk.kb.cop2.backend.crud.database.UserRoleDaoImpl">
+    <bean id="userRoleDao" class="dk.kb.cop3.backend.crud.database.UserRoleDaoImpl">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean id="geoInfoDao" class="dk.kb.cop2.backend.crud.database.GeoInfoDaoImpl">
+    <bean id="geoInfoDao" class="dk.kb.cop3.backend.crud.database.GeoInfoDaoImpl">
             <property name="sessionFactory" ref="sessionFactory"/>
         </bean>
 </beans>
