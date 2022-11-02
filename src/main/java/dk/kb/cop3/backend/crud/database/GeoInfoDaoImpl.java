@@ -38,12 +38,14 @@ public class GeoInfoDaoImpl implements GeoInfoDao {
 
         try {
             LOGGER.debug("Getting area with co-ordinates "+lat + ","+ lng);
-            session = sessionFactory.openSession();
+            session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
             //note that here we reverse the order of the latitude and longitude co-ordinates because
-            Query queryResult = session.createSQLQuery("select a.AREA_ID, a.NAME_OF_AREA from AREAS_IN_DK a where " +
-                    "MDSYS.SDO_CONTAINS(a.POLYGON_COL, SDO_GEOMETRY(2001, NULL, " +
-                    "MDSYS.SDO_POINT_TYPE(" + Double.toString(lng) + "," + Double.toString(lat) + ", NULL), NULL, NULL)) = 'TRUE'");
+            Query queryResult = session.createSQLQuery("select area_id, name_of_area from areas_in_dk where "
+                  + "st_within(st_geomfromtext('POINT("
+                  + Double.toString(lng) + " "
+                  + Double.toString(lat)
+                  + ")',0),ST_GeomFromEWKT(polygon_col))");
             LOGGER.debug("Result list size = "+ queryResult.list().size());
 
             if (queryResult.list().size() == 0){    // NOT IN ANY AREA

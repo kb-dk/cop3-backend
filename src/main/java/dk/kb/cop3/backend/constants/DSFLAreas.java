@@ -53,9 +53,9 @@ public enum DSFLAreas {
                return "Sjælland";
            }
        },
-       Sønderjylland {
+       Sydjylland {
            public String toString() {
-               return "Sønderjylland";
+               return "Sydjylland";
            }
        }
    }
