@@ -62,7 +62,6 @@ public class CreateService {
 
 	SessionFactory fact = HibernateUtil.getSessionFactory();
         Session session = fact.getCurrentSession();
-	//        session.beginTransaction();
 
         try {
             MetadataWriter mdw = new HibernateMetadataWriter(session);
@@ -104,7 +103,7 @@ public class CreateService {
                 }
             }
         } catch (Throwable e) {
-            logger.error("Unable to create object "+editionId+id,e);
+            logger.error("Unable to create object "+ uri , e);
             Response.ResponseBuilder res = Response.status(500);
             return res.build();
         } finally {

@@ -506,7 +506,8 @@ public class ApiTest {
             ses.getTransaction().rollback();
             assertTrue("testCreateObjectService hibernate error "+ex.getMessage(),false);
         }
-
+	ses.close();
+	
         put.setPath(HOST_NAME + CREATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
         try {
 	    File file = new File(MODS_FILE);
