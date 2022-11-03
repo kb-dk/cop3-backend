@@ -1,5 +1,6 @@
 package dk.kb.cop3.backend.crud.api;
 
+import dk.kb.cop3.backend.crud.database.hibernate.*;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
 import dk.kb.cop3.backend.commonutils.DomUtils;
@@ -11,6 +12,11 @@ import org.eclipse.jetty.util.Jetty;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -479,14 +485,18 @@ public class ApiTest {
 
 
     //************************* CREATE AND UPDATE *******************//
-  /*  @Test
+    @Test
     public void testCreateObjectService() throws UnsupportedEncodingException, SAXException {
 
-        SessionFactory fact = HibernateUtil.getSessionFactory();
-        Session ses = fact.getCurrentSession();
+	SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
+                .setProperty("hibernate.jdbc.batch_size", "1000")
+                .buildSessionFactory();
+	
+        Session ses = psqlSessfac.openSession();
+	
         ses.beginTransaction();
         try {
-            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = (dk.kb.cop3.backend.crud.database.hibernate.Object) ses.get(Object.class,CREATE_UPDATE_OBJECT);
+            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = (dk.kb.cop3.backend.crud.database.hibernate.Object) ses.get(dk.kb.cop3.backend.crud.database.hibernate.Object.class,CREATE_UPDATE_OBJECT);
             if (cObject != null) {
                 ses.delete(cObject);
                 ses.getTransaction().commit();
@@ -499,10 +509,12 @@ public class ApiTest {
 
         put.setPath(HOST_NAME + CREATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
         try {
-            org.w3c.dom.Document dom = builder.parse(new File(MODS_FILE));
+	    File file = new File(MODS_FILE);
+	    org.w3c.dom.Document dom = builder.parse(file);
+	    logger.debug("file readable = " + (file.canRead() && file.exists()));
             RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
             put.setRequestEntity(entity);
-            logger.debug(put.getPath());
+            logger.debug("about to execute PUT to: " + put.getPath());
             client.executeMethod(put);
         } catch (java.io.IOException io) {
             logger.error("IO Error putting object to:  " + CREATE_OBJECT_SERVICE);
@@ -510,7 +522,7 @@ public class ApiTest {
         }
         assertEquals(201, put.getStatusCode());
     }
-    */
+
     /* */
     @Test
     public void testUpdateObjectService() throws  SAXException {
@@ -518,8 +530,8 @@ public class ApiTest {
         put = new PutMethod();
         get = new GetMethod();
 
-	String someobject = "/books/ortsam/2011/mar/ostryk/object76351";
-	//	String someobject = CREATE_UPDATE_OBJECT;
+	// String someobject = "/books/ortsam/2011/mar/ostryk/object76351";
+	String someobject = CREATE_UPDATE_OBJECT;
         String lastModified = null;
         get.setPath(HOST_NAME + "/syndication" + someobject);
         try {
@@ -567,12 +579,17 @@ public class ApiTest {
 
     @Test
     public void testUpdateGeoService() throws UnsupportedEncodingException {
-        post.setPath(HOST_NAME + UPDATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
+	client = new HttpClient();
+        post = new PostMethod();
+
+	String path = HOST_NAME + UPDATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT;
+	logger.debug("geoservice path = " + path);
+        post.setPath(path);
         post.setParameter("lat", "10.42");
         post.setParameter("lng", "55.42");
         post.setParameter("user", "Hr. JUNIT ");
-        logger.debug(post.getPath());
         try {
+	    logger.debug("about to post to geoservice path = " + post.getPath());
             client.executeMethod(post);
         } catch (java.io.IOException io) {
             logger.error("IO Error posting new geo coordinates to :  " + UPDATE_OBJECT_SERVICE);

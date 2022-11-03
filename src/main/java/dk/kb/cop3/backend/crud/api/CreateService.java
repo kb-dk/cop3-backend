@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 import javax.jms.JMSException;
 import javax.servlet.http.HttpServletRequest;
@@ -53,9 +54,15 @@ public class CreateService {
         Object cobject = new Object();
 
         ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
-        SessionFactory fact = HibernateUtil.getSessionFactory();
+
+
+	/*	SessionFactory fact = new Configuration().configure("hibernate.cfg.xml")
+                .setProperty("hibernate.jdbc.batch_size", "1000")
+                .buildSessionFactory(); */
+
+	SessionFactory fact = HibernateUtil.getSessionFactory();
         Session session = fact.getCurrentSession();
-//        session.beginTransaction();
+	//        session.beginTransaction();
 
         try {
             MetadataWriter mdw = new HibernateMetadataWriter(session);
