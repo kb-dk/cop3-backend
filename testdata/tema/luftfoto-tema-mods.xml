@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<md:mods xmlns:md="http://www.loc.gov/mods/v3" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
+    <md:recordInfo xmlns:java="http://xml.apache.org/xalan/java">
+        <md:languageOfCataloging>
+            <md:languageTerm authority="rfc4646">da</md:languageTerm>
+        </md:languageOfCataloging>
+        <md:recordIdentifier>/images/luftfo/2011/maj/luftfoto/object99999</md:recordIdentifier>
+        <md:recordCreationDate encoding="w3cdtf">2011-06-04</md:recordCreationDate>
+        <md:recordChangeDate encoding="w3cdtf">2011-06-04</md:recordChangeDate>
+    </md:recordInfo>
+    <md:name xmlns:java="http://xml.apache.org/xalan/java" type="personal" xml:lang="da">
+        <md:namePart>Jacob Larsen (jac@kb.dk)</md:namePart>
+        <md:role>
+            <md:roleTerm type="text">creator</md:roleTerm>
+        </md:role>
+    </md:name>
+    <md:name xmlns:java="http://xml.apache.org/xalan/java" type="cumulus" xml:lang="da">
+        <md:namePart>Jacob Larsen (jac@kb.dk)</md:namePart>
+        <md:role>
+            <md:roleTerm type="text">last-modified-by</md:roleTerm>
+        </md:role>
+    </md:name>
+    <md:typeOfResource xmlns:java="http://xml.apache.org/xalan/java">thema page</md:typeOfResource>
+    <md:genre xmlns:java="http://xml.apache.org/xalan/java" xml:lang="da">Tema</md:genre>
+
+    <md:identifier xmlns:java="http://xml.apache.org/xalan/java" displayLabel="image" type="uri">http://www.kb.dk/imageService/online_master_arkiv_10/non-archival/Maps/FYNLUFTFOTO/h_8685_01.jpg</md:identifier>
+    <md:identifier xmlns:java="http://xml.apache.org/xalan/java" displayLabel="thumbnail" type="uri">http://www.kb.dk/imageService/w150/h150/online_master_arkiv_10/non-archival/Maps/FYNLUFTFOTO/h_8685_01.jpg</md:identifier>
+    <md:titleInfo>
+        <md:title>Smukke steder på Fyn og Langeland</md:title>
+        <md:subTitle>{Test test test}</md:subTitle>
+    </md:titleInfo>
+    <md:note><![CDATA[
+        Dette er eet meget smukt tema. Og man skal huske på at det til og med er et hjemmelavet tema.<br/>
+        I tema notes tillades tags som <span style="font-weight:bold">span med style elementer.</span> eller <br/>
+        &lt;br/> som<br/>
+        bryder tekste<br/>
+        mærkelige<br/>
+        steder.<br/>
+        Og så lidt latin: Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+    ]]></md:note>
+    <relatedItem xmlns="http://www.loc.gov/mods/v3" xmlns:java="http://xml.apache.org/xalan/java">
+        <md:identifier>online_master_arkiv_10/non-archival/Maps/FYNLUFTFOTO/h_8685_01.tif</md:identifier>
+        <md:relatedItem type="isPartOf">
+            <md:identifier>online_master_arkiv_10/non-archival/Maps/FYNLUFTFOTO/L0717_38.tif</md:identifier>
+            <md:recordIdentifier>/images/luftfo/2011/maj/luftfoto/object62200</md:recordIdentifier>
+            <md:subject>
+                <md:cartographics>
+                    <md:coordinates>10.651965209961,55.136795630161</md:coordinates>
+                </md:cartographics>
+            </md:subject>
+        </md:relatedItem>
+        <md:relatedItem type="isPartOf">
+            <md:identifier>online_master_arkiv_10/non-archival/Maps/FYNLUFTFOTO/L-serien/Negativer/L3024/L3024_28a.jpg</md:identifier>
+            <md:recordIdentifier>/images/luftfo/2011/maj/luftfoto/object73990</md:recordIdentifier>
+            <md:subject>
+                <md:cartographics>
+                    <md:coordinates>10.163245269775, 55.54316256093</md:coordinates>
+                </md:cartographics>
+            </md:subject>
+        </md:relatedItem>
+        <md:relatedItem type="isPartOf">
+            <md:identifier>online_master_arkiv_10/non-archival/Maps/FYNLUFTFOTO/L0540_05.jpg</md:identifier>
+            <md:recordIdentifier>/images/luftfo/2011/maj/luftfoto/object65422</md:recordIdentifier>
+            <md:subject>
+                <md:cartographics>
+                    <md:coordinates>10.766032592773, 54.844520297157</md:coordinates>
+                </md:cartographics>
+            </md:subject>
+        </md:relatedItem>
+    </relatedItem>
+</md:mods>
+
+

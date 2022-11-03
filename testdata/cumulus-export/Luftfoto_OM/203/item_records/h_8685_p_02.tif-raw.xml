@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<record>
+ <field name="record_id">
+  <value>67358</value>
+ </field>
+ <field name="Location" data-type="string">
+  <value>Danmark</value>
+ </field>
+ <field name="Horizontal Pixels" data-type="integer">
+  <value>829</value>
+ </field>
+ <field name="Thumbnail Rotation" data-type="enumeration">
+  <value>0</value>
+ </field>
+ <field name="Color Channels" data-type="integer">
+  <value>3</value>
+ </field>
+ <field name="Bits Per Channel" data-type="integer">
+  <value>8</value>
+ </field>
+ <field name="Contrast" data-type="string">
+  <value>Normal</value>
+ </field>
+ <field name="IPTC Date Created" data-type="date">
+  <value>Fri Sep 24 13:21:11 CEST 2010</value>
+ </field>
+ <field name="size" data-type="integer">
+  <value>1795588</value>
+ </field>
+ <field name="Undo" data-type="boolean">
+  <value>false</value>
+ </field>
+ <field name="Generel Material Description" data-type="enumeration">
+  <value>Kort, Todimensionalt billedmateriale </value>
+ </field>
+ <field name="Published" data-type="boolean">
+  <value>false</value>
+ </field>
+ <field name="Subject Distance Range" data-type="string">
+  <value>Unknown</value>
+ </field>
+ <field name="QA_error" data-type="string"/>
+ <field name="Registrationstate" data-type="enumeration">
+  <value>Færdigregistreret</value>
+ </field>
+ <field name="CHECKSUM_ORIGINAL_MASTER" data-type="string">
+  <value>1ff13e44830fa9007bc97cc9987b91c0</value>
+ </field>
+ <field name="Unix File Identifier" data-type="integer">
+  <value>1511714353</value>
+ </field>
+ <field name="Scene Capture Type" data-type="string">
+  <value>Standard</value>
+ </field>
+ <field name="Publication_catalog" data-type="enumeration">
+  <value>Luftfoto OM</value>
+ </field>
+ <field name="Custom Rendered" data-type="string">
+  <value>Normal process</value>
+ </field>
+ <field name="objectIdentifierValue" data-type="string">
+  <value>Uid:dk:kb:doms:2007-01/9d803360-611f-11e0-8940-0016357f605f</value>
+ </field>
+ <field name="Sharpness" data-type="string">
+  <value>Normal</value>
+ </field>
+ <field name="År" data-type="string">
+  <value>1957-05-01</value>
+ </field>
+ <field name="PublishedByVersion" data-type="string">
+  <value>Publication workflow of iteration 13. Class = dk.kb.doms.components.workflow.iteration13.PublishTiffMasterWorkflow;Publish with QA version = $Revision: 1.6 $;Publish without QA version = $Revision: 1.8 $;productionRoot = /Maps;undoRoot = /online_master_arkiv_10/undo/Maps;publishNonArchivalRoot = /online_master_arkiv_10/non-archival/Maps;productionRoot = /Maps;</value>
+ </field>
+ <field name="Production_Catalog" data-type="string">
+  <value>Luftfoto DP</value>
+ </field>
+ <field name="Ophav" data-type="string">
+  <value>Sylvest Jensen</value>
+ </field>
+ <field name="messageDigest" data-type="string">
+  <value>1ff13e44830fa9007bc97cc9987b91c0</value>
+ </field>
+ <field name="PublicationDate" data-type="string">
+  <value>07-04-2011</value>
+ </field>
+ <field name="LastCmdSucceeded" data-type="string">
+  <value>dk.kb.doms.api.oais.sipdipcommands.FinishTransactionCmd@7aacc1</value>
+ </field>
+ <field name="LastCmdInitiated" data-type="string">
+  <value>dk.kb.doms.api.oais.sipdipcommands.FinishTransactionCmd@7aacc1</value>
+ </field>
+ <field name="QA_status" data-type="string"/>
+ <field name="Preservation_status" data-type="enumeration">
+  <value>Skal ikke langtidsbevares</value>
+ </field>
+ <field name="Vertical Pixels" data-type="integer">
+  <value>717</value>
+ </field>
+ <field name="Record Name" data-type="string">
+  <value>h_8685_p_02.tif</value>
+ </field>
+ <field name="Record Creation Date" data-type="date">
+  <value>Thu Apr 07 13:42:02 CEST 2011</value>
+ </field>
+ <field name="Record Modification Date" data-type="date">
+  <value>Fri Apr 08 09:23:36 CEST 2011</value>
+ </field>
+ <field name="Asset Creation Date" data-type="date">
+  <value>Thu Apr 07 16:02:04 CEST 2011</value>
+ </field>
+ <field name="Asset Modification Date" data-type="date">
+  <value>Thu Apr 07 16:02:04 CEST 2011</value>
+ </field>
+ <field name="Cataloging User" data-type="string">
+  <value>blo</value>
+ </field>
+ <field name="Software" data-type="string">
+  <value>Adobe Photoshop CS</value>
+ </field>
+ <field name="Thumbnail" data-type="picture">
+  <value>[B@fea438</value>
+ </field>
+ <field name="Categories" data-type="string">
+  <value>Horisont optagelser af landbrugsejendomme i S/H fra 1950-1972</value>
+ </field>
+ <field name="File Format" data-type="string">
+  <value>TIFF Image</value>
+ </field>
+ <field name="Horizontal Resolution" data-type="double">
+  <value>400.0</value>
+ </field>
+ <field name="Vertical Resolution" data-type="double">
+  <value>400.0</value>
+ </field>
+ <field name="Image Width" data-type="double">
+  <value>2.0725</value>
+ </field>
+ <field name="Image Height" data-type="double">
+  <value>1.7925</value>
+ </field>
+ <field name="File Data Size" data-type="integer">
+  <value>1795588</value>
+ </field>
+ <field name="Asset Reference" data-type="blob">
+  <value>/online_master_arkiv_10/non-archival/Maps/FYNLUFTFOTO/h_8685_p_02.tif</value>
+ </field>
+ <field name="Asset Identifier" data-type="integer">
+  <value>1302134524</value>
+ </field>
+ <field name="Asset Modification State Identifier" data-type="string">
+  <value>2010-09-24 02:21:11</value>
+ </field>
+ <field name="Thumbnail Mean Value" data-type="integer">
+  <value>163</value>
+ </field>
+ <field name="Thumbnail Standard Deviation" data-type="integer">
+  <value>56</value>
+ </field>
+ <field name="Color Model" data-type="enumeration">
+  <value>RGB Color</value>
+ </field>
+ <field name="ICC Profile Name" data-type="string">
+  <value>Gray Gamma 2.2</value>
+ </field>
+ <field name="Captured Date" data-type="date">
+  <value>Fri Sep 24 13:21:11 CEST 2010</value>
+ </field>
+ <field name="Folder Name" data-type="string">
+  <value>/online_master_arkiv_10/non-archival/Maps/FYNLUFTFOTO</value>
+ </field>
+ <field name="Asset Name" data-type="string">
+  <value>h_8685_p_02.tif</value>
+ </field>
+ <field name="Volume Name" data-type="string">
+  <value>Maps</value>
+ </field>
+ <field name="Server Name" data-type="string">
+  <value>dia-prod-cdb-01.kb.dk</value>
+ </field>
+ <field name="Related Master Assets" data-type="blob">
+  <value>
+   <pack type="list" id="h_8685_p_02.tif" relation="Related Master Assets" catalogue="Luftfoto OM">
+    <pack>
+     <pack type="record">
+      <value key="1315007845" type="string">h_8685_02.tif</value>
+      <value key="1382377075">
+       <pack type="list">
+        <pack>
+         <pack type="record">
+          <value key="1382828356" type="guid">{9ed0887f-40e8-4091-a91c-de356c869251}</value>
+          <value key="1382238532" type="int">67352</value>
+         </pack>
+        </pack>
+       </pack>
+      </value>
+     </pack>
+    </pack>
+   </pack>
+  </value>
+ </field>
+ <field name="Image Orientation" data-type="string">
+  <value>Top left</value>
+ </field>
+ <field name="GUID" data-type="string">
+  <value>Uid:dk:kb:doms:2007-01/9d803360-611f-11e0-8940-0016357f605f</value>
+ </field>
+ <field name="Saturation" data-type="string">
+  <value>Normal</value>
+ </field>
+ <field name="Copyright" data-type="enumeration">
+  <value>Billedet er muligvis beskyttet af loven om ophavsret</value>
+ </field>
+ <field name="Person" data-type="string">
+  <value>Christensen, Peder, gårdejer</value>
+ </field>
+ <field name="ID" data-type="integer">
+  <value>67358</value>
+ </field>
+ <field name="Catalog Name" data-type="string">
+  <value>Luftfoto OM</value>
+ </field>
+ <field name="White Balance Mode" data-type="string">
+  <value>Auto white balance</value>
+ </field>
+ <field name="Exposure Mode" data-type="string">
+  <value>Auto exposure</value>
+ </field>
+ <field name="Flash Mode" data-type="string">
+  <value>Flash not used, No strobe return detection function, No flash function, No red-eye reduction mode</value>
+ </field>
+ <field name="creatingApplication" data-type="string">
+  <value>Adobe Photoshop CS</value>
+ </field>
+ <field name="Genre" data-type="enumeration">
+  <value>Skråfoto</value>
+ </field>
+ <field name="Color Space" data-type="string">
+  <value>Uncalibrated</value>
+ </field>
+ <field name="Lokalitet" data-type="string">
+  <value>Danmark, Fyn, Stavre</value>
+ </field>
+ <field name="XMP Metadata" data-type="string"><![CDATA[<x:xmpmeta xmlns:x='adobe:ns:meta/' x:xmptk='XMP toolkit 3.0-28, framework 1.6'>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:iX='http://ns.adobe.com/iX/1.0/'>
+
+ <rdf:Description rdf:about='uuid:d3ba21fd-c7cd-11df-a8f7-b14fab299683'
+  xmlns:pdf='http://ns.adobe.com/pdf/1.3/'>
+ </rdf:Description>
+
+ <rdf:Description rdf:about='uuid:d3ba21fd-c7cd-11df-a8f7-b14fab299683'
+  xmlns:photoshop='http://ns.adobe.com/photoshop/1.0/'>
+  <photoshop:History></photoshop:History>
+ </rdf:Description>
+
+ <rdf:Description rdf:about='uuid:d3ba21fd-c7cd-11df-a8f7-b14fab299683'
+  xmlns:tiff='http://ns.adobe.com/tiff/1.0/'>
+  <tiff:XResolution>400/1</tiff:XResolution>
+  <tiff:YResolution>400/1</tiff:YResolution>
+  <tiff:ResolutionUnit>2</tiff:ResolutionUnit>
+ </rdf:Description>
+
+ <rdf:Description rdf:about='uuid:d3ba21fd-c7cd-11df-a8f7-b14fab299683'
+  xmlns:xap='http://ns.adobe.com/xap/1.0/'>
+  <xap:CreateDate>2010-09-24T13:21:11+01:00</xap:CreateDate>
+  <xap:ModifyDate>2010-09-24T13:21:11+01:00</xap:ModifyDate>
+  <xap:MetadataDate>2010-09-24T13:21:11+01:00</xap:MetadataDate>
+  <xap:CreatorTool>Adobe Photoshop CS Windows</xap:CreatorTool>
+ </rdf:Description>
+
+ <rdf:Description rdf:about='uuid:d3ba21fd-c7cd-11df-a8f7-b14fab299683'
+  xmlns:xapMM='http://ns.adobe.com/xap/1.0/mm/'>
+  <xapMM:DocumentID>adobe:docid:photoshop:d3ba21fc-c7cd-11df-a8f7-b14fab299683</xapMM:DocumentID>
+ </rdf:Description>
+
+ <rdf:Description rdf:about='uuid:d3ba21fd-c7cd-11df-a8f7-b14fab299683'
+  xmlns:dc='http://purl.org/dc/elements/1.1/'>
+  <dc:format>image/tiff</dc:format>
+ </rdf:Description>
+
+</rdf:RDF>
+</x:xmpmeta>]]></field>
+ <field name="formatName" data-type="string">
+  <value>TIFF Image</value>
+ </field>
+ <field name="eventIdentifierType" data-type="enumeration">
+  <value>Det Kongelige Biblioteks eventype</value>
+ </field>
+ <field name="Gain Control" data-type="string">
+  <value>None</value>
+ </field>
+ <field name="Cataloging language" data-type="enumeration">
+  <value>da</value>
+ </field>
+ <field name="Compression" data-type="string">
+  <value>Uncompressed</value>
+ </field>
+ <field name="eventIdentifierValue" data-type="string">
+  <value>0</value>
+ </field>
+ <field name="Mastertransferstatus" data-type="string">
+  <value>OK</value>
+ </field>
+ <field name="Category">
+  <value cumulusId="206">Horisont optagelser af landbrugsejendomme i S/H fra 1950-1972</value>
+ </field>
+</record>

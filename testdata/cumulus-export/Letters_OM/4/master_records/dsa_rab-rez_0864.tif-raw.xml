@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<record>
+ <field name="record_id">
+  <value>4719</value>
+ </field>
+ <field name="Horizontal Pixels" data-type="integer">
+  <value>2289</value>
+ </field>
+ <field name="RTL" data-type="boolean">
+  <value>false</value>
+ </field>
+ <field name="Presentation date" data-type="string">
+  <value>1919-01-26</value>
+ </field>
+ <field name="Extent" data-type="string">
+  <value>2 pp.</value>
+ </field>
+ <field name="Thumbnail Rotation" data-type="enumeration">
+  <value>0</value>
+ </field>
+ <field name="Color Channels" data-type="integer">
+  <value>3</value>
+ </field>
+ <field name="Bits Per Channel" data-type="integer">
+  <value>8</value>
+ </field>
+ <field name="formatName" data-type="string">
+  <value>TIFF Image</value>
+ </field>
+ <field name="Undo" data-type="boolean">
+  <value>false</value>
+ </field>
+ <field name="Published" data-type="boolean">
+  <value>true</value>
+ </field>
+ <field name="Date not before" data-type="string">
+  <value>1919-01-26</value>
+ </field>
+ <field name="Country (location) of sender" data-type="string">
+  <value>de</value>
+ </field>
+ <field name="QA_error" data-type="string"/>
+ <field name="Registrationstate" data-type="enumeration">
+  <value>Færdigregistreret</value>
+ </field>
+ <field name="CHECKSUM_ORIGINAL_MASTER" data-type="string">
+  <value>f1e876fd9568e3ecd384a0e159ad16bf</value>
+ </field>
+ <field name="Unix File Identifier" data-type="integer">
+  <value>-593390833</value>
+ </field>
+ <field name="Publication_catalog" data-type="enumeration">
+  <value>Letters OM</value>
+ </field>
+ <field name="Recipient (personal)" data-type="string">
+  <value>Simonsen, David</value>
+ </field>
+ <field name="objectIdentifierValue" data-type="string">
+  <value>Uid:dk:kb:doms:2007-01/d70c83b0-53c1-11e0-8345-0016357f605f</value>
+ </field>
+ <field name="File Format Identifier" data-type="string">
+  <value>image/tiff</value>
+ </field>
+ <field name="PublishedByVersion" data-type="string">
+  <value>Publication workflow of iteration 13. Class = dk.kb.doms.components.workflow.iteration13.PublishTiffMasterWorkflow;Publish with QA version = $Revision: 1.6 $;Publish without QA version = $Revision: 1.8 $;productionRoot = /Letters;undoRoot = /online_master_arkiv/undo/Letters;publishNonArchivalRoot = /online_master_arkiv/non-archival/Letters;productionRoot = /Letters;</value>
+ </field>
+ <field name="Production_Catalog" data-type="string">
+  <value>Letters DP</value>
+ </field>
+ <field name="messageDigest" data-type="string">
+  <value>f1e876fd9568e3ecd384a0e159ad16bf</value>
+ </field>
+ <field name="Location of sender" data-type="string">
+  <value>Berlin</value>
+  <value>Friedenau</value>
+ </field>
+ <field name="Sender (person)" data-type="string">
+  <value>Cohn-Reiss, Ephraim</value>
+  <value>he|כהן, אפרים</value>
+  <value>Reiss, Ephraim Cohn</value>
+ </field>
+ <field name="PublicationDate" data-type="string">
+  <value>21-03-2011</value>
+ </field>
+ <field name="Additional resources" data-type="string">
+  <value>Cohn-Reiss, Esther</value>
+  <value>Hilfsverein der Deutschen Juden</value>
+ </field>
+ <field name="LastCmdSucceeded" data-type="string">
+  <value>dk.kb.doms.api.oais.sipdipcommands.FinishTransactionCmd@f2818d</value>
+ </field>
+ <field name="LastCmdInitiated" data-type="string">
+  <value>dk.kb.doms.api.oais.sipdipcommands.FinishTransactionCmd@f2818d</value>
+ </field>
+ <field name="QA_status" data-type="string"/>
+ <field name="Document Name" data-type="string">
+  <value>dsa_rab-rez_0864.tif</value>
+ </field>
+ <field name="Preservation_status" data-type="enumeration">
+  <value>Klar til langtidsbevaring</value>
+ </field>
+ <field name="Vertical Pixels" data-type="integer">
+  <value>1482</value>
+ </field>
+ <field name="Pageorientation" data-type="enumeration">
+  <value>LTR</value>
+ </field>
+ <field name="Record Name" data-type="string">
+  <value>dsa_rab-rez_0864.tif</value>
+ </field>
+ <field name="Record Creation Date" data-type="date">
+  <value>Mon Mar 21 13:56:29 CET 2011</value>
+ </field>
+ <field name="Record Modification Date" data-type="date">
+  <value>Mon Mar 21 15:49:31 CET 2011</value>
+ </field>
+ <field name="Asset Creation Date" data-type="date">
+  <value>Mon Mar 21 14:48:02 CET 2011</value>
+ </field>
+ <field name="Asset Modification Date" data-type="date">
+  <value>Mon Mar 21 14:48:02 CET 2011</value>
+ </field>
+ <field name="Cataloging User" data-type="string">
+  <value>oam</value>
+ </field>
+ <field name="Software" data-type="string">
+  <value>Omniscan 12.0 Build1210</value>
+ </field>
+ <field name="Thumbnail" data-type="picture">
+  <value>[B@1ed6cb1</value>
+ </field>
+ <field name="Categories" data-type="string">
+  <value>Cohn-Reiss, Ephraim, 0008</value>
+ </field>
+ <field name="File Format" data-type="string">
+  <value>TIFF Image</value>
+ </field>
+ <field name="Color Mode" data-type="enumeration">
+  <value>Color</value>
+ </field>
+ <field name="Horizontal Resolution" data-type="double">
+  <value>400.0</value>
+ </field>
+ <field name="Vertical Resolution" data-type="double">
+  <value>400.0</value>
+ </field>
+ <field name="Image Width" data-type="double">
+  <value>5.7225</value>
+ </field>
+ <field name="Image Height" data-type="double">
+  <value>3.705</value>
+ </field>
+ <field name="File Data Size" data-type="integer">
+  <value>10846330</value>
+ </field>
+ <field name="Asset Reference" data-type="blob">
+  <value>/online_master_arkiv/non-archival/Letters/judsam/2010/jan/dsa/rab-rez/dsa_rab-rez_0864.tif</value>
+ </field>
+ <field name="Asset Identifier" data-type="integer">
+  <value>1300668482</value>
+ </field>
+ <field name="Asset Modification State Identifier" data-type="string">
+  <value>2010-06-16 01:35:42</value>
+ </field>
+ <field name="Thumbnail Mean Value" data-type="integer">
+  <value>157</value>
+ </field>
+ <field name="Thumbnail Standard Deviation" data-type="integer">
+  <value>25</value>
+ </field>
+ <field name="Color Model" data-type="enumeration">
+  <value>RGB Color</value>
+ </field>
+ <field name="ICC Profile Name" data-type="string">
+  <value>OS14000_A1_B8_mG</value>
+ </field>
+ <field name="Folder Name" data-type="string">
+  <value>/online_master_arkiv/non-archival/Letters/judsam/2010/jan/dsa/rab-rez</value>
+ </field>
+ <field name="Asset Name" data-type="string">
+  <value>dsa_rab-rez_0864.tif</value>
+ </field>
+ <field name="Volume Name" data-type="string">
+  <value>online_master_arkiv</value>
+ </field>
+ <field name="Server Name" data-type="string">
+  <value>dia-prod-cdb-01.kb.dk</value>
+ </field>
+ <field name="Related Sub Assets" data-type="blob">
+  <value>
+   <pack type="list" id="dsa_rab-rez_0864.tif" relation="Related Sub Assets" catalogue="Letters OM">
+    <pack>
+     <pack type="record">
+      <value key="1315007845" type="string">dsa_rab-rez_0865.tif</value>
+      <value key="1382377075">
+       <pack type="list">
+        <pack>
+         <pack type="record">
+          <value key="1382828356" type="guid">{9ed0887f-40e8-4091-a91c-de356c869251}</value>
+          <value key="1382238532" type="int">4718</value>
+         </pack>
+        </pack>
+       </pack>
+      </value>
+     </pack>
+    </pack>
+   </pack>
+  </value>
+ </field>
+ <field name="Asset Data Size (Long)" data-type="long">
+  <value>10846330</value>
+ </field>
+ <field name="Image Orientation" data-type="string">
+  <value>Top left</value>
+ </field>
+ <field name="Date not after" data-type="string">
+  <value>1919-01-26</value>
+ </field>
+ <field name="GUID" data-type="string">
+  <value>Uid:dk:kb:doms:2007-01/d70c83b0-53c1-11e0-8345-0016357f605f</value>
+ </field>
+ <field name="Language" data-type="string">
+  <value>de</value>
+ </field>
+ <field name="ID" data-type="integer">
+  <value>4719</value>
+ </field>
+ <field name="Catalog Name" data-type="string">
+  <value>Letters OM</value>
+ </field>
+ <field name="creatingApplication" data-type="string">
+  <value>Omniscan 12.0 Build1210</value>
+ </field>
+ <field name="Presentation Format" data-type="enumeration">
+  <value>Browse</value>
+ </field>
+ <field name="Cataloging language" data-type="enumeration">
+  <value>en</value>
+ </field>
+ <field name="Location of recipient" data-type="string">
+  <value>da|København</value>
+  <value>de|Kopenhagen</value>
+ </field>
+ <field name="Country (location) of recipient" data-type="string">
+  <value>dk</value>
+ </field>
+ <field name="Compression" data-type="string">
+  <value>Uncompressed</value>
+ </field>
+ <field name="Mastertransferstatus" data-type="string">
+  <value>OK</value>
+ </field>
+ <field name="Category">
+  <value cumulusId="3352">Cohn-Reiss, Ephraim</value>
+  <value cumulusId="3360">0008</value>
+ </field>
+</record>

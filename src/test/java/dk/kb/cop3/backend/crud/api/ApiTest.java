@@ -518,8 +518,10 @@ public class ApiTest {
         put = new PutMethod();
         get = new GetMethod();
 
+	String someobject = "/books/ortsam/2011/mar/ostryk/object76351";
+	//	String someobject = CREATE_UPDATE_OBJECT;
         String lastModified = null;
-        get.setPath(HOST_NAME + "/syndication"+CREATE_UPDATE_OBJECT);
+        get.setPath(HOST_NAME + "/syndication" + someobject);
         try {
             logger.debug(get.getPath());
             client.executeMethod(get);
@@ -528,15 +530,17 @@ public class ApiTest {
             logger.error("Error fetching object at:  " + SYNDICATION_OBJECT);
         }
         assertEquals(200, get.getStatusCode());
-
+	logger.debug("Got lastModified from server = " + lastModified);
         put.setPath(HOST_NAME + CREATE_OBJECT_SERVICE  + CREATE_UPDATE_OBJECT+ "?lastModified=" + lastModified);
         logger.debug(HOST_NAME + CREATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT+ "?lastModified=" + lastModified);
         try {
             org.w3c.dom.Document dom = builder.parse(new File(MODS_FILE));
+	    logger.debug("Trying to send file " + MODS_FILE);
             RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
             put.setRequestEntity(entity);
             client.executeMethod(put);
         } catch (java.io.IOException io) {
+	    logger.debug("failed  to send file " + MODS_FILE);
             logger.error("IO Error putting object to:  " + UPDATE_OBJECT_SERVICE);
         }
         logger.debug("put.getStatusCode() = " + put.getStatusCode());
