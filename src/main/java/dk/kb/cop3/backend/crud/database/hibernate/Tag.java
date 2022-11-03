@@ -1,7 +1,6 @@
 package dk.kb.cop3.backend.crud.database.hibernate;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +11,7 @@ public class Tag implements Serializable{
     private String creator;
     //private String timestamp;
     private String xlink_to;
-    private Set objects = new HashSet(0);
+    private Set tagjoins = new HashSet(0);
     private java.sql.Timestamp timestamp;
 
 
@@ -48,12 +47,12 @@ public class Tag implements Serializable{
         this.xlink_to = xlink_to;
     }
 
-    public Set getObjects() {
-        return objects;
+    public Set getTagjoins() {
+        return tagjoins;
     }
 
-    public void setObjects(Set objects) {
-        this.objects = objects;
+    public void setTagjoins(Set tagjoins) {
+        this.tagjoins = tagjoins;
     }
 
     public  java.sql.Timestamp getTimestamp() {

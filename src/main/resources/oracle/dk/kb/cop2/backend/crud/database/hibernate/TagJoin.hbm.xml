@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 27, 2011 3:35:31 PM by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="dk.kb.cop3.backend.migrate.hibernate.TagJoinOracle" table="TAG_JOIN">
+        <composite-id>
+            <key-property name="tid" column="tid"></key-property>
+            <key-property name="oid" column="oid"></key-property>
+        </composite-id>
+        <property name="creator" type="string">
+            <column name="CREATOR" length="100" not-null="true" />
+        </property>
+        <property name="timestamp" type="timestamp">
+            <column name="TIMESTAMP" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
