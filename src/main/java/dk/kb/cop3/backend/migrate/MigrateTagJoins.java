@@ -25,7 +25,7 @@ public class MigrateTagJoins {
 
         Session psqlSession = psqlSessfac.openSession();
 
-        List<TagJoinOracle> tagJoinOracles = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.TagJoinOracle where oid='/images/luftfo/2011/maj/luftfoto/object72762'").list();
+        List<TagJoinOracle> tagJoinOracles = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.TagJoinOracle").list();
         tagJoinOracles.stream().forEach(tagJoinOracle -> {
             TagJoin tagJoin = new TagJoin();
             Object object = psqlSession.get(Object.class,tagJoinOracle.getOid());
