@@ -226,6 +226,7 @@ public class ObjectConverter {
         comment.setXlink_to(commentOracle.getXlink_to());
         comment.setId(commentOracle.getId());
         comment.setHost_uri(commentOracle.getHost_uri());
+        comment.setTimestamp(commentOracle.getTimestamp());
         return comment;
     }
 

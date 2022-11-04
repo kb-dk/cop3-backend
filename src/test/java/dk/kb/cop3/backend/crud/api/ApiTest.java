@@ -2,7 +2,7 @@ package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
-//import dk.kb.cop3.backend.datacontroller.util.DomUtils;
+import dk.kb.cop3.backend.commonutils.DomUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
@@ -14,6 +14,8 @@ import org.junit.Test;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.xml.sax.SAXException;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
@@ -509,7 +511,7 @@ public class ApiTest {
         assertEquals(201, put.getStatusCode());
     }
     */
-    /*
+    /* */
     @Test
     public void testUpdateObjectService() throws  SAXException {
         client = new HttpClient();
@@ -539,7 +541,7 @@ public class ApiTest {
         }
         logger.debug("put.getStatusCode() = " + put.getStatusCode());
         assertEquals(200, put.getStatusCode());
-    }    */
+    }  /*  */
 
   /*  @Test
     public void testUpdateNavigationService() throws UnsupportedEncodingException, SAXException {
