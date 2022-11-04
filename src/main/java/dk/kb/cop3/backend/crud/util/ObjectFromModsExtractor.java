@@ -110,26 +110,14 @@ public class ObjectFromModsExtractor {
         Document modsDocument = parseModsString(modsString);
         Transaction transaction = session.beginTransaction();
         try {
-            // Extract simple strings
             populateCopjectWithSimpleFields(copject, version, modsDocument);
             setLatLng(copject, modsDocument);
             setDates(copject, modsDocument);
-            
             setTypeAndEdition(copject, session, modsDocument);
             setCategories(copject, session, modsDocument);
-
             copject.setDeleted('n');
             copject.setLastModified(getCurrentTimestamp());
             copject.setMods(modsString);
-
-/* should be initalized in (c)object constructor
-            copject.setRandomNumber(new BigDecimal(Math.random()));
-            copject.setInterestingess(new BigDecimal(0));
-            copject.setCorrectness(new BigDecimal(0));
-            copject.setBookmark(new BigInteger(String.valueOf(0)));
-            copject.setLikes(new BigInteger(String.valueOf(0)));
-*/
-            
         } catch (XPathExpressionException e) {
             logger.error("Error evaluating XPath. Error is: " + e.getMessage());
         } catch (HibernateException e) {
