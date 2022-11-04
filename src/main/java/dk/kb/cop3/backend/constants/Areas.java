@@ -63,7 +63,7 @@ public class Areas {
         } else if (name.equalsIgnoreCase("Sjælland")) {   //8
             return DSFLAreas.Sjælland;
         } else if (name.equalsIgnoreCase("Sønderjylland") || name.equalsIgnoreCase("Sydjylland")) {        //9
-            return DSFLAreas.Sønderjylland;
+            return DSFLAreas.Sydjylland;
         } else {
             return DSFLAreas.Danmark;
         }
@@ -89,7 +89,7 @@ public class Areas {
                 return "userScore7";
             case Sjælland:           // 8
                 return "userScore8";
-            case Sønderjylland:      // p
+            case Sydjylland:      // p
                 return "userScore9";
             default:
                 return "userScore";

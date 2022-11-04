@@ -10,7 +10,7 @@
                 <layout class="org.apache.log4j.PatternLayout">
                         <!-- This pattern also includes the service name -->
                         <param name="ConversionPattern"
-                                value="COP2 [%d{yyyy-MM-dd HH.mm:ss}] %-5p %C{1} %M: %m %n" />
+                                value="COP3 [%d{yyyy-MM-dd HH.mm:ss}] %-5p %C{1} %M: %m %n" />
                 </layout>
         </appender>
 
@@ -21,7 +21,7 @@
                 <param name="Append" value="true" />
                 <layout class="org.apache.log4j.PatternLayout">
                         <param name="ConversionPattern"
-                                value="COP2 [%d{yyyy-MM-dd HH.mm:ss}] %-5p %C{1} %M: %m %n" />
+                                value="COP3 [%d{yyyy-MM-dd HH.mm:ss}] %-5p %C{1} %M: %m %n" />
                 </layout>
         </appender>
 
@@ -54,7 +54,7 @@
                 <param name="Append" value="true" />
                 <layout class="org.apache.log4j.PatternLayout">
                         <param name="ConversionPattern"
-                                value="COP2 Cache [%d{yyyy-MM-dd HH.mm:ss}] %-5p %C{1} %M: %m %n" />
+                                value="COP3 Cache [%d{yyyy-MM-dd HH.mm:ss}] %-5p %C{1} %M: %m %n" />
                 </layout>
         </appender>
 

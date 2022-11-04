@@ -25,7 +25,7 @@ public class GeoInfoDaoTest {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
             Object[] fynArea = geoInfoDao.getAreaDetails(55.395833, 10.388611);//co-ordinates for Odense
-            Assert.assertEquals(fynArea[1], DSFLAreas.Fyn);
+            Assert.assertEquals(DSFLAreas.Fyn.toString(), fynArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }
@@ -36,7 +36,7 @@ public class GeoInfoDaoTest {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
             Object[] bornholmArea = geoInfoDao.getAreaDetails(55.098611, 14.701389);//co-ordinates for Rønne
-            Assert.assertEquals(bornholmArea[1], DSFLAreas.Bornholm);
+            Assert.assertEquals(DSFLAreas.Bornholm.toString(), bornholmArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }
@@ -47,7 +47,7 @@ public class GeoInfoDaoTest {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
             Object[] fynArea = geoInfoDao.getAreaDetails(55.676111, 12.568333);//co-ordinates for København
-            Assert.assertEquals(fynArea[1], DSFLAreas.Hovedstaden);
+            Assert.assertEquals(DSFLAreas.Hovedstaden.toString(), fynArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }
@@ -58,7 +58,7 @@ public class GeoInfoDaoTest {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
             Object[] kattegatArea = geoInfoDao.getAreaDetails(57.266667, 11.1);//co-ordinates for Læsø
-            Assert.assertEquals(kattegatArea[1], DSFLAreas.Kattegat);
+            Assert.assertEquals(DSFLAreas.Kattegat.toString(), kattegatArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }
@@ -69,7 +69,7 @@ public class GeoInfoDaoTest {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
             Object[] lollandFalsterArea = geoInfoDao.getAreaDetails(54.8, 11.966667);//co-ordinates for Falster
-            Assert.assertEquals(lollandFalsterArea[1], DSFLAreas.LollandFalster);
+            Assert.assertEquals(DSFLAreas.LollandFalster.toString(), lollandFalsterArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }
@@ -80,7 +80,7 @@ public class GeoInfoDaoTest {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
             Object[] midtjyllandArea = geoInfoDao.getAreaDetails(56.15, 10.216667);//co-ordinates for Århus
-            Assert.assertEquals(midtjyllandArea[1], DSFLAreas.Midtjylland);
+            Assert.assertEquals(DSFLAreas.Midtjylland.toString(), midtjyllandArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }
@@ -91,7 +91,7 @@ public class GeoInfoDaoTest {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
             Object[] nordjyllandArea = geoInfoDao.getAreaDetails(57.05, 9.916667);//co-ordinates for Aalborg
-            Assert.assertEquals(nordjyllandArea[1], DSFLAreas.Nordjylland);
+            Assert.assertEquals(DSFLAreas.Nordjylland.toString(), nordjyllandArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }
@@ -102,7 +102,7 @@ public class GeoInfoDaoTest {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
             Object[] sjællandArea = geoInfoDao.getAreaDetails(55.65, 12.083333);//co-ordinates for Roskilde
-            Assert.assertEquals(sjællandArea[1], DSFLAreas.Sjælland);
+            Assert.assertEquals(DSFLAreas.Sjælland.toString(), sjællandArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }
@@ -113,7 +113,7 @@ public class GeoInfoDaoTest {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
             Object[] sønderjyllandArea = geoInfoDao.getAreaDetails(54.91382, 9.79225);//co-ordinates for Sønderborg
-            Assert.assertEquals(sønderjyllandArea[1], DSFLAreas.Sønderjylland);
+            Assert.assertEquals(DSFLAreas.Sydjylland.toString(), sønderjyllandArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }

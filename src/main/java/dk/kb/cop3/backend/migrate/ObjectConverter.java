@@ -3,20 +3,34 @@ package dk.kb.cop3.backend.migrate;
 import dk.kb.cop3.backend.crud.database.hibernate.*;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.database.type.JGeometryType;
+import oracle.jdbc.driver.OracleConnection;
 import dk.kb.cop3.backend.migrate.hibernate.*;
+import org.hibernate.Session;
+
+import dk.kb.cop3.backend.crud.database.type.JGeometryType;
+import java.awt.geom.Point2D;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+
+import oracle.spatial.geometry.JGeometry;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
+
 public class ObjectConverter {
 
+    private static Logger logger = Logger.getLogger(ObjectConverter.class);
+    
     public static Edition convertEdition(EditionOracle editionOracle) {
         Edition edition = new Edition();
             edition.setId(editionOracle.getId());
@@ -73,6 +87,30 @@ public class ObjectConverter {
         return user;
     }
 
+
+    public static AreasInDk convertArea(AreasInDkOracle oraArea) {
+	AreasInDk area = new AreasInDk();
+
+	area.setAreaId("" + oraArea.getAreaId());
+	area.setNameOfArea(oraArea.getNameOfArea());
+
+	JGeometry     oraGeom   = oraArea.getPolygonCol().getJGeometry();
+	double[]      ordinates = oraGeom.getOrdinatesArray();
+	Coordinate[]  coords    = new Coordinate[ordinates.length/2];
+	
+	for(int i=0;i<ordinates.length;i=i+2) {
+	    coords[i/2] = new Coordinate(ordinates[i], ordinates[i+1]);
+	    System.out.println("coordinate " + i/2 + " " + ordinates[i] + " " +  ordinates[i+1]);
+	}
+	GeometryFactory geoFact = new GeometryFactory();
+
+	Polygon poly            = geoFact.createPolygon(coords);
+	
+	area.setPolygonCol(poly);
+	
+	return area;
+    }
+    
     private static UserRole createUserRole(UserOracle oraUser) {
         UserRole userRole = new UserRole();
         userRole.setRoleId(oraUser.getRole().getRoleId());
@@ -150,9 +188,9 @@ public class ObjectConverter {
         object.setLikes(oraObject.getLikes());
         object.setLikes(oraObject.getLikes());
 
-        object.setKeywords((Set<Tag>) oraObject.getKeywords().stream()
-                .map(oraTag-> {return convertTag((TagOracle) oraTag);})
-                        .collect(Collectors.toSet()));
+//        object.setKeywords((Set<Tag>) oraObject.getKeywords().stream()
+//                .map(oraTag-> {return convertTag((TagOracle) oraTag);})
+//                        .collect(Collectors.toSet()));
 
         object.setCategories((Set<Category>) oraObject.getCategories().stream()
                 .map(oraCategory->{return convertCategory((CategoryOracle) oraCategory);})
@@ -188,6 +226,7 @@ public class ObjectConverter {
         comment.setXlink_to(commentOracle.getXlink_to());
         comment.setId(commentOracle.getId());
         comment.setHost_uri(commentOracle.getHost_uri());
+        comment.setTimestamp(commentOracle.getTimestamp());
         return comment;
     }
 

@@ -12,7 +12,7 @@ public class Comment implements Serializable {
     private String creator;
     private String xlink_to;
     private String host_uri;
-
+    private java.sql.Timestamp timestamp;
 
     public String getText() {
         return text;
@@ -54,6 +54,13 @@ public class Comment implements Serializable {
         this.host_uri = host_uri;
     }
 
+    public  java.sql.Timestamp getTimestamp() {return timestamp;}
+
+    public void setTimestamp(java.sql.Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -62,6 +69,7 @@ public class Comment implements Serializable {
                 ", creator='" + creator + '\'' +
                 ", xlink_to='" + xlink_to + '\'' +
                 ", host_uri='" + host_uri + '\'' +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }

@@ -2,18 +2,20 @@ package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
-//import dk.kb.cop3.backend.datacontroller.util.DomUtils;
+import dk.kb.cop3.backend.commonutils.DomUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.Jetty;
+// import org.eclipse.jetty.server.Server;
+// import org.eclipse.jetty.util.Jetty;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.xml.sax.SAXException;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
@@ -25,11 +27,11 @@ import static org.junit.Assert.assertTrue;
 public class ApiTest {
 
     // The webserver
-    private static Jetty jetty = null;
+    // private static Jetty jetty = null;
 
     // The port Jetty will bind to on localhost
     private static int HTTP_PORT = 8080;
-    static Server jettyServer;
+    //    static Server jettyServer;
 
     //The host + port the client will use
     private final static String HOST_NAME = CopBackendProperties.getInstance().getConstants().getProperty("cop3_backend.baseurl");
@@ -509,7 +511,7 @@ public class ApiTest {
         assertEquals(201, put.getStatusCode());
     }
     */
-    /*
+    /* */
     @Test
     public void testUpdateObjectService() throws  SAXException {
         client = new HttpClient();
@@ -539,7 +541,7 @@ public class ApiTest {
         }
         logger.debug("put.getStatusCode() = " + put.getStatusCode());
         assertEquals(200, put.getStatusCode());
-    }    */
+    }  /*  */
 
   /*  @Test
     public void testUpdateNavigationService() throws UnsupportedEncodingException, SAXException {

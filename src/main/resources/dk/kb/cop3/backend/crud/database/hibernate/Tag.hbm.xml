@@ -24,16 +24,9 @@
             <column name="TIMESTAMP" not-null="true" />
         </property>
 
-        <set name="objects" table="TAG_JOIN" inverse="false" lazy="true" fetch="select">
-            <key>
-                <column name="TID" length="1024" not-null="true" />
-            </key>
-            <many-to-many entity-name="dk.kb.cop3.backend.crud.database.hibernate.Object">
-                <column name="OID" length="1024" not-null="true" />
-            </many-to-many>
-
-
-
+        <set name="tagjoins" table="TAG_JOIN" lazy="true" fetch="select">
+            <key column="tid"/>
+            <one-to-many class="dk.kb.cop3.backend.crud.database.hibernate.TagJoin" />
         </set>
     </class>
 </hibernate-mapping>

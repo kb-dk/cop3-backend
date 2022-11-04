@@ -9,6 +9,9 @@ import org.hibernate.SessionFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXB;
+import java.io.StringWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -167,7 +170,9 @@ public class DescriptionService {
             logger.debug("The transformation is done");
             description = (Document) result.getNode();
 
-            return Response.ok(description).build();
+            StringWriter sw = new StringWriter();
+            JAXB.marshal(description, sw);
+            return Response.ok(sw.toString()).build();
 
         } catch (Exception someEx) { // if getting from DB somehow fails, try to get an older entry from cache
             logger.warn("Error getting description for: " + editionId, someEx);

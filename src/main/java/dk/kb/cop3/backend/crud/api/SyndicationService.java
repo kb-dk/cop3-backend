@@ -1,6 +1,5 @@
 package dk.kb.cop3.backend.crud.api;
 
-import dk.kb.cop3.backend.commonutils.CachebleResponse;
 import dk.kb.cop3.backend.constants.Formats;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
@@ -17,6 +16,12 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 
 
@@ -37,7 +42,7 @@ public class SyndicationService {
     @Context
     UriInfo uriInfo;
 
-    private static Logger logger = Logger.getLogger(SyndicationService.class);
+    private static final Logger logger = Logger.getLogger(SyndicationService.class);
 
     /**
      * This method binds to all syndication GET services
@@ -60,7 +65,6 @@ public class SyndicationService {
      * @param notAfter
      * @param httpServletRequest
      * @param servletContext
-     * @return
      */
 
     //@Produces("application/xml")
@@ -105,11 +109,8 @@ public class SyndicationService {
                 editionId, id, language, format, random, itemsPerPage, page, bbo, query, notBefore, notAfter);
         logger.debug("Cache key: " + cacheKey);
 
-        Response.ResponseBuilder responseBuilder = null;
-        Document responseDoc = null;
-        MetadataFormulator mdf = getMetadataFormulator(format);
+        Document responseDoc;
         Session session = null;
-
         try {
             // Get the object(s) from database
 
@@ -118,130 +119,115 @@ public class SyndicationService {
 
             SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
             session = sessionFactory.openSession();
-
             session.beginTransaction();
-
             MetadataSource mds = new SolrMetadataSource(session);
             // give the parameters to the metadatasource
-            mds.setBoundingBox(bbo);
-            if (subjectId != null) {
-                // quick fix for problem with category identifiers containing lang
-                // always append '/da/'
-                logger.debug("setting subject id: " + subjectId + "/" + language + "/");
-                mds.setCategory(subjectId + "/" + language + "/");
-            }
-            if (objectId != null) {
-                logger.debug("setting Searchterms id: " + editionId + "/" + id + "/");
-                mds.setSearchterms("id", editionId + "/" + id);
-            }
+            performSearch(id, language, random, itemsPerPage, page, bbo, query, notBefore, notAfter, searchwide, type,
+                    correctness, orderBy, sortOrder, editionId, subjectId, objectId,
+                    session, mds);
 
-            if (searchwide == null || searchwide.equals("")) {   // ABWE OKT 2011: THIS IS THE WORST cgi-param hacks in the history of modern computing
-                logger.debug("searching for edition.");
-                mds.setEdition(editionId);
-            }
-            if (notAfter != null) {
-                mds.setNotAfter(notAfter);
-            }
-            if (notBefore != null) {
-                mds.setNotBefore(notBefore);
-            }
-
-            if (type != null && !type.equals("all")) { // hvis typen er angivet. Skråfoto, lodfoto eller protokol side. Så kan den angives og søgningen begrænses hermed til f.eks. protokolsider.
-                mds.setType(type);
-            }
-
-            if (correctness != null) {
-                mds.setCorrectness(new BigDecimal(correctness));
-            }
-
-            mds.setNumberPerPage(itemsPerPage);
-
-            if (page > 0) {
-                mds.setOffset(calculateOffSet(page, itemsPerPage));
-            } else {
-                mds.setOffset(0);
-            }
-
-            mds.setRandom(random);
-            if (query != null && !query.equals("")) {
-                setQueryParams(query, mds);
-            }
-
-            if (orderBy != null && !orderBy.equals("")) {
-                mds.setSortcolumn(orderBy);
-            }
-
-            if (sortOrder != null && sortOrder.equals("-1")) {
-                mds.setSortorder(-1);
-            }
-
-            if (sortOrder != null && sortOrder.equals("1")) {
-                mds.setSortorder(1);
-            }
-
-            try {
-                logger.debug("staring search");
-                Long start_time = System.currentTimeMillis();
-                mds.execute(); // Her kastes exceptions
-                logger.debug("search ended " + (System.currentTimeMillis() - start_time) / 1000L);
-                session.flush();
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                logger.error("An exception occurred while executing the MetaDataSource" + e.getLocalizedMessage());
-                // error in search return status 500
-                return Response.status(500).build();
-            }
 
             // Formulate the response
-
+            MetadataFormulator mdf = getMetadataFormulator(format);
             mdf.setServletContext(servletContext);
             mdf.setRequest(httpServletRequest);
             mdf.setDataSource(mds);
-
-            // Formulate the cacheble DOM doc.
             responseDoc = mdf.formulate();
             String rDoc = getStringFromDoc(responseDoc);
-
             if (format == Formats.osd) {
                 rDoc = rDoc.replaceAll("</?[^>]*>", "");
             }
 
-            CachebleResponse newRes = new CachebleResponse(responseDoc, mdf.getLastModifiedTimeStamp());
-
             Response.ResponseBuilder res = Response.ok(rDoc);
             res.type(mdf.mediaType());
-            res.header("Last-Modified-Time-Stamp", newRes.getLastModifiedDateAsNumber());
+            res.header("Last-Modified-Time-Stamp", mdf.getLastModifiedTimeStamp());
             return res.build();
-        } catch (Exception e) { // if getting from DB somehow fails, try to get an older entry from cache
-            logger.error("Exception while getting objects from the database", e);
-            return Response.noContent().build(); // This URI has no content.
-
+        } catch (Exception e) {
+            logger.error("Error getting objects", e);
+            return Response.status(500).build();
         } finally {
-            logger.debug("In finally block, attempting to close Hibernate resources...");
             if (session != null && session.isConnected()) {
-                logger.debug("Closing Hibernate session as we're still connected");
-//                session.cancelQuery(); TODO: check this
                 session.close();
             }
-            logger.debug("Exiting finally block...");
         }
     }
 
+    private void performSearch(String id, String language,
+                               double random, int itemsPerPage, int page, String bbo, String query,
+                               String notBefore, String notAfter, String searchwide, String type,
+                               String correctness, String orderBy, String sortOrder, String editionId,
+                               String subjectId, String objectId,
+                               Session session, MetadataSource mds) {
+        mds.setBoundingBox(bbo);
+        if (subjectId != null) {
+            // quick fix for problem with category identifiers containing lang
+            // always append '/da/'
+            logger.debug("setting subject id: " + subjectId + "/" + language + "/");
+            mds.setCategory(subjectId + "/" + language + "/");
+        }
+        if (objectId != null) {
+            logger.debug("setting Searchterms id: " + editionId + "/" + id + "/");
+            mds.setSearchterms("id", editionId + "/" + id);
+        }
 
-    private String getStringFromDoc(org.w3c.dom.Document doc) {
-        try {
-            javax.xml.transform.dom.DOMSource domSource = new javax.xml.transform.dom.DOMSource(doc);
-            java.io.StringWriter writer = new java.io.StringWriter();
-            javax.xml.transform.stream.StreamResult result = new javax.xml.transform.stream.StreamResult(writer);
-            javax.xml.transform.TransformerFactory tf = javax.xml.transform.TransformerFactory.newInstance();
-            javax.xml.transform.Transformer transformer = tf.newTransformer();
+        if (searchwide == null || searchwide.equals("")) {   // ABWE OKT 2011: THIS IS THE WORST cgi-param hacks in the history of modern computing
+            logger.debug("searching for edition.");
+            mds.setEdition(editionId);
+        }
+        if (notAfter != null) {
+            mds.setNotAfter(notAfter);
+        }
+        if (notBefore != null) {
+            mds.setNotBefore(notBefore);
+        }
+
+        if (type != null && !type.equals("all")) { // hvis typen er angivet. Skråfoto, lodfoto eller protokol side. Så kan den angives og søgningen begrænses hermed til f.eks. protokolsider.
+            mds.setType(type);
+        }
+
+        if (correctness != null) {
+            mds.setCorrectness(new BigDecimal(correctness));
+        }
+
+        mds.setNumberPerPage(itemsPerPage);
+
+        if (page > 0) {
+            mds.setOffset(calculateOffSet(page, itemsPerPage));
+        } else {
+            mds.setOffset(0);
+        }
+
+        mds.setRandom(random);
+        if (query != null && !query.equals("")) {
+            setQueryParams(query, mds);
+        }
+
+        if (orderBy != null && !orderBy.equals("")) {
+            mds.setSortcolumn(orderBy);
+        }
+
+        if (sortOrder != null && sortOrder.equals("-1")) {
+            mds.setSortorder(-1);
+        }
+
+        if (sortOrder != null && sortOrder.equals("1")) {
+            mds.setSortorder(1);
+        }
+        mds.execute();
+        session.flush();
+        session.getTransaction().commit();
+    }
+
+
+    private String getStringFromDoc(Document doc) throws TransformerException {
+            DOMSource domSource = new DOMSource(doc);
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, result);
             writer.flush();
             return writer.toString();
-        } catch (javax.xml.transform.TransformerException ex) {
-            ex.printStackTrace();
-            return null;
-        }
     }
 
     /**
@@ -265,7 +251,7 @@ public class SyndicationService {
             case solr:
                 return new SolrMetadataFormulator();
             default:
-                return null;
+                return new ModsMetadataFormulator();
         }
     }
 
@@ -274,7 +260,7 @@ public class SyndicationService {
      *
      * @param pageNumber
      * @param itemsPerPage
-     * @return
+     * @return the offset
      */
     private int calculateOffSet(int pageNumber, int itemsPerPage) {
         return (pageNumber * itemsPerPage + 1) - itemsPerPage;
@@ -285,8 +271,8 @@ public class SyndicationService {
      * sets field:term and type
      * example query: person:sylvest+jensen%26location:fyn%26type:Skråfoto
      *
-     * @param query
-     * @param mds
+     * @param query query from request
+     * @param mds the current metadatasource
      */
     private void setQueryParams(String query, MetadataSource mds) {
         if (query.contains("&")) { // case more than one term
@@ -309,9 +295,10 @@ public class SyndicationService {
 
         if (!term.contains(":")) { // fritekst søgning
             mds.setSearchterms(term);
-        } else if (term.contains(":")) {  // open search syntax i query feltet.
-            mds.setSearchterms(term.substring(0, term.indexOf(":")),
-                    term.substring(term.indexOf(":") + 1, term.length()));
+        } else {
+            mds.setSearchterms(
+                    term.substring(0, term.indexOf(":")),
+                    term.substring(term.indexOf(":") + 1));
         }
     }
 }

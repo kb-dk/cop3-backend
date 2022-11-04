@@ -1,6 +1,12 @@
 package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
@@ -120,8 +126,8 @@ public class SolrizrService {
 
 	private String get_data(String cop) throws java.io.IOException {
 
-		org.apache.http.impl.client.CloseableHttpClient httpClient = null;
-		org.apache.http.client.methods.CloseableHttpResponse response = null;
+		CloseableHttpClient httpClient = null;
+		CloseableHttpResponse response = null;
 		String responseString = null;
 		try {
 			httpClient =
@@ -155,8 +161,8 @@ public class SolrizrService {
 
 	private String post_data(String solr, String xml_data) throws java.io.IOException {
 
-		org.apache.http.impl.client.CloseableHttpClient httpClient = null;
-		org.apache.http.client.methods.CloseableHttpResponse response = null;
+		CloseableHttpClient httpClient = null;
+		CloseableHttpResponse response = null;
 		String responseString = null;
 		try {
 			httpClient =
@@ -166,15 +172,15 @@ public class SolrizrService {
 			logger.debug("request uri: " + solr);
 
 			// create a method object
-			org.apache.http.client.methods.HttpPost post_method =
-					new org.apache.http.client.methods.HttpPost (solr);
+			HttpPost post_method =
+					new HttpPost (solr);
 
 			logger.debug("made post method");
 
 			// add request body
 
 			logger.debug("body content=" +  xml_data);
-			org.apache.http.entity.StringEntity params =new org.apache.http.entity.StringEntity(xml_data,"UTF-8");
+			StringEntity params =new org.apache.http.entity.StringEntity(xml_data,"UTF-8");
 			params.setContentType("text/xml");
 			post_method.addHeader("Content-Type", "text/xml");
 
@@ -187,8 +193,8 @@ public class SolrizrService {
 
 			logger.debug("executed");
 
-			org.apache.http.HttpEntity response_entity = response.getEntity();
-			responseString = org.apache.http.util.EntityUtils.toString(response_entity, "UTF-8");
+			HttpEntity response_entity = response.getEntity();
+			responseString = EntityUtils.toString(response_entity, "UTF-8");
 
 			logger.info("post_data response status: " + response.getStatusLine().toString()  );
 			logger.debug("post_data response content: " +  responseString );

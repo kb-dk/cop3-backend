@@ -12,6 +12,8 @@ public class CommentOracle implements Serializable {
     private String creator;
     private String xlink_to;
     private String host_uri;
+    private java.sql.Timestamp timestamp;
+
 
     public String getText() {
         return text;
@@ -39,6 +41,12 @@ public class CommentOracle implements Serializable {
 
     public String getXlink_to() {
         return xlink_to;
+    }
+
+    public  java.sql.Timestamp getTimestamp() {return timestamp;}
+
+    public void setTimestamp(java.sql.Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public void setXlink_to(String xlink_to) {
