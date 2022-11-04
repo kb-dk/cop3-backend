@@ -12,6 +12,7 @@ public class MigrateDB {
         MigrateUsers.main(args);
         MigrateAreasInDk.main(args);
         MigrateObjects.main(args);
+        MigrateTagJoins.main(args);
         MigrateComments.main(args);
     }
 }

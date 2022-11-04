@@ -188,9 +188,9 @@ public class ObjectConverter {
         object.setLikes(oraObject.getLikes());
         object.setLikes(oraObject.getLikes());
 
-        object.setKeywords((Set<Tag>) oraObject.getKeywords().stream()
-                .map(oraTag-> {return convertTag((TagOracle) oraTag);})
-                        .collect(Collectors.toSet()));
+//        object.setKeywords((Set<Tag>) oraObject.getKeywords().stream()
+//                .map(oraTag-> {return convertTag((TagOracle) oraTag);})
+//                        .collect(Collectors.toSet()));
 
         object.setCategories((Set<Category>) oraObject.getCategories().stream()
                 .map(oraCategory->{return convertCategory((CategoryOracle) oraCategory);})
