@@ -18,11 +18,10 @@ public class MigrateObjects {
 
 
     public static void main(String[] args) {
+        MigrationUtils.initializeMigration();
         Session oraSession = MigrationUtils.getOracleSession();
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
 
-        SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
-                .setProperty("hibernate.jdbc.batch_size", "1000")
-                .buildSessionFactory();
         int pageSize = 1000;
         int startPage = 0;
         if (args.length > 0) {

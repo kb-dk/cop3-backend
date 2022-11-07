@@ -27,7 +27,6 @@ import java.net.URI;
 @Path("/create")
 public class CreateService {
     private static Logger logger = Logger.getLogger(CreateService.class);
-    private CopBackendProperties consts = CopBackendProperties.getInstance();
 
     @GET
     @Path("/{medium}/{collection}/{year}/{month}/{edition}/{id}")

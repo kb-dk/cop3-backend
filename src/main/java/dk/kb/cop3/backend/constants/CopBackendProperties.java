@@ -1,12 +1,8 @@
 package dk.kb.cop3.backend.constants;
 
 import org.apache.log4j.Logger;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 /**
@@ -20,32 +16,52 @@ public class CopBackendProperties {
 
      private static Logger logger = Logger.getLogger(CopBackendProperties.class);
 
-    private Properties props = null;
+    private static Properties props = null;
 
-    private static CopBackendProperties ourInstance = new CopBackendProperties();
+    public static Properties getProperties() {return props;}
 
-    public static CopBackendProperties getInstance() {
-        return ourInstance;
-    }
-
-    private CopBackendProperties() {
-        String propFile = "/cop_config.xml";
-        this.setConstants(propFile);
-    }
-
-    public void setConstants(String propFile) {
-        this.props = new Properties();
+    public static synchronized void initialize(InputStream input) {
+        props = new Properties();
         try {
-            InputStream in = this.getClass().getResourceAsStream(propFile);
-            props.loadFromXML(in);
-        } catch (FileNotFoundException fileNotFound) {
-            logger.error(String.format("The file '%s' was not found", propFile), fileNotFound);
-        } catch (IOException ioException) {
-            logger.error(String.format("An exception occurred while reading from the file '%s' ", propFile), ioException);
+            props.loadFromXML(input);
+        } catch (InvalidPropertiesFormatException e) {
+            logger.fatal("Invalid properties");
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            logger.fatal("Error reading properties");
+            throw new RuntimeException(e);
         }
     }
 
-     public Properties getConstants() {
-        return this.props;
+    public static String getDatabaseUrl() {
+        return (String) props.get("database.url");
+    }
+
+    public static String getDatabaseUser() {
+        return (String) props.get("database.user");
+    }
+
+    public static String getDatabasePassword() {
+        return (String) props.get("database.password");
+    }
+
+    public static String getCopBackendUrl() {
+        return (String) props.getProperty("cop2_backend.baseurl");
+    }
+
+    public static String getGuiUri() {
+        return (String) props.getProperty("gui.uri");
+    }
+
+    public static String getSolrBaseurl() {
+        return (String) props.getProperty("cop2_solr.baseurl");
+    }
+
+    public static String getCopBackendInternalBaseurl() {
+        return props.getProperty("cop2_backend.internal.baseurl");
+    }
+
+    public static String getDefaultTemplate() {
+        return props.getProperty("template.default");
     }
 }

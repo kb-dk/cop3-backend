@@ -14,11 +14,10 @@ public class MigrateCategories {
     private static Logger logger = Logger.getLogger(MigrateCategories.class);
 
     public static void main(String[] args) {
+        MigrationUtils.initializeMigration();
         Session oraSession = MigrationUtils.getOracleSession();
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
         List<CategoryOracle> categories = oraSession.createQuery("FROM CategoryOracle").list();
-
-        SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
 
         categories.stream()
                 .map(ObjectConverter::convertCategory)

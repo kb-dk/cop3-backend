@@ -20,8 +20,6 @@ import java.util.HashSet;
 public class UpdateService {
     private static Logger logger = Logger.getLogger(UpdateService.class);
 
-    private CopBackendProperties consts = CopBackendProperties.getInstance();
-
     //
     private static final HashSet<String> EDITABLE_FIELDS =
             new HashSet<String>() {

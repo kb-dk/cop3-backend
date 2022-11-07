@@ -47,7 +47,6 @@ public abstract class MetadataFormulator {
 
     private String lastModifiedTimeStamp = "";
     private java.lang.String language = "da";
-    private CopBackendProperties consts = CopBackendProperties.getInstance();
     protected String currentRawMods;
 
     org.apache.log4j.Logger logger =
@@ -184,7 +183,7 @@ public abstract class MetadataFormulator {
         insertElement.appendChild(element);
         element = destination.createElementNS("http://www.w3.org/2005/Atom", "link");
 
-        String copBaseUrl = this.consts.getConstants().getProperty("cop2_backend.baseurl");
+        String copBaseUrl = CopBackendProperties.getCopBackendUrl();
         String baseUrl = copBaseUrl + "/syndication";
 
         element.setAttribute("rel", "search");
@@ -225,7 +224,7 @@ public abstract class MetadataFormulator {
             throw new NullPointerException("No data source available");
         }
 
-        String baseUrl = this.consts.getConstants().getProperty("cop2_backend.baseurl");
+        String baseUrl = CopBackendProperties.getDatabaseUrl();
 
         javax.xml.transform.Transformer transformer = null;
 
@@ -423,7 +422,7 @@ public abstract class MetadataFormulator {
                     transformer.setParameter("correctness", correctness);
                     transformer.setParameter("interestingness",interestingness);
                     transformer.setParameter("metadata_context", baseUrl);
-                    transformer.setParameter("content_context", this.consts.getConstants().getProperty("gui.uri"));
+                    transformer.setParameter("content_context", CopBackendProperties.getGuiUri());
                     transformer.setParameter("record_id", recordId);
                     transformer.setParameter("language", this.getLanguage());
                     if(keywords!=null){

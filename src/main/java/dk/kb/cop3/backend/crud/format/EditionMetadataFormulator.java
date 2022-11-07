@@ -23,9 +23,6 @@ import javax.xml.parsers.ParserConfigurationException;
 public class EditionMetadataFormulator extends MetadataFormulator {
 
 
-    private CopBackendProperties constants =
-	CopBackendProperties.getInstance();
-
     private java.lang.String xslt = "/build_edition_rss.xsl";
     private java.lang.String template = "/template_edition_rss.xml";
     private java.lang.String format = "rss";
@@ -81,7 +78,7 @@ public class EditionMetadataFormulator extends MetadataFormulator {
             insert_here = root;
         }
 
-	java.lang.String copGuiUri = this.constants.getConstants().getProperty("gui.uri");
+	java.lang.String copGuiUri = CopBackendProperties.getGuiUri();
 
         javax.xml.transform.Transformer transformer = null;
         try {

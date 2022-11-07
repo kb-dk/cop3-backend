@@ -25,7 +25,6 @@ import javax.ws.rs.core.UriInfo;
 public class SolrizrService {
 
 	private static Logger logger = Logger.getLogger(SolrizrService.class);
-	private CopBackendProperties consts = CopBackendProperties.getInstance();
 
 	// TODO: do we need this
 	@Context
@@ -38,7 +37,7 @@ public class SolrizrService {
 							@Context HttpServletRequest httpServletRequest,
 							@Context ServletContext servletContext)
 	{
-		String source_data_url = this.consts.getConstants().getProperty("cop2_backend.internal.baseurl");
+		String source_data_url = CopBackendProperties.getDatabaseUrl();
 		source_data_url += "/editions/any/2009/jul/editions/da/?format=solr";
 		String solr_doc = "";
 
@@ -50,7 +49,7 @@ public class SolrizrService {
 
 		String destination_data_url = "";
 		if("".equals(solr_baseurl)) {
-			destination_data_url = this.consts.getConstants().getProperty("cop2_solr.baseurl")+"/update?softCommit=true";
+			destination_data_url = CopBackendProperties.getSolrBaseurl()+"/update?softCommit=true";
 		} else {
 			destination_data_url = solr_baseurl + "/update?softCommit=true";
 		}
@@ -85,7 +84,7 @@ public class SolrizrService {
 	{
 
 		String cop_id          = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
-		String source_data_url = this.consts.getConstants().getProperty("cop2_backend.internal.baseurl");
+		String source_data_url = CopBackendProperties.getCopBackendInternalBaseurl();
 
 		String exhibition =  "".equals(spotlight_exhibition) ? "" : "&spotlight_exhibition=" + spotlight_exhibition;
 
@@ -105,7 +104,7 @@ public class SolrizrService {
 
 		String destination_data_url = "";
 		if("".equals(solr_baseurl)) {
-			destination_data_url = this.consts.getConstants().getProperty("cop2_solr.baseurl")+"/update?softCommit=true";
+			destination_data_url = CopBackendProperties.getSolrBaseurl()+"/update?softCommit=true";
 		} else {
 			destination_data_url = solr_baseurl + "/update?softCommit=true";
 		}
