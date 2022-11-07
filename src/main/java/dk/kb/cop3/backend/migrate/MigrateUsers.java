@@ -12,12 +12,10 @@ import java.util.List;
 public class MigrateUsers {
 
     public static void main(String[] args) {
+        MigrationUtils.initializeMigration();
         Session oraSession = MigrationUtils.getOracleSession();
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
 
-        SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
-
-//        List<UserOracle> usersOracle = oraSession.createQuery( "from dk.kb.cop3.backend.migrate.hibernate.UserOracle").setMaxResults(10).list();
         List<UserOracle> usersOracle = oraSession.createQuery( "from dk.kb.cop3.backend.migrate.hibernate.UserOracle").list();
         usersOracle.stream()
                 .map(oraUser -> ObjectConverter.convertUser(oraUser))

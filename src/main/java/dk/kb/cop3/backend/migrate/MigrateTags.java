@@ -13,11 +13,9 @@ public class MigrateTags {
     private static final Logger logger = Logger.getLogger(MigrateTags.class);
 
     public static void main(String[] args) {
-        Session oraSession = getOracleSession();
-
-        SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
-
+        MigrationUtils.initializeMigration();
+        Session oraSession = MigrationUtils.getOracleSession();
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
 
         List<TagOracle> tags = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.TagOracle").list();
         tags.stream()
@@ -32,12 +30,4 @@ public class MigrateTags {
                     psqlSession.close();
                 });
     }
-
-    private static Session getOracleSession() {
-        Configuration oraConf = new Configuration().configure("oracle/hibernate-oracle.cfg.xml");
-        SessionFactory oracSessfac = oraConf.buildSessionFactory();
-        Session oraSession = oracSessfac.openSession();
-        return oraSession;
-    }
-
 }

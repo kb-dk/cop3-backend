@@ -1,5 +1,6 @@
 package dk.kb.cop3.backend.migrate;
 
+import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.migrate.hibernate.EditionOracle;
 import org.apache.log4j.Logger;
@@ -15,11 +16,9 @@ public class MigrateEditions {
 
 
     public static void main(String[] args) {
+        MigrationUtils.initializeMigration();
         Session oraSession = MigrationUtils.getOracleSession();
-
-        SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
-
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
 
         List<EditionOracle> editions = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.EditionOracle").list();
         editions.stream()

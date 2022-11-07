@@ -11,10 +11,9 @@ import java.util.List;
 
 public class MigrateUserRolePermissions {
     public static void main(String[] args) {
+        MigrationUtils.initializeMigration();
         Session oraSession = MigrationUtils.getOracleSession();
-
-        SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
 
         List<UserRolePermissionsOracle> userRolePermissionsOracle = oraSession.createQuery( "from dk.kb.cop3.backend.migrate.hibernate.UserRolePermissionsOracle").list();
         userRolePermissionsOracle.stream()

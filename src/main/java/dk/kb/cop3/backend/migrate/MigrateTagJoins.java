@@ -18,14 +18,12 @@ public class MigrateTagJoins {
 
 
     public static void main(String[] args) {
+        MigrationUtils.initializeMigration();
         Session oraSession = MigrationUtils.getOracleSession();
-
-        SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
-
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
         Session psqlSession = psqlSessfac.openSession();
 
-        List<TagJoinOracle> tagJoinOracles = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.TagJoinOracle where oid='/images/luftfo/2011/maj/luftfoto/object72762'").list();
+        List<TagJoinOracle> tagJoinOracles = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.TagJoinOracle").list();
         tagJoinOracles.stream().forEach(tagJoinOracle -> {
             TagJoin tagJoin = new TagJoin();
             Object object = psqlSession.get(Object.class,tagJoinOracle.getOid());
@@ -46,7 +44,5 @@ public class MigrateTagJoins {
                 logger.error("object or tag not migrated "+tagJoinOracle.toString());
             }
         });
-
-
     }
 }

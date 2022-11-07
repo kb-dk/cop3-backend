@@ -14,12 +14,9 @@ public class MigrateAreasInDk {
     private static Logger logger = Logger.getLogger(MigrateAreasInDk.class);
 
     public static void main(String[] args) {
-        Session oraSession = getOracleSession();
-
-        SessionFactory psqlSessfac = new Configuration()
-                .configure("hibernate.cfg.xml")
-                .buildSessionFactory();
-
+        MigrationUtils.initializeMigration();
+        Session oraSession = MigrationUtils.getOracleSession();
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
 
         List<AreasInDkOracle> areas = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.AreasInDkOracle").list();
 
@@ -35,12 +32,4 @@ public class MigrateAreasInDk {
                     psqlSession.close();
                 });
     }
-
-    private static Session getOracleSession() {
-        Configuration oraConf = new Configuration().configure("oracle/hibernate-oracle.cfg.xml");
-        SessionFactory oracSessfac = oraConf.buildSessionFactory();
-        Session oraSession = oracSessfac.openSession();
-        return oraSession;
-    }
-
 }

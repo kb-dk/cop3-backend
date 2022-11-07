@@ -14,5 +14,7 @@
     <entry key="database.url">jdbc:postgresql://localhost:25432/cop</entry>
     <entry key="database.user">cop</entry>
     <entry key="database.password">cop123</entry>
+
+    <entry key="oradatabase.url">jdbc:oracle:thin:@oracle-test-03.kb.dk:1521:KURSUS</entry>
 </properties>
 

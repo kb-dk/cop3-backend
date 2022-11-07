@@ -15,11 +15,9 @@ public class MigrateType {
 
 
     public static void main(String[] args) {
+        MigrationUtils.initializeMigration();
         Session oraSession = MigrationUtils.getOracleSession();
-
-        SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
-
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
 
         List<TypeOracle> editions = oraSession.createQuery("from dk.kb.cop3.backend.migrate.hibernate.TypeOracle").list();
         editions.stream()

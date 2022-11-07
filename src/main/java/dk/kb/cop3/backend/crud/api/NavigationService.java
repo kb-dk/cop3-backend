@@ -131,10 +131,9 @@ public class NavigationService {
                         transformer.setParameter("mode",mode);
                     }
 
-                    java.util.Properties constants =
-			        CopBackendProperties.getInstance().getConstants();
-                    String baseUrl = constants.getProperty("cop2_backend.baseurl");
-                    String guiUri = constants.getProperty("gui.uri");
+                    String baseUrl = CopBackendProperties.getCopBackendUrl();
+                    String guiUri = CopBackendProperties.getGuiUri();
+
                     String base_url = baseUrl;
                     transformer.setParameter("base_uri",base_url+"/navigation"+editionId);
                     transformer.setParameter("edition_id",editionId);

@@ -14,11 +14,10 @@ public class MigrateComments {
     private static final Logger logger = Logger.getLogger(MigrateComments.class);
 
     public static void main(String[] args) {
-        Session oraSession = getOracleSession();
+        MigrationUtils.initializeMigration();
+        Session oraSession = MigrationUtils.getOracleSession();
+        SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
         List<CommentOracle> comments = oraSession.createQuery("FROM CommentOracle").list();
-
-        SessionFactory psqlSessfac = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
 
         comments.stream()
                 .map(ObjectConverter::convertComment)
@@ -38,12 +37,4 @@ public class MigrateComments {
             logger.error("Error saving comment ",ex);
         }
     }
-
-
-    private static Session getOracleSession() {
-        Configuration oraConf = new Configuration().configure("oracle/hibernate-oracle.cfg.xml");
-        SessionFactory oracSessfac = oraConf.buildSessionFactory();
-        return oracSessfac.openSession();
-    }
-
 }

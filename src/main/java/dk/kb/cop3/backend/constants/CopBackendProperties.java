@@ -1,16 +1,9 @@
 package dk.kb.cop3.backend.constants;
 
 import org.apache.log4j.Logger;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
-
-import static dk.kb.cop3.backend.constants.ObjSubPag.object;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,55 +16,54 @@ public class CopBackendProperties {
 
      private static Logger logger = Logger.getLogger(CopBackendProperties.class);
 
-    private Properties props = null;
+    private static Properties props = null;
 
-    private static CopBackendProperties ourInstance = new CopBackendProperties();
+    public static Properties getProperties() {return props;}
 
-    public static CopBackendProperties getInstance() {
-        return ourInstance;
-    }
-
-    private CopBackendProperties() {
-        InputStream in;
-        String propFile;
+    public static synchronized void initialize(InputStream input) {
+        props = new Properties();
         try {
-            InitialContext ctx = new InitialContext();
-            propFile = (String) ctx.lookup("java:comp/env/copBackendProperties");
-            in = new FileInputStream(propFile);
-        } catch (NamingException e) {
-            logger.warn("Using default cop properties");
-            in = this.getClass().getResourceAsStream("/cop_config.xml");
-        } catch (FileNotFoundException e) {
-            logger.fatal("Configfile not found ",e);
-            throw new RuntimeException("Configfile not found ",e);
+            props.loadFromXML(input);
+        } catch (InvalidPropertiesFormatException e) {
+            logger.fatal("Invalid properties");
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            logger.fatal("Error reading properties");
+            throw new RuntimeException(e);
         }
-        this.setConstants(in);
+        StringWriter outputString = new StringWriter();
+        PrintWriter output = new PrintWriter(outputString);
     }
 
-    public void setConstants(InputStream in) {
-        this.props = new Properties();
-        try {
-            props.loadFromXML(in);
-        } catch (FileNotFoundException fileNotFound) {
-            logger.error(String.format("The file '%s' was not found"), fileNotFound);
-        } catch (IOException ioException) {
-            logger.error(String.format("An exception occurred while reading from the file"), ioException);
-        }
+    public static String getDatabaseUrl() {
+        return (String) props.get("database.url");
     }
 
-    public String getDatabaseUrl() {
-        return (String) this.props.get("database.url");
+    public static String getDatabaseUser() {
+        return (String) props.get("database.user");
     }
 
-    public String getDatabaseUser() {
-        return (String) this.props.get("database.user");
+    public static String getDatabasePassword() {
+        return (String) props.get("database.password");
     }
 
-    public String getDatabasePassword() {
-        return (String) this.props.get("database.password");
+    public static String getCopBackendUrl() {
+        return (String) props.getProperty("cop2_backend.baseurl");
     }
 
-     public Properties getConstants() {
-        return this.props;
+    public static String getGuiUri() {
+        return (String) props.getProperty("gui.uri");
+    }
+
+    public static String getSolrBaseurl() {
+        return (String) props.getProperty("cop2_solr.baseurl");
+    }
+
+    public static String getCopBackendInternalBaseurl() {
+        return props.getProperty("cop2_backend.internal.baseurl");
+    }
+
+    public static String getDefaultTemplate() {
+        return props.getProperty("template.default");
     }
 }

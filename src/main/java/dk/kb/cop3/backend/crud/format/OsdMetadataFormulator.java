@@ -13,8 +13,7 @@ import dk.kb.cop3.backend.constants.CopBackendProperties;
 
 public class OsdMetadataFormulator extends MetadataFormulator {
 
-    private CopBackendProperties consts = CopBackendProperties.getInstance();
-    private String copBaseUrl = this.consts.getConstants().getProperty("cop2_backend.baseurl");
+    private String copBaseUrl = CopBackendProperties.getCopBackendUrl();
     private String baseUrl    = copBaseUrl + "/syndication";
 
     org.apache.log4j.Logger logger =

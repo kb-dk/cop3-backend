@@ -34,7 +34,7 @@ public class ApiTest {
     //    static Server jettyServer;
 
     //The host + port the client will use
-    private final static String HOST_NAME = CopBackendProperties.getInstance().getConstants().getProperty("cop3_backend.baseurl");
+    private final static String HOST_NAME = CopBackendProperties.getCopBackendUrl();
 
     // Client methods
     static HttpClient client = new HttpClient();

@@ -18,6 +18,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.criterion.Restrictions;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -33,9 +35,9 @@ public class HibernateUtil {
         try {
             Configuration configuration = new Configuration();
             configuration.configure("hibernate.cfg.xml")
-                    .setProperty(Environment.URL, CopBackendProperties.getInstance().getDatabaseUrl())
-                    .setProperty(Environment.USER,CopBackendProperties.getInstance().getDatabaseUser())
-                    .setProperty(Environment.PASS,CopBackendProperties.getInstance().getDatabasePassword());
+                    .setProperty(Environment.URL, CopBackendProperties.getDatabaseUrl())
+                    .setProperty(Environment.USER,CopBackendProperties.getDatabaseUser())
+                    .setProperty(Environment.PASS,CopBackendProperties.getDatabasePassword());
             return configuration.buildSessionFactory();
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
@@ -47,7 +49,6 @@ public class HibernateUtil {
 
 
     public static SessionFactory getSessionFactory() {
-        myLogger.debug("get session");
         return sessionFactory;
 
     }

@@ -39,8 +39,6 @@ public class SolrMetadataSource implements MetadataSource {
 
     private static final Logger logger = Logger.getLogger(SolrMetadataSource.class);
 
-    private final CopBackendProperties consts = CopBackendProperties.getInstance();
-
     protected static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     protected org.hibernate.Session session;
@@ -361,7 +359,7 @@ public class SolrMetadataSource implements MetadataSource {
 
     private void solrSearch() {
         try {
-            String solr_url = this.consts.getConstants().getProperty("cop2_solr.baseurl");
+            String solr_url = CopBackendProperties.getCopBackendUrl();
             logger.debug("Solr url "+solr_url);
             HttpSolrServer solr = new HttpSolrServer(solr_url);
 

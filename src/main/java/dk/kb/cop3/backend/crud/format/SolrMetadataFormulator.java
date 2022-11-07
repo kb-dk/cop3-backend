@@ -15,10 +15,9 @@ import org.w3c.dom.Element;
 
 public class SolrMetadataFormulator extends MetadataFormulator {
 
-    private CopBackendProperties consts = CopBackendProperties.getInstance();
-    private String copBaseUrl = this.consts.getConstants().getProperty("cop2_backend.baseurl");
+    private String copBaseUrl = CopBackendProperties.getCopBackendUrl();
     private String baseUrl = copBaseUrl + "/syndication";
-    private String copIntBaseUrl = this.consts.getConstants().getProperty("cop2_backend.internal.baseurl");
+    private String copIntBaseUrl = CopBackendProperties.getCopBackendInternalBaseurl();
     private String internalBaseUrl = copIntBaseUrl + "/syndication";
 
     org.apache.log4j.Logger logger =
@@ -67,7 +66,7 @@ public class SolrMetadataFormulator extends MetadataFormulator {
             steps[i].setParameter("spotlight_exhibition",exhibition);
             steps[i].setParameter("raw_mods", this.currentRawMods);
             //	    steps[i].setParameter("url_prefix",copBaseUrl);
-            steps[i].setParameter("content_context", this.consts.getConstants().getProperty("gui.uri"));
+            steps[i].setParameter("content_context", CopBackendProperties.getGuiUri());
             try {
                 steps[i].transform(dom_source, dom_result);
                 solr_doc = (org.w3c.dom.Document) dom_result.getNode();
