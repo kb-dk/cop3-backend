@@ -31,8 +31,6 @@ public class CopBackendProperties {
             logger.fatal("Error reading properties");
             throw new RuntimeException(e);
         }
-        StringWriter outputString = new StringWriter();
-        PrintWriter output = new PrintWriter(outputString);
     }
 
     public static String getDatabaseUrl() {
