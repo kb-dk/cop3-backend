@@ -2,188 +2,85 @@ package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
-//import dk.kb.cop3.backend.datacontroller.util.DomUtils;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.util.TestUtil;
-import dk.kb.cop3.backend.commonutils.DomUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.Jetty;
 import org.hibernate.Session;
-// import org.eclipse.jetty.server.Server;
-// import org.eclipse.jetty.util.Jetty;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
+import org.junit.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.xml.sax.SAXException;
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * This class is the main reference for the supported URI's in the CRUD engine.
  */
 public class ApiTest {
 
-    // The webserver
-    private static Jetty jetty = null;
-
-    // The port Jetty will bind to on localhost
-    private static int HTTP_PORT = 9921;
-    static Server jettyServer;
-
-    //The host + port the client will use
-//    private final static String HOST_NAME = CopBackendProperties.getInstance().getConstants().getProperty("cop3_backend.baseurl");
-    private final static String HOST_NAME = "http://localhost:9921/cop";
-
-    // Client methods
+    private static final String COP_CONFIG = "src/test/resources/cop_config.xml";
+    private static String HOST_NAME = "";
     static HttpClient client = new HttpClient();
     static GetMethod get = new GetMethod();
     static PutMethod put = new PutMethod();
     static PostMethod post = new PostMethod();
-
     private static Logger logger = Logger.getLogger(ApiTest.class);
-
-    private static final String SYNDICATION_ROOT = "/syndication/images/luftfo/2011/maj/luftfoto/";
-
-    // READ SERVICES
-
-    // GET LISTS OF OBJECTS
-
-
-    // All objects in a subject - as COP1 would use it
+    private static final String OBJECT_NAME = "object62132";
+    private static final String OBJECT2_NAME = "object135334";
+    private static final String OBJECT3_NAME = "object62138";
+    private static final String OBJECT_PATH = "/images/luftfo/2011/maj/luftfoto/";
+    private static final String OBJECT_ID = "/images/luftfo/2011/maj/luftfoto";
+    private static final String SYNDICATION_ROOT = "/syndication" + OBJECT_PATH;
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT =
-            SYNDICATION_ROOT + "subject203?itemsPerPage=10";
-
-    // All objects in a subject - as COP1 would use it, in native MODS
+            SYNDICATION_ROOT + OBJECT2_NAME + "?itemsPerPage=10";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS =
-            SYNDICATION_ROOT + "subject203?format=mods&itemsPerPage=10";
-
-    // All objects in a subject - as COP1 would use it, get the danish version
+            SYNDICATION_ROOT + OBJECT2_NAME + "?format=mods&itemsPerPage=10";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_LANG_DA =
-            SYNDICATION_ROOT + "subject203/da?format=mods&itemsPerPage=10";
-
-    // All objects in a subject - as Luftfoto would use it (All objetcs with random number > 0.8)
+            SYNDICATION_ROOT + OBJECT2_NAME + "/da?format=mods&itemsPerPage=10";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_FRACTION =
-            SYNDICATION_ROOT + "subject203?random=0.8&itemsPerPage=10";
-
-    // All objects in a subject - as COP1 would use it - max 5 records
+            SYNDICATION_ROOT + OBJECT2_NAME + "?random=0.8&itemsPerPage=10";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MAX_5 =
-            SYNDICATION_ROOT + "subject203?itemsPerPage=5";
-
-    // All objects in a subject - as COP1 would use it - max 5 records - page 2
+            SYNDICATION_ROOT + OBJECT2_NAME + "?itemsPerPage=5";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MAX_5_PAGE_2 =
-            SYNDICATION_ROOT + "subject203?itemsPerPage=5&page=2";
-
-    // All objects in a subject within a bounding box
+            SYNDICATION_ROOT + OBJECT2_NAME + "?itemsPerPage=5&page=2";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO =
-            SYNDICATION_ROOT + "subject203?bbo=-111.032,42.943,-119.856,43.039&itemsPerPage=10";
-
-    // All objects within a bounding box
+            SYNDICATION_ROOT + OBJECT2_NAME + "?bbo=-111.032,42.943,-119.856,43.039&itemsPerPage=10";
     private final static String SYNDICATION_ALL_OBJECTS_IN_BBO =
             SYNDICATION_ROOT + "?bbo=-111.032,42.943,-119.856,43.039&random=0.8&itemsPerPage=10";
-
-
-    // All objects in a subject within a bounding box with a freetext search on the term 'jensen'
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FREETEXT =
             SYNDICATION_ROOT + "?bbo=-111.032,42.943,-119.856,43.039&query=jensen&itemsPerPage=10";
-
-
-    // All objects in a subject within a bounding box with a search on persons 'jensen'
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FIELDED_SEARCH =
             SYNDICATION_ROOT + "?bbo=-111.032,42.943,-119.856,43.039&query=person:jensen&itemsPerPage=10&itemsPerPage=10";
-
-    // All objects in a subject within a bounding box with year in between 1939 - 1945
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_YEAR_RANGE =
-            SYNDICATION_ROOT + "subject203?bbo=-111.032,42.943,-119.856,43.039&notBefore=1939-01-01&notAfter=1945-01-01&itemsPerPage=10";
-
-    // All objects in a query that combines as much as possible
+            SYNDICATION_ROOT + OBJECT2_NAME + "?bbo=-111.032,42.943,-119.856,43.039&notBefore=1939-01-01&notAfter=1945-01-01&itemsPerPage=10";
     private final static String SYNDICATION_ALL_THINGS_COMBINED =
-            SYNDICATION_ROOT + "subject203?bbo=-111.032,42.943,-119.856,43.039&query=person:sylvest+jensen%26location:fyn&random=0.8&itemsPerPage=10";
-
-
-    // GET SINGLE OBJECTS
-
-    // Get the object with identifier /images/luftfo/2011/maj/luftfoto/object62132
-    private final static String SYNDICATION_OBJECT = SYNDICATION_ROOT + "object62132";
-
-    // Get the object with identifier /images/luftfo/2011/maj/luftfoto/object62132 as MODS
-    private final static String SYNDICATION_OBJECT_MODS = SYNDICATION_ROOT + "object62132/da?format=mods";
-
-    // Get the object with identifier /images/luftfo/2011/maj/luftfoto/object62132 in an unknown format
-    private final static String SYNDICATION_OBJECT_UNKNOWN = SYNDICATION_ROOT + "object62132/da?format=unknown";
-
-
-    // SPECIAL SERVICES
-
-    // Content services
-    // GET the TOC of the object with id images/luftfo/2011/maj/luftfoto/object62132
-    private final static String CONTENT_OPML = "/content/images/luftfo/2011/maj/luftfoto/object62132";
-
-    // GET the TOC of the object with id images/luftfo/2011/maj/luftfoto/object62132 in danish
-    private final static String CONTENT_OPML_LANG_DA = "/content/images/luftfo/2011/maj/luftfoto/object62132/da";
-
-
-    // Novigation services
-    // GET the OPML of full edition
-    private final static String NAVIGATION_OPML_FULL = "/navigation/images/luftfo/2011/maj/luftfoto";
-
-    // GET the OPML of full edition in danish
-    private final static String NAVIGATION_OPML_FULL_DA = "/navigation/images/luftfo/2011/maj/luftfoto/da";
-
-    // GET the OPML of an edition, with subject 203 as top node
-    private final static String NAVIGATION_OPML_SUBJECT = "/navigation/images/luftfo/2011/maj/luftfoto/subject203";
-
-    // GET the OPML of an edition, with subject 203 as top node in danish
-    private final static String NAVIGATION_OPML_SUBJECT_DA = "/navigation/images/luftfo/2011/maj/luftfoto/subject203/da";
-
-    // Directory service
-    // GET a list of all editions
+            SYNDICATION_ROOT + OBJECT2_NAME + "?bbo=-111.032,42.943,-119.856,43.039&query=person:sylvest+jensen%26location:fyn&random=0.8&itemsPerPage=10";
+    private final static String SYNDICATION_OBJECT = SYNDICATION_ROOT + OBJECT_NAME;
+    private final static String SYNDICATION_OBJECT_AS_MODS = SYNDICATION_ROOT + OBJECT_NAME + "/da?format=mods";
+    private final static String SYNDICATION_OBJECT_UNKNOWN = SYNDICATION_ROOT + OBJECT_NAME + "/da?format=unknown";
+    private final static String CONTENT_OPML = "/content" + OBJECT_PATH + OBJECT_NAME;
+    private final static String CONTENT_OPML_LANG_DA = "/content" + OBJECT_PATH + OBJECT_NAME + "/da";
+    private final static String NAVIGATION_OPML_FULL = "/navigation" + OBJECT_ID;
+    private final static String NAVIGATION_OPML_FULL_DA = "/navigation" + OBJECT_PATH + "da";
+    private final static String NAVIGATION_OPML_SUBJECT = "/navigation" + OBJECT_PATH + OBJECT2_NAME;
+    private final static String NAVIGATION_OPML_SUBJECT_DA = "/navigation" + OBJECT_PATH + OBJECT2_NAME + "/da";
     private final static String DIRECTORY_SERVICE_OPML = "/directory";
-
-    // Configuration service
-    // GET the default configuration for an edition as java.properties file
-    private final static String CONFIGURATION_SERVICE_PROPERTIES = "/configuration/images/luftfo/2011/maj/luftfoto";
-
-
-    // UPDATE / CREATE SERVICES
-
-    // POST an updated object to the server.
+    private final static String CONFIGURATION_SERVICE_PROPERTIES = "/configuration" + OBJECT_ID;
     private final static String UPDATE_OBJECT_SERVICE = "/update";
-
     private final static String CREATE_OBJECT_SERVICE = "/create";
-
-    // PUT a new or updated opml document to the server.
     private final static String CREATE_UPDATE_NAVIGATION_SERVICE = "/create";
-
-    // The test object to create or update
-    private final static String CREATE_UPDATE_OBJECT = "/images/luftfo/2011/maj/luftfoto/object62138";
-
-    // The mods file on disk, with id /images/luftfo/2011/maj/luftfoto/object62132
+    private final static String CREATE_UPDATE_OBJECT = OBJECT_PATH + OBJECT3_NAME;
     private static final String MODS_FILE = "testdata/cumulus-export/Luftfoto_OM/205/master_records/L0717_04.tif-mods.xml";
-
-    // The edition to get an updated opml
-    private static final String LUFTFOTO_EDITION = "/images/luftfo/2011/maj/luftfoto";
-
-    // the opml file on disk
+    private static final String LUFTFOTO_EDITION = OBJECT_ID;
     private static final String OPML_FILE = "testdata/cumulus-export/Luftfoto_OM/205/categories.xml";
-
 
     /**
      * Classes for building a DOM Document from the result stream
      */
     private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     private static DocumentBuilder builder = null;
-
 
     /**
      * Start up the embedded Jetty at port 8080
@@ -192,14 +89,12 @@ public class ApiTest {
      */
     @BeforeClass
     public static void initTest() throws Exception {
+        CopBackendProperties.initialize(new FileInputStream(COP_CONFIG));
         client.getHttpConnectionManager().getParams().setConnectionTimeout(DatacontrollerConstants.CONN_TIMEOUT);
         client.getHttpConnectionManager().getParams().setSoTimeout(DatacontrollerConstants.CONN_TIMEOUT);
-
-        //jettyServer = jetty.serverInitializedOK(HTTP_PORT);
-        //jettyServer.start();
-        //factory.setNamespaceAware(true);
+        HOST_NAME = CopBackendProperties.getCopBackendUrl();
+        logger.debug("Hostname:"+ HOST_NAME);
         builder = factory.newDocumentBuilder();
-
     }
 
     /**
@@ -209,11 +104,8 @@ public class ApiTest {
      */
     @AfterClass
     public static void postTest() throws Exception {
- //       jettyServer.stop();
- //       jettyServer.join();
-
-	close(get);
-	close(put);
+        close(get);
+        close(put);
     }
 
     //***********READ TESTS********************//
@@ -222,11 +114,21 @@ public class ApiTest {
     // GET LISTS OF OBJECTS
 
     @Test
+    public void testSyndicationAllObjectsInSubjectMods() {
+        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS);
+        logger.debug(get.getPath());
+        try {
+            client.executeMethod(get);
+        } catch (java.io.IOException io) {
+            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS);
+        }
+        assertEquals(200, get.getStatusCode());
+    }
+
+    @Test
     public void testSyndicationAllObjectsInSubject() {
         get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT);
-        logger.debug(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT);
-
-
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -237,21 +139,9 @@ public class ApiTest {
 
 
     @Test
-    public void testSyndicationAllObjectsInSubjectMods() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS);
-        try {
-            logger.debug(get.getPath());
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS);
-        }
-        assertEquals(200, get.getStatusCode());
-    }
-
-
-    @Test
     public void testSyndicationAllObjectsInSubjectLangDa() {
         get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_LANG_DA);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -263,6 +153,7 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInFraction() {
         get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_FRACTION);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -274,6 +165,7 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInSubjectMax5() {
         get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MAX_5);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -285,6 +177,7 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInSubjectInBBO() {
         get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -296,6 +189,7 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInBBO() {
         get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_BBO);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -307,6 +201,7 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithFreeText() {
         get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FREETEXT);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -318,6 +213,7 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithFieldedSearch() {
         get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FIELDED_SEARCH);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -357,6 +253,7 @@ public class ApiTest {
     @Test
     public void testSyndicationObject() {
         get.setPath(HOST_NAME + SYNDICATION_OBJECT);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -367,11 +264,12 @@ public class ApiTest {
 
     @Test
     public void testSyndicationObjectMods() {
-        get.setPath(HOST_NAME + SYNDICATION_OBJECT_MODS);
+        get.setPath(HOST_NAME + SYNDICATION_OBJECT_AS_MODS);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_OBJECT_MODS);
+            logger.error("IO Error fetching object at:  " + SYNDICATION_OBJECT_AS_MODS);
         }
         assertEquals(200, get.getStatusCode());
     }
@@ -380,6 +278,7 @@ public class ApiTest {
     @Test
     public void testSyndicationObjectUnknown() {
         get.setPath(HOST_NAME + SYNDICATION_OBJECT_UNKNOWN);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -388,13 +287,12 @@ public class ApiTest {
         assertEquals(404, get.getStatusCode());
     }
 
-
-    // SPECIAL SERVICES
-
     // Navigation service
+    @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlFull() {
         get.setPath(HOST_NAME + NAVIGATION_OPML_FULL);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -403,9 +301,11 @@ public class ApiTest {
         assertEquals(200, get.getStatusCode());
     }
 
+    @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlFullDa() {
         get.setPath(HOST_NAME + NAVIGATION_OPML_FULL_DA);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -414,9 +314,11 @@ public class ApiTest {
         assertEquals(200, get.getStatusCode());
     }
 
+    @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlSubject() {
         get.setPath(HOST_NAME + NAVIGATION_OPML_SUBJECT);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -425,9 +327,11 @@ public class ApiTest {
         assertEquals(200, get.getStatusCode());
     }
 
+    @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlSubjectDa() {
         get.setPath(HOST_NAME + NAVIGATION_OPML_SUBJECT_DA);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -438,10 +342,10 @@ public class ApiTest {
 
 
     // Content services
-
     @Test
     public void testContentOpml() {
         get.setPath(HOST_NAME + CONTENT_OPML);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -453,6 +357,7 @@ public class ApiTest {
     @Test
     public void testContentOpmlLangDa() {
         get.setPath(HOST_NAME + CONTENT_OPML_LANG_DA);
+        logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
@@ -575,12 +480,12 @@ public class ApiTest {
         PostMethod post = new PostMethod();
         final Session session = TestUtil.openDatabaseSession();
         Object cobject = TestUtil.getCobject(CREATE_UPDATE_OBJECT, session);
+        logger.info(CREATE_UPDATE_OBJECT);
         final double lat = cobject.getPoint().getCoordinate().getX();
         final double lon = cobject.getPoint().getCoordinate().getY();
         Assert.assertEquals("lat", 10.42, lat, 0.1);
         Assert.assertEquals("lon", 55.42, lon, 0.1);
-        post = updateGeoService(post, 10.42, 55.42);
-//        post = updateGeoService(post, lat+1, lon+1);
+        post = updateGeoService(post, lat+1, lon+1);
         revertUpdateGeoService(post, lat, lon);
         close(post);
     }
