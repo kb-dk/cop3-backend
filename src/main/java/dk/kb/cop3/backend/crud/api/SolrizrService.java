@@ -50,7 +50,7 @@ public class SolrizrService {
 
 		String destination_data_url = "";
 		if("".equals(solr_baseurl)) {
-			destination_data_url = this.consts.getConstants().getProperty("cop2_solr.baseurl")+"/update?softCommit=true";
+			destination_data_url = this.consts.getConstants().getProperty("solr.baseurl")+"/update?softCommit=true";
 		} else {
 			destination_data_url = solr_baseurl + "/update?softCommit=true";
 		}
@@ -105,7 +105,7 @@ public class SolrizrService {
 
 		String destination_data_url = "";
 		if("".equals(solr_baseurl)) {
-			destination_data_url = this.consts.getConstants().getProperty("cop2_solr.baseurl")+"/update?softCommit=true";
+			destination_data_url = this.consts.getConstants().getProperty("solr.baseurl")+"/update?softCommit=true";
 		} else {
 			destination_data_url = solr_baseurl + "/update?softCommit=true";
 		}

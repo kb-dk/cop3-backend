@@ -24,7 +24,7 @@ public class ReformulatorTest {
     // TODO: tilføj manglende felter
 	rf.changeField("title","This is the new title");
     rf.changeField("note","This is a note");
-    rf.changeField("name","this is the new name");
+//    rf.changeField("name","this is the new name");
     rf.changeField("building","this is the new building");
     rf.changeField("location","this is the new location");
     rf.changeField("creator","A new creator");

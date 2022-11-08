@@ -109,11 +109,11 @@ public class GeoInfoDaoTest {
     }
 
     @Test
-    public void getAreaDetailsForPointInSønderjylland() {
+    public void getAreaDetailsForPointInSydjylland() {
         GeoInfoDao geoInfoDao = new GeoInfoDaoImpl();
         try {
-            Object[] sønderjyllandArea = geoInfoDao.getAreaDetails(54.91382, 9.79225);//co-ordinates for Sønderborg
-            Assert.assertEquals(DSFLAreas.Sydjylland.toString(), sønderjyllandArea[1].toString());
+            Object[] sydjyllandArea = geoInfoDao.getAreaDetails(54.91382, 9.79225);//co-ordinates for Sønderborg
+            Assert.assertEquals(DSFLAreas.Sydjylland.toString(), sydjyllandArea[1].toString());
         } catch (AreaNotFoundException e) {
             Assert.fail(e.getMessage());
         }

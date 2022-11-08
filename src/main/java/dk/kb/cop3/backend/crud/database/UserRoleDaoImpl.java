@@ -38,14 +38,11 @@ public class UserRoleDaoImpl implements UserRoleDao{
     @Override
     public UserRole findUserRoleById(int roleId) throws DataAccessException {
         Session session = null;
-        Transaction tx = null;
         try{
-            LOGGER.debug("Getting user from the DB with roleId: " + roleId);
-            session = sessionFactory.openSession();
-            tx = session.beginTransaction();
+            session = HibernateUtil.getSessionFactory().openSession();
+            Transaction tx = session.beginTransaction();
             UserRole userRole = (UserRole) session.get(UserRole.class, roleId);
             tx.commit();
-            LOGGER.debug("Successfully performed DB query");
             return userRole;
         } catch (ObjectNotFoundException e) {
             LOGGER.debug("No user role found for role id: " + roleId);

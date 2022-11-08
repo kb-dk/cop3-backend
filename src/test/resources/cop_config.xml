@@ -10,7 +10,7 @@
     <entry key="cop2_backend.baseurl">http://localhost:8080/cop3-backend</entry>
     <entry key="cop2_backend.internal.baseurl">http://localhost:8080/cop3-backend</entry>
     <entry key="annotation.baseurl">http://cop-test-01.kb.dk/</entry>
-    <entry key="cop2_solr.baseurl">http://index-test.kb.dk/solr/cop-editions</entry>
+    <entry key="solr.baseurl">http://index-test.kb.dk/solr/cop-editions</entry>
 
 </properties>
 

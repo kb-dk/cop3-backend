@@ -361,7 +361,7 @@ public class SolrMetadataSource implements MetadataSource {
 
     private void solrSearch() {
         try {
-            String solr_url = this.consts.getConstants().getProperty("cop2_solr.baseurl");
+            String solr_url = this.consts.getConstants().getProperty("solr.baseurl");
             logger.debug("Solr url "+solr_url);
             HttpSolrServer solr = new HttpSolrServer(solr_url);
 
