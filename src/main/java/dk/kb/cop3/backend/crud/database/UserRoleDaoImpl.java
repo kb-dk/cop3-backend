@@ -22,12 +22,6 @@ import org.springframework.dao.DataAccessException;
 public class UserRoleDaoImpl implements UserRoleDao{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserRoleDaoImpl.class);
-    private SessionFactory sessionFactory;
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     /**
      * Implementation of the findUserRoleById method
@@ -38,11 +32,14 @@ public class UserRoleDaoImpl implements UserRoleDao{
     @Override
     public UserRole findUserRoleById(int roleId) throws DataAccessException {
         Session session = null;
+        Transaction tx = null;
         try{
+            LOGGER.debug("Getting user from the DB with roleId: " + roleId);
             session = HibernateUtil.getSessionFactory().openSession();
-            Transaction tx = session.beginTransaction();
+            tx = session.beginTransaction();
             UserRole userRole = (UserRole) session.get(UserRole.class, roleId);
             tx.commit();
+            LOGGER.debug("Successfully performed DB query");
             return userRole;
         } catch (ObjectNotFoundException e) {
             LOGGER.debug("No user role found for role id: " + roleId);

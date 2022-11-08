@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.xml.sax.SAXException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
@@ -569,7 +570,7 @@ public class ApiTest {
 
 
     @Test
-    public void testUpdateGeoService() throws UnsupportedEncodingException {
+    public void testUpdateGeoService() throws  FileNotFoundException {
         logger.info("ApiTest called");
         PostMethod post = new PostMethod();
         final Session session = TestUtil.openDatabaseSession();

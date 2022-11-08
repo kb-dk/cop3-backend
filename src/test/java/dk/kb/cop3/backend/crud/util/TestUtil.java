@@ -1,6 +1,8 @@
 package dk.kb.cop3.backend.crud.util;
 
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
+import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
@@ -19,9 +21,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -44,9 +44,9 @@ public class TestUtil {
         return objectFromModsExtractor.extractFromMods(copject, mods, session);
     }
 
-    public static Session openDatabaseSession() {
-        Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
-        SessionFactory sessions = cfg.buildSessionFactory();
+    public static Session openDatabaseSession() throws FileNotFoundException {
+        CopBackendProperties.initialize(new FileInputStream("src/test/resources/cop_config.xml"));
+        SessionFactory sessions = HibernateUtil.getSessionFactory();
         return sessions.openSession();
     }
 

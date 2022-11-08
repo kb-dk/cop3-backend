@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -19,7 +20,7 @@ public class SolrMetadataSourceTest {
     private static Session session;
 
     @Before
-    public void initTest() {
+    public void initTest() throws FileNotFoundException {
          session = TestUtil.openDatabaseSession();
          createAndSaveTestData();
      }

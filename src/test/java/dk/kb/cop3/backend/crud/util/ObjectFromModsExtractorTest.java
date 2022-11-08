@@ -1,5 +1,6 @@
 package dk.kb.cop3.backend.crud.util;
 
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
@@ -13,6 +14,7 @@ import org.junit.Test;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -33,7 +35,6 @@ public class ObjectFromModsExtractorTest {
      */
     private static Logger myLogger = Logger.getLogger(ObjectFromModsExtractorTest.class);
 
-    private static SessionFactory sessionFactory;
     private static String mods = null;
 //    private static String themeMods = null;
 
@@ -44,9 +45,8 @@ public class ObjectFromModsExtractorTest {
     ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
 
     @BeforeClass
-    public static void initTests() throws ParserConfigurationException, IOException {
-        sessionFactory = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
+    public static void initTests() throws IOException {
+        CopBackendProperties.initialize(new FileInputStream("src/test/resources/cop_config.xml"));
     }
 
     @Test

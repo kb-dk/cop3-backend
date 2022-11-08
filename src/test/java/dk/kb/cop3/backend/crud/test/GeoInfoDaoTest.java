@@ -12,13 +12,24 @@ import dk.kb.cop3.backend.constants.DSFLAreas;
 import dk.kb.cop3.backend.crud.database.GeoInfoDao;
 import dk.kb.cop3.backend.crud.database.GeoInfoDaoImpl;
 import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
+import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.FileNotFoundException;
 
 /**
  * Unit test class for the GeoInfoDao
  */
 public class GeoInfoDaoTest {
+
+
+    @Before
+    public void initTest() throws FileNotFoundException {
+        TestUtil.openDatabaseSession();
+    }
 
     @Test
     public void getAreaDetailsForPointInFyn() {

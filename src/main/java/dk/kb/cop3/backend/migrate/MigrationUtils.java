@@ -14,6 +14,9 @@ public class MigrationUtils {
 
     public static void initializeMigration() {
         String configFile = System.getProperty("dk.kb.cop.propertiesFile");
+        if (configFile == null) {
+            configFile = "src/main/resources/cop_config.xml";
+        }
         try {
             CopBackendProperties.initialize(new FileInputStream(configFile));
         } catch (FileNotFoundException e) {

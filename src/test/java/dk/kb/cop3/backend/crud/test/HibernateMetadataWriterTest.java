@@ -18,6 +18,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathExpressionException;
+import java.io.FileNotFoundException;
 import java.io.StringWriter;
 
 
@@ -29,7 +30,7 @@ public class HibernateMetadataWriterTest {
     final static String NEW_TITLE = "New Title";
 
     @Before
-    public void initTest(){
+    public void initTest() throws FileNotFoundException {
         session = TestUtil.openDatabaseSession();
     }
 

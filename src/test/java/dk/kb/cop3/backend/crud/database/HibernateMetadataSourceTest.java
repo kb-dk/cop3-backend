@@ -1,6 +1,8 @@
 package dk.kb.cop3.backend.crud.database;
 
+import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,6 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.validation.constraints.AssertTrue;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 
 /**
@@ -27,10 +31,9 @@ public class HibernateMetadataSourceTest{
 
 
     @BeforeClass
-    public static void initTest() {
-        Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
-        SessionFactory sessions = cfg.buildSessionFactory();
-        session = sessions.openSession();
+    public static void initTest() throws FileNotFoundException {
+        CopBackendProperties.initialize(new FileInputStream("src/test/resources/cop_config.xml"));
+        session = TestUtil.openDatabaseSession().getSession();
         mds = new HibernateMetadataSource(session);
     }
 
