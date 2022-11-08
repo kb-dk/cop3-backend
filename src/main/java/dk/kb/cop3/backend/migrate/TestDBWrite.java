@@ -22,7 +22,7 @@ public class TestDBWrite {
 
     public static void main(String[] args) {
         SessionFactory sessfac = new Configuration().configure("hibernate.cfg.xml")
-                .setProperty(org.hibernate.cfg.Environment.HBM2DDL_AUTO,"create")
+                .setProperty(org.hibernate.cfg.Environment.HBM2DDL_AUTO,"update")
                 .buildSessionFactory();
         Session session = sessfac.openSession();
         Transaction trans = session.beginTransaction();

@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 @Path("/")
 public class InfoService {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(InfoService.class);
+    static final Logger logger = LoggerFactory.getLogger(InfoService.class);
        /**
      * We can use this service to test that the web server is up and running
      * And that Jersey responds to GET requests
@@ -26,7 +26,7 @@ public class InfoService {
     @GET
     @Produces("text/plain")
     public Response getSyndicationHelloWorld() {
-        LOGGER.info("Hello again from the COP-02 - Backend");
-        return Response.ok("This is still the COP2 Backend").build(); // Unsupported type
+        logger.info("Hello again from the COP3 - Backend");
+        return Response.ok("This is now the COP3 Backend").build(); // Unsupported type
     }
 }

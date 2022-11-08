@@ -2,13 +2,20 @@ package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
+//import dk.kb.cop3.backend.datacontroller.util.DomUtils;
+import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.util.TestUtil;
 import dk.kb.cop3.backend.commonutils.DomUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.Jetty;
+import org.hibernate.Session;
 // import org.eclipse.jetty.server.Server;
 // import org.eclipse.jetty.util.Jetty;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,14 +34,15 @@ import static org.junit.Assert.assertTrue;
 public class ApiTest {
 
     // The webserver
-    // private static Jetty jetty = null;
+    private static Jetty jetty = null;
 
     // The port Jetty will bind to on localhost
-    private static int HTTP_PORT = 8080;
-    //    static Server jettyServer;
+    private static int HTTP_PORT = 9921;
+    static Server jettyServer;
 
     //The host + port the client will use
-    private final static String HOST_NAME = CopBackendProperties.getCopBackendUrl();
+//    private final static String HOST_NAME = CopBackendProperties.getInstance().getConstants().getProperty("cop3_backend.baseurl");
+    private final static String HOST_NAME = "http://localhost:9921/cop";
 
     // Client methods
     static HttpClient client = new HttpClient();
@@ -205,7 +213,6 @@ public class ApiTest {
 
 	close(get);
 	close(put);
-	close(post);
     }
 
     //***********READ TESTS********************//
@@ -511,7 +518,7 @@ public class ApiTest {
         assertEquals(201, put.getStatusCode());
     }
     */
-    /* */
+    /*
     @Test
     public void testUpdateObjectService() throws  SAXException {
         client = new HttpClient();
@@ -541,7 +548,7 @@ public class ApiTest {
         }
         logger.debug("put.getStatusCode() = " + put.getStatusCode());
         assertEquals(200, put.getStatusCode());
-    }  /*  */
+    }    */
 
   /*  @Test
     public void testUpdateNavigationService() throws UnsupportedEncodingException, SAXException {
@@ -563,11 +570,32 @@ public class ApiTest {
 
     @Test
     public void testUpdateGeoService() throws UnsupportedEncodingException {
-        post.setPath(HOST_NAME + UPDATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
-        post.setParameter("lat", "10.42");
-        post.setParameter("lng", "55.42");
-        post.setParameter("user", "Hr. JUNIT ");
-        logger.debug(post.getPath());
+        logger.info("ApiTest called");
+        PostMethod post = new PostMethod();
+        final Session session = TestUtil.openDatabaseSession();
+        Object cobject = TestUtil.getCobject(CREATE_UPDATE_OBJECT, session);
+        final double lat = cobject.getPoint().getCoordinate().getX();
+        final double lon = cobject.getPoint().getCoordinate().getY();
+        Assert.assertEquals("lat", 10.42, lat, 0.1);
+        Assert.assertEquals("lon", 55.42, lon, 0.1);
+        post = updateGeoService(post, 10.42, 55.42);
+//        post = updateGeoService(post, lat+1, lon+1);
+        revertUpdateGeoService(post, lat, lon);
+        close(post);
+    }
+
+    private void revertUpdateGeoService(PostMethod post, double lat, double lon) {
+        post = prepareUpdatePost(post, lat, lon);
+        try {
+            client.executeMethod(post);
+        } catch (java.io.IOException io) {
+            logger.error("IO Error posting new geo coordinates to :  " + UPDATE_OBJECT_SERVICE);
+        }
+        assertEquals(200, post.getStatusCode());
+    }
+
+    private PostMethod updateGeoService(PostMethod post, double lat, double lon) {
+        post = prepareUpdatePost(post, lat, lon);
         try {
             client.executeMethod(post);
         } catch (java.io.IOException io) {
@@ -575,6 +603,16 @@ public class ApiTest {
         }
         logger.debug("code: " + post.getStatusCode() + " status text" + post.getStatusText());
         assertEquals(200, post.getStatusCode());
+        return post;
+    }
+
+    private PostMethod prepareUpdatePost(PostMethod post, double lat, double lon) {
+        post.setPath(HOST_NAME + UPDATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
+        post.setParameter("lat", Double.toString(lat));
+        post.setParameter("lng", Double.toString(lon));
+        post.setParameter("user", "Mr. JUNIT ");
+        logger.debug(post.getPath());
+        return post;
     }
 
 

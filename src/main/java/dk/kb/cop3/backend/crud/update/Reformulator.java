@@ -1,5 +1,7 @@
 package dk.kb.cop3.backend.crud.update;
 
+import javax.xml.transform.stream.StreamSource;
+
 public class Reformulator {
 
     private javax.xml.parsers.DocumentBuilderFactory dfactory =
@@ -121,15 +123,8 @@ public class Reformulator {
         String xsl = this.XSL_FILES.get(field);
         logger.debug("field is "+field+" sheet is " + xsl);
         try {
-            this.transformers.put
-		(field,
-		 transFact.newTransformer
-		 (new javax.xml.transform.stream.StreamSource
-		  (
-		   this.getClass().getResourceAsStream(xsl)
-		   )
-		  )
-		 );
+            final StreamSource streamSource = new StreamSource(this.getClass().getResourceAsStream(xsl));
+            this.transformers.put(field, transFact.newTransformer(streamSource));
         } catch (javax.xml.transform.TransformerConfigurationException transformerPrblm) {
             logger.warn("problem might be: " + transformerPrblm.getMessage());
             transformerPrblm.printStackTrace();
