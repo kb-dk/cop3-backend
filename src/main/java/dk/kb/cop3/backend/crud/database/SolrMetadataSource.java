@@ -8,13 +8,13 @@ import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
 
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
@@ -358,12 +358,11 @@ public class SolrMetadataSource implements MetadataSource {
 
 
     private void solrSearch() {
-        try {
+//        try {
             String solr_url = CopBackendProperties.getCopBackendUrl();
             logger.debug("Solr url "+solr_url);
-            HttpSolrServer solr = new HttpSolrServer(solr_url);
-
-            SolrQuery query = new SolrQuery();
+            HttpSolrClient solr =  new HttpSolrClient.Builder(solr_url).build();
+        SolrQuery query = new SolrQuery();
 
             Set<String> fields = searchterms.keySet();
             String solr_q = "";
@@ -536,15 +535,15 @@ public class SolrMetadataSource implements MetadataSource {
 	        logger.debug("solr_q" + solr_q);
             query.setQuery(solr_q);
             logger.debug(query.toString());
-            QueryResponse solrResponse = solr.query(query);
-            this.solrResults = solrResponse.getResults();
+   //         QueryResponse solrResponse = solr.query(query);
+    //        this.solrResults = solrResponse.getResults();
             logger.debug("Found number of records "+this.solrResults.getNumFound());
             this.numberOfHits = this.solrResults.getNumFound();
             this.solrResultIterator = solrResults.listIterator();
 
-        } catch(SolrServerException serverProblem) {
-            logger.error(serverProblem.getMessage(),serverProblem);
-        }
+//        } catch(SolrServerException serverProblem) {
+//            logger.error(serverProblem.getMessage(),serverProblem);
+//        }
     }
 
     private String getSolrDate(String date) {
