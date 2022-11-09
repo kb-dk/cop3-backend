@@ -476,28 +476,23 @@ public class ApiTest {
 
     @Test
     public void testUpdateGeoService() throws  FileNotFoundException {
-        logger.info("ApiTest called");
         PostMethod post = new PostMethod();
         final Session session = TestUtil.openDatabaseSession();
         Object cobject = TestUtil.getCobject(CREATE_UPDATE_OBJECT, session);
         logger.info(CREATE_UPDATE_OBJECT);
         final double lat = cobject.getPoint().getCoordinate().getX();
         final double lon = cobject.getPoint().getCoordinate().getY();
-        Assert.assertEquals("lat", 10.42, lat, 0.1);
-        Assert.assertEquals("lon", 55.42, lon, 0.1);
-        post = updateGeoService(post, lat+1, lon+1);
+        post = updateGeoService(post, 10.423, 55.423);
+        assertEquals("lat", 10.423, cobject.getPoint().getCoordinate().getX(), 0.1);
+        assertEquals("lon", 55.423, cobject.getPoint().getCoordinate().getY(), 0.1);
         revertUpdateGeoService(post, lat, lon);
+        assertEquals("lat", lat, cobject.getPoint().getCoordinate().getX(), 0.1);
+        assertEquals("lon", lon, cobject.getPoint().getCoordinate().getY(), 0.1);
         close(post);
     }
 
     private void revertUpdateGeoService(PostMethod post, double lat, double lon) {
-        post = prepareUpdatePost(post, lat, lon);
-        try {
-            client.executeMethod(post);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error posting new geo coordinates to :  " + UPDATE_OBJECT_SERVICE);
-        }
-        assertEquals(200, post.getStatusCode());
+        updateGeoService(post, lat, lon);
     }
 
     private PostMethod updateGeoService(PostMethod post, double lat, double lon) {
@@ -506,6 +501,7 @@ public class ApiTest {
             client.executeMethod(post);
         } catch (java.io.IOException io) {
             logger.error("IO Error posting new geo coordinates to :  " + UPDATE_OBJECT_SERVICE);
+            logger.error(io);
         }
         logger.debug("code: " + post.getStatusCode() + " status text" + post.getStatusText());
         assertEquals(200, post.getStatusCode());
