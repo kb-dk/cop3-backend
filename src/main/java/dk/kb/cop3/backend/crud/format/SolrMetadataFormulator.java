@@ -38,7 +38,7 @@ public class SolrMetadataFormulator extends MetadataFormulator {
         logger.debug("done constructing SolrMetadataFormulator");
     }
 
-    public org.w3c.dom.Document formulate() {
+    public Document formulate() {
         logger.debug("before anything");
 
         org.w3c.dom.Document solr_doc = (org.w3c.dom.Document) null;
@@ -46,11 +46,7 @@ public class SolrMetadataFormulator extends MetadataFormulator {
         org.w3c.dom.Document src = this.formulate(this.format, this.template, this.xslt);
         logger.debug("transformed mods " + src);
         javax.xml.transform.dom.DOMSource dom_source = new javax.xml.transform.dom.DOMSource(src);
-
         javax.xml.transform.dom.DOMResult dom_result = new javax.xml.transform.dom.DOMResult();
-
-	    String exhibition = this.getRequest().getParameter("spotlight_exhibition") == null ? "" : this.getRequest().getParameter("spotlight_exhibition");
-
         logger.debug("about to transform");
 
         for (int i = 0; i < steps.length; i++) {
@@ -63,7 +59,6 @@ public class SolrMetadataFormulator extends MetadataFormulator {
             steps[i].setParameter("metadata_context", copBaseUrl);
             steps[i].setParameter("url_prefix", baseUrl);
             steps[i].setParameter("internal_url_prefix", internalBaseUrl);
-            steps[i].setParameter("spotlight_exhibition",exhibition);
             steps[i].setParameter("raw_mods", this.currentRawMods);
             //	    steps[i].setParameter("url_prefix",copBaseUrl);
             steps[i].setParameter("content_context", CopBackendProperties.getGuiUri());

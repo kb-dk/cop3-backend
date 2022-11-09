@@ -1,7 +1,26 @@
 package dk.kb.cop3.backend.crud.format;
 
+import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
+import dk.kb.cop3.backend.crud.database.MetadataSource;
+import dk.kb.cop3.backend.crud.database.MetadataWriter;
+import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
+import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.util.TestUtil;
+import dk.kb.cop3.backend.solr.SolrHelper;
+import org.apache.solr.common.SolrInputDocument;
+import org.apache.xerces.dom.ElementNSImpl;
+import org.hibernate.Session;
 import org.junit.Test;
+import org.locationtech.jts.util.Assert;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.FileNotFoundException;
 
 /**
  * jUnit tests of formulators, using a fake metadatasource
@@ -99,34 +118,6 @@ public class FormulatorTest {
 
     }
     */
-    @Test
-    public void testSolrFormulator() {
-
-    String id = "/images/luftfo/2011/maj/luftfoto/object203821";
-
-    org.hibernate.Session session = 
-	dk.kb.cop3.backend.crud.database.HibernateUtil.getSessionFactory().getCurrentSession();
-    session.beginTransaction();
-
-    dk.kb.cop3.backend.crud.database.MetadataSource source 
-	= new dk.kb.cop3.backend.crud.database.HibernateMetadataSource(session);
-    source.setSearchterms("id",id);
-    source.execute();
-
-    MetadataFormulator formulator = new SolrMetadataFormulator();
-
-    formulator.setDataSource(source);
-    formulator.setOutPutStream(System.out);
-    Document dom = formulator.formulate();
-    System.out.println(formulator.serialize(dom));
-
-    if (session != null && session.isConnected()){
-	logger.debug("Closing Hibernate session as we're still connected");
-	session.cancelQuery();
-	session.close();
-    }
-
-}
 
 
 /*@Test
