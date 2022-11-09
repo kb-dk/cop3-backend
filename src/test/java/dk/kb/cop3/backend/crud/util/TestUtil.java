@@ -7,12 +7,10 @@ import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
-import org.apache.commons.io.FileUtils;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.junit.Assert;
@@ -23,6 +21,9 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import java.io.*;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 
 import static java.math.BigInteger.valueOf;
@@ -32,7 +33,7 @@ public class TestUtil {
 
     public static String getTestMods() {
         try {
-            return FileUtils.readFileToString(new File(LUFTFOTO_MODS_FILE), "UTF-8");
+            return Files.readString(Path.of(LUFTFOTO_MODS_FILE), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
