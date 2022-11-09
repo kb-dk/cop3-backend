@@ -6,10 +6,10 @@
     <!-- base uri for the gui -->
     <entry key="gui.uri">http://dsfl-test-01.kb.dk</entry>
 
-    <entry key="cop2_backend.baseurl">http://cop-test-01.kb.dk/cop</entry>
-    <entry key="cop2_backend.internal.baseurl">http://cop-test-01.kb.dk/cop</entry>
-    <entry key="annotation.baseurl">http://cop-test-01.kb.dk/</entry>
-    <entry key="solr.baseurl">http://index-test.kb.dk/solr/cop-editions</entry>
+    <entry key="cop2_backend.baseurl">http://localhost:8080/cop</entry>
+    <entry key="cop2_backend.internal.baseurl">http://localhost:8080/cop</entry>
+    <entry key="annotation.baseurl">http://localhost:8080/annotation</entry>
+    <entry key="solr.baseurl">http:/localhost:50006//solr/cop-editions</entry>
 
     <entry key="database.url">jdbc:postgresql://localhost:25432/cop</entry>
     <entry key="database.user">cop</entry>
