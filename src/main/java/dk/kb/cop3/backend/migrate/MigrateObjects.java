@@ -31,7 +31,7 @@ public class MigrateObjects {
         List<ObjectOracle> objects = new ArrayList<>();
         for (int pageNo = startPage; pageNo == startPage || !objects.isEmpty(); pageNo++) {
             logger.info("fetching object from oracle. Firstresult:"+pageNo*pageSize);
-            objects = oraSession.createQuery("from ObjectOracle where id = '/images/luftfo/2011/maj/luftfoto/object62138'")
+            objects = oraSession.createQuery("from ObjectOracle")
                     .setMaxResults(pageSize)
                     .setFirstResult(pageNo * pageSize)
                     .list();
