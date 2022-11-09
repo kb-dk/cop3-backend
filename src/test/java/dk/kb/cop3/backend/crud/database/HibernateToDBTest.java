@@ -5,24 +5,16 @@ import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
-import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import dk.kb.cop3.backend.crud.util.TestUtil;
-import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.junit.*;
 import org.locationtech.jts.geom.Geometry;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.Clob;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 

@@ -4,19 +4,19 @@ import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -51,7 +51,7 @@ public class ObjectFromModsExtractorTest {
 
     @Test
     public void testExtractFromArealModsOK() throws IOException {
-        String mods = FileUtils.readFileToString(new File(LUFTFOTO_MODS_FILE), "UTF-8");
+        String mods = Files.readString(Path.of(LUFTFOTO_MODS_FILE), StandardCharsets.UTF_8);
         dk.kb.cop3.backend.crud.database.hibernate.Object copject = new Object();
         Session ses = HibernateUtil.getSessionFactory().openSession();
         copject = objectFromModsExtractor.extractFromMods(copject, mods, ses);
@@ -78,7 +78,7 @@ public class ObjectFromModsExtractorTest {
 
     @Test
     public void testExtractFromBookModsOK() throws IOException {
-        String mods = FileUtils.readFileToString(new File(BOOK_MODS_FILE), "UTF-8");
+        String mods = Files.readString(Path.of(BOOK_MODS_FILE), StandardCharsets.UTF_8);
         dk.kb.cop3.backend.crud.database.hibernate.Object copject = new Object();
         Session ses = HibernateUtil.getSessionFactory().openSession();
         copject = objectFromModsExtractor.extractFromMods(copject, mods, ses);

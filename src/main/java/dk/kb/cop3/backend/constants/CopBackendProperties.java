@@ -54,7 +54,7 @@ public class CopBackendProperties {
     }
 
     public static String getSolrBaseurl() {
-        return (String) props.getProperty("cop2_solr.baseurl");
+        return (String) props.getProperty("solr.baseurl");
     }
 
     public static String getCopBackendInternalBaseurl() {
