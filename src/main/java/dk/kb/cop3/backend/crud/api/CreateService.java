@@ -9,7 +9,6 @@ import dk.kb.cop3.backend.solr.SolrHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,16 +19,14 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
-import java.net.URI;
+
 
 
 // The class binds to /create
 
 @Path("/create")
 public class CreateService {
-    private static Logger logger = Logger.getLogger(CreateService.class);
+    private static final Logger logger = Logger.getLogger(CreateService.class);
 
     @GET
     @Path("/{medium}/{collection}/{year}/{month}/{edition}/{id}")
@@ -64,7 +61,7 @@ public class CreateService {
 
     /**
      * Put-service. Receive som data, and try saving it to db.
-     * PUT http://localhost:8080/cop/syndication/SOMEOBJECT (the path is not final)
+     * PUT <a href="http://localhost:8080/cop/syndication/SOMEOBJECT">...</a> (the path is not final)
      *
      * @return
      */
@@ -79,21 +76,28 @@ public class CreateService {
                                           @Context HttpServletRequest httpServletRequest,
                                           String mods) {
         Session session = HibernateUtil.getSessionFactory().openSession();
+        String objectId;
         try {
             MetadataWriter mdw = new HibernateMetadataWriter(session);
-            String objectId = mdw.createFromMods(mods);
-            if ("conflict".equals(objectId)) {
-                return Response.status(HttpStatus.SC_CONFLICT)
-                        .entity("object allready exists")
-                        .build();
-            }
-            if ("error".equals(objectId)) {
-                return Response.serverError().entity("error creating object").build();
-            }
-            return updateSolrAndReturnReponse(objectId);
+            objectId = mdw.createFromMods(mods);
+        } catch (Exception e) {
+            logger.error("Error creating object in database ", e);
+            return Response.serverError().entity("Error creating object in database").build();
         } finally {
             session.close();
         }
+
+        Response response = checkMetadatawriterResponse(objectId);
+        if (response != null) {
+            return response;
+        }
+
+        if (SolrHelper.updateCobjectInSolr(objectId)) {
+            return Response.ok().build();
+        } else {
+            return Response.serverError().entity("error updating solr").build();
+        }
+
     }
 
     @POST
@@ -120,6 +124,21 @@ public class CreateService {
         } finally {
             session.close();
         }
+
+        Response response = checkMetadatawriterResponse(objectId);
+        if (response != null) {
+            // something went wrong, return
+            return response;
+        }
+
+        if (SolrHelper.updateCobjectInSolr(objectId)) {
+            return Response.ok().build();
+        } else {
+            return Response.serverError().entity("error updating solr").build();
+        }
+    }
+
+    private Response checkMetadatawriterResponse(String objectId) {
         if (StringUtils.isEmpty(objectId) || "error".equals(objectId) ||
                 "ids-do-not-match".equals(objectId)) {
             logger.error("unable to update from mods");
@@ -133,18 +152,8 @@ public class CreateService {
                     .entity("object not found")
                     .build();
         }
-        return updateSolrAndReturnReponse(objectId);
+        return null;
 
-    }
-
-    private static Response updateSolrAndReturnReponse(String objectId) {
-        try {
-            SolrHelper.indexCopObject(objectId);
-        } catch (XPathExpressionException | SolrServerException | IOException e) {
-            logger.error("Error updating solr", e);
-            return Response.serverError().entity("Error updating solr").build();
-        }
-        return Response.ok(objectId).build();
     }
 
     @PUT
@@ -164,7 +173,7 @@ public class CreateService {
         Session ses = fact.getCurrentSession();
         ses.beginTransaction();
         try {
-            Edition editionObject = (Edition) ses.get(Edition.class, editionId);
+            Edition editionObject = ses.get(Edition.class, editionId);
             if (editionObject == null) {
                 logger.warn("Edition " + editionId + " not found");
                 ses.close();

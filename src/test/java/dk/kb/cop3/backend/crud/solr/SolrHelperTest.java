@@ -2,15 +2,13 @@ package dk.kb.cop3.backend.crud.solr;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
-import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import dk.kb.cop3.backend.solr.SolrHelper;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.common.SolrInputDocument;
 import org.hibernate.Session;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.locationtech.jts.util.Assert;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.FileInputStream;
@@ -47,7 +45,13 @@ public class SolrHelperTest {
         Session session = TestUtil.openDatabaseSession();
         HibernateMetadataWriter mdw = new HibernateMetadataWriter(session);
 
-        SolrHelper.indexCopObject(id);
+        SolrHelper.updateCobjectInSolr(id);
+    }
+
+    @Test
+    @Ignore
+    public void testSolrizeEditions() {
+        SolrHelper.SolrizeEditions();
     }
 
 }
