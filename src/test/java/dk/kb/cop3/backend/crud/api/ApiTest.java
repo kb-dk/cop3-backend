@@ -113,7 +113,7 @@ public class ApiTest {
 
     // GET LISTS OF OBJECTS
 
-    private void TestRequest( String request, String returnType, int expectedStatusCode){
+    private void testRequest(String request, String returnType, int expectedStatusCode){
         get.setPath(HOST_NAME + request);
         logger.debug(get.getPath());
         try {
@@ -127,59 +127,59 @@ public class ApiTest {
 
     @Test
     public void testSyndicationAllObjectsInSubjectMods() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubject() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT, "list of objects", 200);
     }
 
 
     @Test
     public void testSyndicationAllObjectsInSubjectLangDa() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_LANG_DA, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_LANG_DA, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInFraction() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_FRACTION, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_FRACTION, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectMax5() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MAX_5, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MAX_5, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBO() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInBBO() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_BBO, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_BBO, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithFreeText() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FREETEXT, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FREETEXT, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithFieldedSearch() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FIELDED_SEARCH, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FIELDED_SEARCH, "list of objects", 200);
     }
 
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithYearRange() {
-        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_YEAR_RANGE, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_YEAR_RANGE, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllThingsCombined() {
-        TestRequest(SYNDICATION_ALL_THINGS_COMBINED, "list of objects", 200);
+        testRequest(SYNDICATION_ALL_THINGS_COMBINED, "list of objects", 200);
     }
 
 
@@ -187,55 +187,55 @@ public class ApiTest {
 
     @Test
     public void testSyndicationObject() {
-        TestRequest(SYNDICATION_OBJECT, "object", 200);
+        testRequest(SYNDICATION_OBJECT, "object", 200);
     }
 
     @Test
     public void testSyndicationObjectMods() {
-        TestRequest(SYNDICATION_OBJECT_AS_MODS, "object", 200);
+        testRequest(SYNDICATION_OBJECT_AS_MODS, "object", 200);
     }
 
 
     @Test
     public void testSyndicationObjectUnknown() {
-        TestRequest(SYNDICATION_OBJECT_UNKNOWN, "object", 404);
+        testRequest(SYNDICATION_OBJECT_UNKNOWN, "object", 404);
     }
 
     // Navigation service
     @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlFull() {
-        TestRequest(NAVIGATION_OPML_FULL, "opml", 200);
+        testRequest(NAVIGATION_OPML_FULL, "opml", 200);
     }
 
     @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlFullDa() {
-        TestRequest(NAVIGATION_OPML_FULL_DA, "opml", 200);
+        testRequest(NAVIGATION_OPML_FULL_DA, "opml", 200);
     }
 
     @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlSubject() {
-        TestRequest(NAVIGATION_OPML_SUBJECT, "opml", 200);
+        testRequest(NAVIGATION_OPML_SUBJECT, "opml", 200);
     }
 
     @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlSubjectDa() {
-        TestRequest(NAVIGATION_OPML_SUBJECT_DA, "opml", 200);
+        testRequest(NAVIGATION_OPML_SUBJECT_DA, "opml", 200);
     }
 
 
     // Content services
     @Test
     public void testContentOpml() {
-        TestRequest(CONTENT_OPML, "object", 200);
+        testRequest(CONTENT_OPML, "object", 200);
     }
 
     @Test
     public void testContentOpmlLangDa() {
-        TestRequest(CONTENT_OPML_LANG_DA, "object", 200);
+        testRequest(CONTENT_OPML_LANG_DA, "object", 200);
     }
 
 
