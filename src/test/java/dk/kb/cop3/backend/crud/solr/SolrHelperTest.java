@@ -51,7 +51,7 @@ public class SolrHelperTest {
     @Test
     @Ignore
     public void testSolrizeEditions() {
-        SolrHelper.SolrizeEditions();
+        SolrHelper.solrizeEditions();
     }
 
 }

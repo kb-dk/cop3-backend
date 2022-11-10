@@ -15,21 +15,29 @@ import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.xalan.processor.TransformerFactoryImpl;
 import org.hibernate.Session;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
 
 public class SolrHelper {
-    private static Logger log = Logger.getLogger(SolrHelper.class);
+    private static final Logger log = Logger.getLogger(SolrHelper.class);
 
     private static String getSolrXmlDocument(String id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -66,7 +74,7 @@ public class SolrHelper {
         return updateWentOk;
     }
 
-    public static boolean SolrizeEditions() {
+    public static boolean solrizeEditions() {
         boolean updateWentOK = false;
         String solrUrl = CopBackendProperties.getSolrBaseurl();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -88,6 +96,8 @@ public class SolrHelper {
                 if (response.getStatus() != 0) {
                     updateWentOK = false;
                     log.error("Error sending edition to solr "+response);
+                } else {
+                    updateWentOK = true;
                 }
             } catch (SolrServerException | IOException e) {
                 updateWentOK = false;
@@ -95,6 +105,41 @@ public class SolrHelper {
             }
         }
         return updateWentOK;
+    }
+
+    public static boolean updateCategoriesInEditionInSolr(String editionId, String categoryId) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Edition edition = session.get(Edition.class,editionId);
+        if (edition != null) {
+            String solr_url = CopBackendProperties.getSolrBaseurl();
+            String topCategoryId = edition.getCumulusTopCatagory();
+            HttpSolrClient solr = new HttpSolrClient.Builder(solr_url).build();
+            try {
+                UpdateRequest updateRequest = new UpdateRequest();
+                updateRequest.deleteByQuery("bread_crumb_ssim:"+topCategoryId);
+                updateRequest.deleteById(topCategoryId);
+                updateRequest.setParam("softCommit","true");
+                UpdateResponse response = updateRequest.process(solr);
+                if (response.getStatus() != 0) {
+                    log.error("Unable to update categories "+response);
+                    return false;
+                }
+                String solrXml = getSolrXMLfromOPML(edition.getOpml(),editionId,categoryId);
+                DirectXmlRequest xmlReq = new DirectXmlRequest("/update", solrXml);
+                ModifiableSolrParams params = new ModifiableSolrParams();
+                params.set("softCommit","true");
+                xmlReq.setParams(params);
+                response = xmlReq.process(solr);
+                if (response.getStatus() != 0) {
+                    log.error("Unable to update categories "+response);
+                    return false;
+                }
+                return true;
+            } catch (SolrServerException | IOException e) {
+                log.error("Unable to update categories in solr",e);
+            }
+        }
+        return false;
     }
 
     public static SolrInputDocument getSolrDocFromEdition(Edition edition) {
@@ -128,4 +173,32 @@ public class SolrHelper {
             return null;
         }
     }
+
+    private static String getSolrXMLfromOPML(String opml, String editionId, String catId) {
+        try {
+            TransformerFactory trans_fact = new TransformerFactoryImpl();
+            Transformer transformer =
+                    trans_fact.newTransformer(new StreamSource(SolrHelper.class.getResourceAsStream("/opml2solr.xsl")));
+            transformer.setParameter("start_node_id", catId.replaceFirst("subject", ""));
+            transformer.setParameter("mode", "deep");
+            String baseUrl = CopBackendProperties.getCopBackendUrl();
+            String guiUri = CopBackendProperties.getGuiUri();
+            transformer.setParameter("base_uri", baseUrl + "/navigation" + editionId);
+            transformer.setParameter("edition_id", editionId);
+            transformer.setParameter("html_base_uri", guiUri + editionId);
+            transformer.setParameter("rss_base_uri", baseUrl + "/syndication" + editionId);
+            DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dfactory.newDocumentBuilder();
+            Document opmlResult = dBuilder.newDocument();
+            Document sourceOpml = dBuilder.parse(new InputSource(new StringReader(opml)));
+            transformer.transform(new DOMSource(sourceOpml), new DOMResult(opmlResult));
+            return getStringFromDocument(opmlResult);
+        } catch (ParserConfigurationException | IOException | TransformerException | SAXException e) {
+            log.error("Error transforming opml for edition "+editionId,e);
+        }
+        return null;
+
+    }
+
+
 }
