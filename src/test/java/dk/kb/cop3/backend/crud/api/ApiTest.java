@@ -45,18 +45,19 @@ public class ApiTest {
             SYNDICATION_ROOT + OBJECT2_NAME + "?itemsPerPage=5";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MAX_5_PAGE_2 =
             SYNDICATION_ROOT + OBJECT2_NAME + "?itemsPerPage=5&page=2";
+    private static final String BOUNDING_BOX = "10.772781372070312,55.384376628312815,10.331611633300783,55.23587533144054";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO =
-            SYNDICATION_ROOT + OBJECT2_NAME + "?bbo=-111.032,42.943,-119.856,43.039&itemsPerPage=10";
+            SYNDICATION_ROOT + OBJECT2_NAME + "?bbo=" + BOUNDING_BOX + "&itemsPerPage=10";
     private final static String SYNDICATION_ALL_OBJECTS_IN_BBO =
-            SYNDICATION_ROOT + "?bbo=-111.032,42.943,-119.856,43.039&random=0.8&itemsPerPage=10";
+            SYNDICATION_ROOT + "?bbo=" + BOUNDING_BOX + "&random=0.8&itemsPerPage=10";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FREETEXT =
-            SYNDICATION_ROOT + "?bbo=-111.032,42.943,-119.856,43.039&query=jensen&itemsPerPage=10";
+            SYNDICATION_ROOT + "?bbo=" + BOUNDING_BOX + "&query=jensen&itemsPerPage=10";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FIELDED_SEARCH =
-            SYNDICATION_ROOT + "?bbo=-111.032,42.943,-119.856,43.039&query=person:jensen&itemsPerPage=10&itemsPerPage=10";
+            SYNDICATION_ROOT + "?bbo=" + BOUNDING_BOX + "&query=person:jensen&itemsPerPage=10&itemsPerPage=10";
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_YEAR_RANGE =
-            SYNDICATION_ROOT + OBJECT2_NAME + "?bbo=-111.032,42.943,-119.856,43.039&notBefore=1939-01-01&notAfter=1945-01-01&itemsPerPage=10";
+            SYNDICATION_ROOT + OBJECT2_NAME + "?bbo=" + BOUNDING_BOX + "&notBefore=1939-01-01&notAfter=1945-01-01&itemsPerPage=10";
     private final static String SYNDICATION_ALL_THINGS_COMBINED =
-            SYNDICATION_ROOT + OBJECT2_NAME + "?bbo=-111.032,42.943,-119.856,43.039&query=person:sylvest+jensen%26location:fyn&random=0.8&itemsPerPage=10";
+            SYNDICATION_ROOT + OBJECT2_NAME + "?bbo=" + BOUNDING_BOX + "&query=person:sylvest+jensen%26location:fyn&random=0.8&itemsPerPage=10";
     private final static String SYNDICATION_OBJECT = SYNDICATION_ROOT + OBJECT_NAME;
     private final static String SYNDICATION_OBJECT_AS_MODS = SYNDICATION_ROOT + OBJECT_NAME + "/da?format=mods";
     private final static String SYNDICATION_OBJECT_UNKNOWN = SYNDICATION_ROOT + OBJECT_NAME + "/da?format=unknown";
