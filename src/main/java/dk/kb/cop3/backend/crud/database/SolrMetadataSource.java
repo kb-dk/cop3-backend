@@ -23,6 +23,7 @@ import org.hibernate.query.Query;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -358,11 +359,11 @@ public class SolrMetadataSource implements MetadataSource {
 
 
     private void solrSearch() {
-//        try {
-            String solr_url = CopBackendProperties.getCopBackendUrl();
+        try {
+            String solr_url = CopBackendProperties.getSolrUrl();
             logger.debug("Solr url "+solr_url);
-            HttpSolrClient solr =  new HttpSolrClient.Builder(solr_url).build();
-        SolrQuery query = new SolrQuery();
+            HttpSolrClient solr = new HttpSolrClient.Builder(solr_url).build();
+            SolrQuery query = new SolrQuery();
 
             Set<String> fields = searchterms.keySet();
             String solr_q = "";
@@ -535,15 +536,17 @@ public class SolrMetadataSource implements MetadataSource {
 	        logger.debug("solr_q" + solr_q);
             query.setQuery(solr_q);
             logger.debug(query.toString());
-   //         QueryResponse solrResponse = solr.query(query);
-    //        this.solrResults = solrResponse.getResults();
+            QueryResponse solrResponse = solr.query(query);
+            this.solrResults = solrResponse.getResults();
             logger.debug("Found number of records "+this.solrResults.getNumFound());
             this.numberOfHits = this.solrResults.getNumFound();
             this.solrResultIterator = solrResults.listIterator();
 
-//        } catch(SolrServerException serverProblem) {
-//            logger.error(serverProblem.getMessage(),serverProblem);
-//        }
+        } catch(SolrServerException serverProblem) {
+            logger.error(serverProblem.getMessage(),serverProblem);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String getSolrDate(String date) {
