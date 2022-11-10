@@ -113,138 +113,73 @@ public class ApiTest {
 
     // GET LISTS OF OBJECTS
 
-    @Test
-    public void testSyndicationAllObjectsInSubjectMods() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS);
+    private void TestRequest( String request, String returnType, int expectedStatusCode){
+        get.setPath(HOST_NAME + request);
         logger.debug(get.getPath());
         try {
             client.executeMethod(get);
         } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS);
+            logger.error("IO Error fetching" + returnType + " at:  " + request);
+            logger.error(io);
         }
-        assertEquals(200, get.getStatusCode());
+        assertEquals(expectedStatusCode, get.getStatusCode());
+    }
+
+    @Test
+    public void testSyndicationAllObjectsInSubjectMods() {
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MODS, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubject() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT, "list of objects", 200);
     }
 
 
     @Test
     public void testSyndicationAllObjectsInSubjectLangDa() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_LANG_DA);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_LANG_DA);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_LANG_DA, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInFraction() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_FRACTION);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_FRACTION);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_FRACTION, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectMax5() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MAX_5);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MAX_5);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_MAX_5, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBO() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInBBO() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_BBO);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_BBO);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_BBO, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithFreeText() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FREETEXT);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FREETEXT);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FREETEXT, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithFieldedSearch() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FIELDED_SEARCH);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FIELDED_SEARCH);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_FIELDED_SEARCH, "list of objects", 200);
     }
 
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithYearRange() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_YEAR_RANGE);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_YEAR_RANGE);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO_WITH_YEAR_RANGE, "list of objects", 200);
     }
 
     @Test
     public void testSyndicationAllThingsCombined() {
-        get.setPath(HOST_NAME + SYNDICATION_ALL_THINGS_COMBINED);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_ALL_THINGS_COMBINED);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_ALL_THINGS_COMBINED, "list of objects", 200);
     }
 
 
@@ -252,118 +187,55 @@ public class ApiTest {
 
     @Test
     public void testSyndicationObject() {
-        get.setPath(HOST_NAME + SYNDICATION_OBJECT);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_OBJECT);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_OBJECT, "object", 200);
     }
 
     @Test
     public void testSyndicationObjectMods() {
-        get.setPath(HOST_NAME + SYNDICATION_OBJECT_AS_MODS);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_OBJECT_AS_MODS);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(SYNDICATION_OBJECT_AS_MODS, "object", 200);
     }
 
 
     @Test
     public void testSyndicationObjectUnknown() {
-        get.setPath(HOST_NAME + SYNDICATION_OBJECT_UNKNOWN);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + SYNDICATION_OBJECT_UNKNOWN);
-        }
-        assertEquals(404, get.getStatusCode());
+        TestRequest(SYNDICATION_OBJECT_UNKNOWN, "object", 404);
     }
 
     // Navigation service
     @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlFull() {
-        get.setPath(HOST_NAME + NAVIGATION_OPML_FULL);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching opml at:  " + NAVIGATION_OPML_FULL);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(NAVIGATION_OPML_FULL, "opml", 200);
     }
 
     @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlFullDa() {
-        get.setPath(HOST_NAME + NAVIGATION_OPML_FULL_DA);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching opml at:  " + NAVIGATION_OPML_FULL_DA);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(NAVIGATION_OPML_FULL_DA, "opml", 200);
     }
 
     @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlSubject() {
-        get.setPath(HOST_NAME + NAVIGATION_OPML_SUBJECT);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching opml at:  " + NAVIGATION_OPML_SUBJECT);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(NAVIGATION_OPML_SUBJECT, "opml", 200);
     }
 
     @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlSubjectDa() {
-        get.setPath(HOST_NAME + NAVIGATION_OPML_SUBJECT_DA);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching opml at:  " + NAVIGATION_OPML_SUBJECT_DA);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(NAVIGATION_OPML_SUBJECT_DA, "opml", 200);
     }
 
 
     // Content services
     @Test
     public void testContentOpml() {
-        get.setPath(HOST_NAME + CONTENT_OPML);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + CONTENT_OPML);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(CONTENT_OPML, "object", 200);
     }
 
     @Test
     public void testContentOpmlLangDa() {
-        get.setPath(HOST_NAME + CONTENT_OPML_LANG_DA);
-        logger.debug(get.getPath());
-        try {
-            client.executeMethod(get);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error fetching object at:  " + CONTENT_OPML_LANG_DA);
-        }
-        assertEquals(200, get.getStatusCode());
+        TestRequest(CONTENT_OPML_LANG_DA, "object", 200);
     }
 
 
@@ -392,38 +264,39 @@ public class ApiTest {
 
 
     //************************* CREATE AND UPDATE *******************//
-  /*  @Test
-    public void testCreateObjectService() throws UnsupportedEncodingException, SAXException {
+//    @Test
+//    public void testCreateObjectService() throws  FileNotFoundException{
+//        final Session ses = TestUtil.openDatabaseSession();
+//
+//        ses.beginTransaction();
+//        try {
+//            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = ses.get(Object.class,CREATE_UPDATE_OBJECT);
+//            if (cObject != null) {
+//                ses.delete(cObject);
+//                ses.getTransaction().commit();
+//            }
+//        } catch (Exception ex) {
+//            logger.debug("error "+ex.getMessage());
+//            ses.getTransaction().rollback();
+//            assertTrue("testCreateObjectService hibernate error "+ex.getMessage(),false);
+//        }
+//
+//        put.setPath(HOST_NAME + CREATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
+//        try {
+//            org.w3c.dom.Document dom = builder.parse(new File(MODS_FILE));
+//            RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
+//            put.setRequestEntity(entity);
+//            logger.debug(put.getPath());
+//            client.executeMethod(put);
+//        } catch (java.io.IOException io) {
+//            logger.error("IO Error putting object to:  " + CREATE_OBJECT_SERVICE);
+//            logger.debug(io.getMessage());
+//        } catch (SAXException e) {
+//            throw new RuntimeException(e);
+//        }
+//        assertEquals(201, put.getStatusCode());
+//    }
 
-        SessionFactory fact = HibernateUtil.getSessionFactory();
-        Session ses = fact.getCurrentSession();
-        ses.beginTransaction();
-        try {
-            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = (dk.kb.cop3.backend.crud.database.hibernate.Object) ses.get(Object.class,CREATE_UPDATE_OBJECT);
-            if (cObject != null) {
-                ses.delete(cObject);
-                ses.getTransaction().commit();
-            }
-        } catch (Exception ex) {
-            logger.debug("error "+ex.getMessage());
-            ses.getTransaction().rollback();
-            assertTrue("testCreateObjectService hibernate error "+ex.getMessage(),false);
-        }
-
-        put.setPath(HOST_NAME + CREATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
-        try {
-            org.w3c.dom.Document dom = builder.parse(new File(MODS_FILE));
-            RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
-            put.setRequestEntity(entity);
-            logger.debug(put.getPath());
-            client.executeMethod(put);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error putting object to:  " + CREATE_OBJECT_SERVICE);
-            logger.debug(io.getMessage());
-        }
-        assertEquals(201, put.getStatusCode());
-    }
-    */
     /*
     @Test
     public void testUpdateObjectService() throws  SAXException {
