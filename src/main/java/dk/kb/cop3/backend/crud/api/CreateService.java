@@ -149,7 +149,7 @@ public class CreateService {
         Session ses = fact.getCurrentSession();
         ses.beginTransaction();
         try {
-            Edition editionObject = (Edition) ses.get(Edition.class, editionId);
+            Edition editionObject = ses.get(Edition.class, editionId);
             if (editionObject == null) {
                 logger.warn("Edition " + editionId + " not found");
                 ses.close();
