@@ -8,7 +8,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.xml.xpath.XPathExpressionException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
