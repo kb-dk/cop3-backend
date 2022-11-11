@@ -13,6 +13,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.xalan.processor.TransformerFactoryImpl;
@@ -39,8 +40,13 @@ import java.util.List;
 public class SolrHelper {
     private static final Logger log = Logger.getLogger(SolrHelper.class);
 
-    private static String getSolrXmlDocument(String id) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+    private final Session session;
+
+    public SolrHelper(Session session) {
+        this.session = session;
+    }
+
+    private String getSolrXmlDocument(String id) {
         MetadataSource source = new SolrMetadataSource(session);
         source.setSearchterms("id", id);
         source.execute();
@@ -50,7 +56,7 @@ public class SolrHelper {
         return getStringFromDocument(dom);
     }
 
-    public static boolean updateCobjectInSolr(String objectId)  {
+    public boolean updateCobjectInSolr(String objectId)  {
         boolean updateWentOk;
         String solrUrl = CopBackendProperties.getSolrBaseurl();
         HttpSolrClient client= new HttpSolrClient.Builder(solrUrl).build();
@@ -67,14 +73,14 @@ public class SolrHelper {
                 updateWentOk = false;
                 log.error("Unable to update object in solr "+response);
             }
-        } catch (SolrServerException | IOException e) {
+        } catch (IOException | SolrServerException | SolrException e) {
             log.error("error updating object in solr ",e);
             updateWentOk = false;
         }
         return updateWentOk;
     }
 
-    public static boolean solrizeEditions() {
+    public boolean solrizeEditions() {
         boolean updateWentOK = false;
         String solrUrl = CopBackendProperties.getSolrBaseurl();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -84,6 +90,8 @@ public class SolrHelper {
         } catch (Exception e) {
             log.error("Error getting edition from database",e);
             return false;
+        } finally {
+            session.close();
         }
         HttpSolrClient client = new HttpSolrClient.Builder(solrUrl).build();
         for (Edition edition : editions) {
@@ -99,7 +107,7 @@ public class SolrHelper {
                 } else {
                     updateWentOK = true;
                 }
-            } catch (SolrServerException | IOException e) {
+            } catch (SolrServerException | IOException | SolrException e) {
                 updateWentOK = false;
                 log.error("Error sending edition to solr", e);
             }
@@ -107,7 +115,7 @@ public class SolrHelper {
         return updateWentOK;
     }
 
-    public static boolean updateCategoriesInEditionInSolr(String editionId, String categoryId) {
+    public  boolean updateCategoriesInEditionInSolr(String editionId, String categoryId) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Edition edition = session.get(Edition.class,editionId);
         if (edition != null) {
@@ -135,14 +143,16 @@ public class SolrHelper {
                     return false;
                 }
                 return true;
-            } catch (SolrServerException | IOException e) {
+            } catch (SolrException | IOException | SolrServerException e) {
                 log.error("Unable to update categories in solr",e);
+            } finally {
+                session.close();
             }
         }
         return false;
     }
 
-    public static SolrInputDocument getSolrDocFromEdition(Edition edition) {
+    public  SolrInputDocument getSolrDocFromEdition(Edition edition) {
         SolrInputDocument solrDoc = new SolrInputDocument();
         solrDoc.addField("id",edition.getId());
         solrDoc.addField("name_ssi",edition.getName());
@@ -159,7 +169,7 @@ public class SolrHelper {
         return solrDoc;
     }
     
-    private static String getStringFromDocument(Document doc) {
+    private String getStringFromDocument(Document doc) {
         try {
             DOMSource domSource = new DOMSource(doc);
             StringWriter writer = new StringWriter();
@@ -174,7 +184,7 @@ public class SolrHelper {
         }
     }
 
-    private static String getSolrXMLfromOPML(String opml, String editionId, String catId) {
+    private String getSolrXMLfromOPML(String opml, String editionId, String catId) {
         try {
             TransformerFactory trans_fact = new TransformerFactoryImpl();
             Transformer transformer =

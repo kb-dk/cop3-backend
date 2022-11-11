@@ -82,19 +82,22 @@ public class CreateService {
             objectId = mdw.createFromMods(mods);
         } catch (Exception e) {
             logger.error("Error creating object in database ", e);
-            return Response.serverError().entity("Error creating object in database").build();
-        } finally {
             session.close();
+            return Response.serverError().entity("Error creating object in database").build();
         }
 
         Response response = checkMetadatawriterResponse(objectId);
         if (response != null) {
+            session.close();
             return response;
         }
 
-        if (SolrHelper.updateCobjectInSolr(objectId)) {
+        SolrHelper solrHelper = new SolrHelper(session);
+        if (solrHelper.updateCobjectInSolr(objectId)) {
+            session.close();
             return Response.ok().build();
         } else {
+            session.close();
             return Response.serverError().entity("error updating solr").build();
         }
 
@@ -120,20 +123,23 @@ public class CreateService {
             objectId = mdw.updateFromMods(idFromRequest, mods, lastModified, user);
         } catch (HibernateException ex) {
             logger.error("Cannot create object from mods", ex);
-            return Response.serverError().entity("error").build();
-        } finally {
             session.close();
+            return Response.serverError().entity("error").build();
         }
 
         Response response = checkMetadatawriterResponse(objectId);
         if (response != null) {
             // something went wrong, return
+            session.close();
             return response;
         }
 
-        if (SolrHelper.updateCobjectInSolr(objectId)) {
+        SolrHelper solrHelper = new SolrHelper(session);
+        if (solrHelper.updateCobjectInSolr(objectId)) {
+            session.close();
             return Response.ok().build();
         } else {
+            session.close();
             return Response.serverError().entity("error updating solr").build();
         }
     }

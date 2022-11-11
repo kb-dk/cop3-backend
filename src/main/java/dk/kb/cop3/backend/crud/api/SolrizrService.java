@@ -1,8 +1,10 @@
 package dk.kb.cop3.backend.crud.api;
 
+import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.solr.SolrHelper;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -28,10 +30,13 @@ public class SolrizrService {
 	@Path("/editions/")
 	public Response solrizeAllEditions(@Context HttpServletRequest httpServletRequest,
 							@Context ServletContext servletContext) {
-		boolean updateWentOK = SolrHelper.solrizeEditions();
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		SolrHelper solrHelper = new SolrHelper(session);
+		boolean updateWentOK = solrHelper.solrizeEditions();
 		if (updateWentOK) {
 			return Response.ok().build();
 		}
+		session.close();
 		return Response.serverError().build();
 	}
 
@@ -52,10 +57,12 @@ public class SolrizrService {
 		String edition_id = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition;
 		boolean updateWentOk;
 
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		SolrHelper solrHelper = new SolrHelper(session);
 		if (id.startsWith("object")) {
-			updateWentOk = SolrHelper.updateCobjectInSolr(cop_id);
+			updateWentOk = solrHelper.updateCobjectInSolr(cop_id);
 		} else {
-			updateWentOk = SolrHelper.updateCategoriesInEditionInSolr(edition_id,id);
+			updateWentOk = solrHelper.updateCategoriesInEditionInSolr(edition_id,id);
 		}
 
 		if (updateWentOk) {

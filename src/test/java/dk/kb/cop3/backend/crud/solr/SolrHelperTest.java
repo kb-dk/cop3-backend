@@ -39,19 +39,23 @@ public class SolrHelperTest {
     }
 
     @Test
-    public void testIndexObject() throws XPathExpressionException, SolrServerException, IOException {
+    public void testIndexObject() throws FileNotFoundException {
         String id = "/letters/judsam/2011/mar/dsa/object22959";
 
         Session session = TestUtil.openDatabaseSession();
-        HibernateMetadataWriter mdw = new HibernateMetadataWriter(session);
 
-        SolrHelper.updateCobjectInSolr(id);
+        SolrHelper solrHelper = new SolrHelper(session);
+        solrHelper.updateCobjectInSolr(id);
+        session.close();
     }
 
     @Test
     @Ignore
-    public void testSolrizeEditions() {
-        SolrHelper.solrizeEditions();
+    public void testSolrizeEditions() throws FileNotFoundException {
+        Session session = TestUtil.openDatabaseSession();
+        SolrHelper solrHelper = new SolrHelper(session);
+        solrHelper.solrizeEditions();
+        session.close();
     }
 
 }
