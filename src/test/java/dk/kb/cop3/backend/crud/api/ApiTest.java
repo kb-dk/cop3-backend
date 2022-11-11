@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This class is the main reference for the supported URI's in the CRUD engine.
@@ -268,39 +269,37 @@ public class ApiTest {
 
 
     //************************* CREATE AND UPDATE *******************//
-//    @Test
-//    public void testCreateObjectService() throws  FileNotFoundException{
-//        final Session ses = TestUtil.openDatabaseSession();
-//
-//        ses.beginTransaction();
-//        try {
-//            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = ses.get(Object.class,CREATE_UPDATE_OBJECT);
-//            if (cObject != null) {
-//                ses.delete(cObject);
-//                ses.getTransaction().commit();
-//            }
-//        } catch (Exception ex) {
-//            logger.debug("error "+ex.getMessage());
-//            ses.getTransaction().rollback();
-//            assertTrue("testCreateObjectService hibernate error "+ex.getMessage(),false);
-//        }
-//
-//        put.setPath(HOST_NAME + CREATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
-//        try {
-//            org.w3c.dom.Document dom = builder.parse(new File(MODS_FILE));
-//            RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
-//            put.setRequestEntity(entity);
-//            logger.debug(put.getPath());
-//            client.executeMethod(put);
-//        } catch (java.io.IOException io) {
-//            logger.error("IO Error putting object to:  " + CREATE_OBJECT_SERVICE);
-//            logger.debug(io.getMessage());
-//        } catch (SAXException e) {
-//            throw new RuntimeException(e);
-//        }
-//        assertEquals(201, put.getStatusCode());
-//    }
+    @Test
+    public void testCreateObjectService() throws  FileNotFoundException{
+        final Session ses = TestUtil.openDatabaseSession();
+        ses.beginTransaction();
+        try {
+            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = ses.get(Object.class,CREATE_UPDATE_OBJECT);
+            if (cObject != null) {
+                ses.delete(cObject);
+                ses.getTransaction().commit();
+            }
+        } catch (Exception ex) {
+            logger.debug("error "+ex.getMessage());
+            ses.getTransaction().rollback();
+            assertTrue("testCreateObjectService hibernate error "+ex.getMessage(),false);
+        }
 
+        put.setPath(HOST_NAME + CREATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
+        try {
+            org.w3c.dom.Document dom = builder.parse(new File(LUFTFOTO_MODS_FILE));
+            RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
+            put.setRequestEntity(entity);
+            logger.debug(put.getPath());
+            client.executeMethod(put);
+        } catch (java.io.IOException io) {
+            logger.error("IO Error putting object to:  " + CREATE_OBJECT_SERVICE);
+            logger.debug(io.getMessage());
+        } catch (SAXException e) {
+            throw new RuntimeException(e);
+        }
+        assertEquals(201, put.getStatusCode());
+    }
 
     @Test
     public void testUpdateObjectService() throws SAXException {
