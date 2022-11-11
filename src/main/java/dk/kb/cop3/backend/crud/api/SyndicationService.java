@@ -108,7 +108,6 @@ public class SyndicationService {
         try {
             SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
             session = sessionFactory.openSession();
-            session.beginTransaction();
             MetadataSource mds = new SolrMetadataSource(session);
             // give the parameters to the metadatasource
             performSearch(id, language, random, itemsPerPage, page, bbo, query, notBefore, notAfter, searchwide, type,
@@ -203,8 +202,6 @@ public class SyndicationService {
             mds.setSortorder(1);
         }
         mds.execute();
-        session.flush();
-        session.getTransaction().commit();
     }
 
 
