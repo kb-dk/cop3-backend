@@ -1,5 +1,6 @@
 package dk.kb.cop3.backend.crud.api;
 
+import dk.kb.cop3.backend.commonutils.DomUtils;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
@@ -9,8 +10,11 @@ import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.*;
+import org.xml.sax.SAXException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import static org.junit.Assert.assertEquals;
@@ -29,7 +33,7 @@ public class ApiTest {
     private static Logger logger = Logger.getLogger(ApiTest.class);
     private static final String OBJECT_NAME = "object62132";
     private static final String OBJECT2_NAME = "object135334";
-    private static final String OBJECT3_NAME = "object62138";
+    private static final String OBJECT3_NAME = "object182167";
     private static final String OBJECT_PATH = "/images/luftfo/2011/maj/luftfoto/";
     private static final String OBJECT_ID = "/images/luftfo/2011/maj/luftfoto";
     private static final String SYNDICATION_ROOT = "/syndication" + OBJECT_PATH;
@@ -73,7 +77,7 @@ public class ApiTest {
     private final static String CREATE_OBJECT_SERVICE = "/create";
     private final static String CREATE_UPDATE_NAVIGATION_SERVICE = "/create";
     private final static String CREATE_UPDATE_OBJECT = OBJECT_PATH + OBJECT3_NAME;
-    private static final String MODS_FILE = "testdata/cumulus-export/Luftfoto_OM/205/master_records/L0717_04.tif-mods.xml";
+    private static final String LUFTFOTO_MODS_FILE = "src/test/resources/testdata/luftfoto_object182167.mods.xml";
     private static final String LUFTFOTO_EDITION = OBJECT_ID;
     private static final String OPML_FILE = "testdata/cumulus-export/Luftfoto_OM/205/categories.xml";
 
@@ -196,7 +200,6 @@ public class ApiTest {
         testRequest(SYNDICATION_OBJECT_AS_MODS, "object", 200);
     }
 
-
     @Test
     public void testSyndicationObjectUnknown() {
         testRequest(SYNDICATION_OBJECT_UNKNOWN, "object", 404);
@@ -298,15 +301,34 @@ public class ApiTest {
 //        assertEquals(201, put.getStatusCode());
 //    }
 
-    /*
-    @Test
-    public void testUpdateObjectService() throws  SAXException {
-        client = new HttpClient();
-        put = new PutMethod();
-        get = new GetMethod();
 
-        String lastModified = null;
-        get.setPath(HOST_NAME + "/syndication"+CREATE_UPDATE_OBJECT);
+    @Test
+    public void testUpdateObjectService() throws SAXException {
+        client = new HttpClient();
+        post = new PostMethod();
+
+        String lastModified = getLastModifiedFromExistingObject();
+        String lastModifiedBy = "TEST";
+
+        post.setPath(HOST_NAME + CREATE_OBJECT_SERVICE  + CREATE_UPDATE_OBJECT+ "?lastmodified=" + lastModified + "&user=" + lastModifiedBy);
+        logger.info(HOST_NAME + CREATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT+ "?lastmodified=" + lastModified + "&user=" + lastModifiedBy);
+        try {
+            org.w3c.dom.Document dom = builder.parse(new File(LUFTFOTO_MODS_FILE));
+            RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
+            post.setRequestEntity(entity);
+            client.executeMethod(post);
+        } catch (java.io.IOException io) {
+            logger.error("IO Error putting object to:  " + UPDATE_OBJECT_SERVICE);
+            logger.error(io);
+        }
+        logger.debug("post.getStatusCode() = " + post.getStatusCode());
+        assertEquals(200, post.getStatusCode());
+    }
+
+    private String getLastModifiedFromExistingObject() {
+        get = new GetMethod();
+        get.setPath(HOST_NAME + "/syndication" + CREATE_UPDATE_OBJECT);
+        String lastModified = "";
         try {
             logger.debug(get.getPath());
             client.executeMethod(get);
@@ -315,20 +337,8 @@ public class ApiTest {
             logger.error("Error fetching object at:  " + SYNDICATION_OBJECT);
         }
         assertEquals(200, get.getStatusCode());
-
-        put.setPath(HOST_NAME + CREATE_OBJECT_SERVICE  + CREATE_UPDATE_OBJECT+ "?lastModified=" + lastModified);
-        logger.debug(HOST_NAME + CREATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT+ "?lastModified=" + lastModified);
-        try {
-            org.w3c.dom.Document dom = builder.parse(new File(MODS_FILE));
-            RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
-            put.setRequestEntity(entity);
-            client.executeMethod(put);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error putting object to:  " + UPDATE_OBJECT_SERVICE);
-        }
-        logger.debug("put.getStatusCode() = " + put.getStatusCode());
-        assertEquals(200, put.getStatusCode());
-    }    */
+        return lastModified;
+    }
 
   /*  @Test
     public void testUpdateNavigationService() throws UnsupportedEncodingException, SAXException {
