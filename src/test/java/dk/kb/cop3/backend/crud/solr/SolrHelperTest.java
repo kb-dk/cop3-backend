@@ -1,10 +1,8 @@
 package dk.kb.cop3.backend.crud.solr;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
-import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import dk.kb.cop3.backend.solr.SolrHelper;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.hibernate.Session;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -13,7 +11,6 @@ import org.junit.Test;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class SolrHelperTest {
 
@@ -23,7 +20,7 @@ public class SolrHelperTest {
     }
 
     @Test
-    public void testSolrFormulator() throws FileNotFoundException, XPathExpressionException {
+    public void testSolrFormulator() {
 //
 //        String id = "/images/luftfo/2011/maj/luftfoto/object182167";
 //
@@ -54,7 +51,7 @@ public class SolrHelperTest {
     public void testSolrizeEditions() throws FileNotFoundException {
         Session session = TestUtil.openDatabaseSession();
         SolrHelper solrHelper = new SolrHelper(session);
-        solrHelper.solrizeEditions();
+        solrHelper.updateEditionsInSolr();
         session.close();
     }
 

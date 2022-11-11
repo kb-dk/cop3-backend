@@ -32,7 +32,7 @@ public class SolrizrService {
 							@Context ServletContext servletContext) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		SolrHelper solrHelper = new SolrHelper(session);
-		boolean updateWentOK = solrHelper.solrizeEditions();
+		boolean updateWentOK = solrHelper.updateEditionsInSolr();
 		if (updateWentOK) {
 			return Response.ok().build();
 		}
@@ -62,7 +62,7 @@ public class SolrizrService {
 		if (id.startsWith("object")) {
 			updateWentOk = solrHelper.updateCobjectInSolr(cop_id);
 		} else {
-			updateWentOk = solrHelper.updateCategoriesInEditionInSolr(edition_id,id);
+			updateWentOk = solrHelper.updateCategoriesSolrForEdition(edition_id,id);
 		}
 
 		if (updateWentOk) {

@@ -80,7 +80,7 @@ public class SolrHelper {
         return updateWentOk;
     }
 
-    public boolean solrizeEditions() {
+    public boolean updateEditionsInSolr() {
         boolean updateWentOK = false;
         String solrUrl = CopBackendProperties.getSolrBaseurl();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -115,7 +115,7 @@ public class SolrHelper {
         return updateWentOK;
     }
 
-    public  boolean updateCategoriesInEditionInSolr(String editionId, String categoryId) {
+    public  boolean updateCategoriesSolrForEdition(String editionId, String categoryId) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Edition edition = session.get(Edition.class,editionId);
         if (edition != null) {
@@ -123,31 +123,41 @@ public class SolrHelper {
             String topCategoryId = edition.getCumulusTopCatagory();
             HttpSolrClient solr = new HttpSolrClient.Builder(solr_url).build();
             try {
-                UpdateRequest updateRequest = new UpdateRequest();
-                updateRequest.deleteByQuery("bread_crumb_ssim:"+topCategoryId);
-                updateRequest.deleteById(topCategoryId);
-                updateRequest.setParam("softCommit","true");
-                UpdateResponse response = updateRequest.process(solr);
-                if (response.getStatus() != 0) {
-                    log.error("Unable to update categories "+response);
-                    return false;
-                }
+                if (removeCurrentCategoriesFromSolr(topCategoryId, solr)) return false;
                 String solrXml = getSolrXMLfromOPML(edition.getOpml(),editionId,categoryId);
-                DirectXmlRequest xmlReq = new DirectXmlRequest("/update", solrXml);
-                ModifiableSolrParams params = new ModifiableSolrParams();
-                params.set("softCommit","true");
-                xmlReq.setParams(params);
-                response = xmlReq.process(solr);
-                if (response.getStatus() != 0) {
-                    log.error("Unable to update categories "+response);
-                    return false;
-                }
-                return true;
+                return addNewCategoriesToSolr(solr, solrXml);
             } catch (SolrException | IOException | SolrServerException e) {
                 log.error("Unable to update categories in solr",e);
             } finally {
                 session.close();
             }
+        }
+        return false;
+    }
+
+    private static boolean addNewCategoriesToSolr(HttpSolrClient solr, String solrXml) throws SolrServerException, IOException {
+        UpdateResponse response;
+        DirectXmlRequest xmlReq = new DirectXmlRequest("/update", solrXml);
+        ModifiableSolrParams params = new ModifiableSolrParams();
+        params.set("softCommit","true");
+        xmlReq.setParams(params);
+        response = xmlReq.process(solr);
+        if (response.getStatus() != 0) {
+            log.error("Unable to update categories "+response);
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean removeCurrentCategoriesFromSolr(String topCategoryId, HttpSolrClient solr) throws SolrServerException, IOException {
+        UpdateRequest updateRequest = new UpdateRequest();
+        updateRequest.deleteByQuery("bread_crumb_ssim:"+ topCategoryId);
+        updateRequest.deleteById(topCategoryId);
+        updateRequest.setParam("softCommit","true");
+        UpdateResponse response = updateRequest.process(solr);
+        if (response.getStatus() != 0) {
+            log.error("Unable to update categories "+response);
+            return true;
         }
         return false;
     }
