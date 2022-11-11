@@ -12,11 +12,10 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.*;
 
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrDocument;
 import org.hibernate.query.Query;
@@ -350,8 +349,10 @@ public class SolrMetadataSource implements MetadataSource {
     }
 
     private void getSingleObjectFromDB() {
+        Transaction tx = this.session.beginTransaction();
         Query query = session.createQuery("from dk.kb.cop3.backend.crud.database.hibernate.Object where id ='"+this.searchterms.get("id")+"'");
         this.hibernateResultSet = query.list();
+        tx.commit();
         this.hibernateResultIterator = this.hibernateResultSet.iterator();
         this.numberOfHits = hibernateResultSet.size();
     }
