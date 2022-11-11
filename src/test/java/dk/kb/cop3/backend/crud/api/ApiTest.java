@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.*;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -17,6 +18,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -80,7 +83,7 @@ public class ApiTest {
     private final static String CREATE_UPDATE_OBJECT = OBJECT_PATH + OBJECT3_NAME;
     private static final String LUFTFOTO_MODS_FILE = "src/test/resources/testdata/luftfoto_object182167.mods.xml";
     private static final String LUFTFOTO_EDITION = OBJECT_ID;
-    private static final String OPML_FILE = "testdata/cumulus-export/Luftfoto_OM/205/categories.xml";
+    private static final String OPML_FILE = "src/test/resources/testdata/david_simonsens_haandskrifter.opml.xml";
 
     /**
      * Classes for building a DOM Document from the result stream
@@ -339,8 +342,8 @@ public class ApiTest {
         return lastModified;
     }
 
-  /*  @Test
-    public void testUpdateNavigationService() throws UnsupportedEncodingException, SAXException {
+    @Test
+    public void testUpdateNavigationService() {
         put = new PutMethod();
         put.setPath(HOST_NAME + CREATE_UPDATE_NAVIGATION_SERVICE + LUFTFOTO_EDITION);
         try {
@@ -351,10 +354,11 @@ public class ApiTest {
             client.executeMethod(put);
         } catch (java.io.IOException io) {
             logger.error("IO Error putting opml to:  " + LUFTFOTO_EDITION);
+        } catch (SAXException e) {
+            throw new RuntimeException(e);
         }
-        //assertEquals(200, put.getStatusCode());
         assertEquals(201, put.getStatusCode());
-    }*/
+    }
 
 
     @Test
@@ -401,13 +405,11 @@ public class ApiTest {
     }
 
 
-    /* deleted
         @Test
-    public void testUpdateGeoServiceWithNoUser() throws UnsupportedEncodingException {
+    public void testUpdateGeoServiceFailsWithoutUser() {
         post.setPath(HOST_NAME + UPDATE_OBJECT_SERVICE + CREATE_UPDATE_OBJECT);
         post.setParameter("lat", "10.42");
         post.setParameter("lng", "55.42");
-        //post.setParameter("user", "Hr. JUNIT ");
         logger.debug(post.getPath());
         try {
             client.executeMethod(post);
@@ -415,9 +417,8 @@ public class ApiTest {
             logger.error("IO Error posting new geo coordinates to :  " + UPDATE_OBJECT_SERVICE);
         }
         logger.debug("code: " + post.getStatusCode() + " status text" + post.getStatusText());
-        assertEquals(304, post.getStatusCode());
+        assertEquals(400, post.getStatusCode());
     }
-    */
 
     private static void close(org.apache.commons.httpclient.HttpMethod method) {
 	    method.releaseConnection();
