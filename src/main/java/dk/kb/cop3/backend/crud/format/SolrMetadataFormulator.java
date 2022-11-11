@@ -31,26 +31,18 @@ public class SolrMetadataFormulator extends MetadataFormulator {
     private javax.xml.transform.Transformer[] steps = new javax.xml.transform.Transformer[2];
 
     public SolrMetadataFormulator() {
-        logger.debug("constructing SolrMetadataFormulator");
         this.steps[0] = this.trInit("/mods2ese.xsl");
-        logger.debug("got first transform");
         this.steps[1] = this.trInit("/ese_solrizr.xsl");
-        logger.debug("done constructing SolrMetadataFormulator");
     }
 
     public Document formulate() {
-        logger.debug("before anything");
-
         org.w3c.dom.Document solr_doc = (org.w3c.dom.Document) null;
 
         org.w3c.dom.Document src = this.formulate(this.format, this.template, this.xslt);
-        logger.debug("transformed mods " + src);
         javax.xml.transform.dom.DOMSource dom_source = new javax.xml.transform.dom.DOMSource(src);
         javax.xml.transform.dom.DOMResult dom_result = new javax.xml.transform.dom.DOMResult();
-        logger.debug("about to transform");
 
         for (int i = 0; i < steps.length; i++) {
-            logger.debug("before step " + i);
             if (steps[i] == null) {
                 logger.debug("end of civilization: steps[" + i + "] is null");
                 return null;
@@ -65,7 +57,6 @@ public class SolrMetadataFormulator extends MetadataFormulator {
             try {
                 steps[i].transform(dom_source, dom_result);
                 solr_doc = (org.w3c.dom.Document) dom_result.getNode();
-                logger.debug("transformed solr_doc " + solr_doc);
                 if (i < steps.length) {
                     dom_source = new javax.xml.transform.dom.DOMSource(solr_doc);
                     dom_result = new javax.xml.transform.dom.DOMResult();
@@ -80,36 +71,24 @@ public class SolrMetadataFormulator extends MetadataFormulator {
     private javax.xml.transform.Transformer trInit(java.lang.String xsl) {
 
         String xfile = xsl;
-        logger.debug("initializing transform for " + xfile);
-
         // getResource() returns a file URL
-
-        logger.debug("xsl_path_is :" + this.getClass().getResource(xfile));
-
         javax.xml.transform.Transformer transform = null;
 
         try {
-            logger.debug("about to make transform for " + xfile);
-
             // this.getClass().getResource(xfile).toString() the URL object as a systemID
-
             javax.xml.transform.stream.StreamSource source =
                     new javax.xml.transform.stream.StreamSource(this.getClass().getResource(xfile).toString());
 
             transform =
                     trans_fact.newTransformer(source);
-            logger.debug("hopefully made transform for " + xfile);
         } catch (javax.xml.transform.TransformerConfigurationException transformerPrblm) {
             logger.debug("problem might be: " + transformerPrblm.getMessage());
             transformerPrblm.printStackTrace();
         }
-
         if (transform == null) {
             logger.debug("transform for " + xfile + " didn't work as expected");
         }
-
         return transform;
-
     }
 
     @Override

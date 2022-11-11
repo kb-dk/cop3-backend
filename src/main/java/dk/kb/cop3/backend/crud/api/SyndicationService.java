@@ -103,20 +103,9 @@ public class SyndicationService {
         String subjectId = (id.contains("subject")) ? editionId + "/" + id : null;
         String objectId = (id.contains("object")) ? editionId + "/" + id : null;
 
-        // The caching key is the concatenation of everything
-        String cacheKey = String.format(
-                "syndication:edition:%s;id:%s;lang:%s;format:%s;random:%s;itemsPerPage:%d;page:%d;bbo:%s;query:%s;notBefore:%s;notAfter:%s;",
-                editionId, id, language, format, random, itemsPerPage, page, bbo, query, notBefore, notAfter);
-        logger.debug("Cache key: " + cacheKey);
-
         Document responseDoc;
         Session session = null;
         try {
-            // Get the object(s) from database
-
-            // However, if the medium is 'edition' we have a special
-            // case. Eeeh. That was no good idea.
-
             SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction();

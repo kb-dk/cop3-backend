@@ -230,7 +230,6 @@ public abstract class MetadataFormulator {
 
         try {
             //transformer = trans_fact.newTransformer(new javax.xml.transform.stream.StreamSource(xsl));
-            logger.debug("xsl path is :" + this.getClass().getResourceAsStream(xsl));
 
             // xsltSystemId = new File(systemID).toURL().toExternalForm( );
             // xsltStreamSource.setSystemId(xsltFile.toURI().toString());
@@ -238,7 +237,6 @@ public abstract class MetadataFormulator {
                     new javax.xml.transform.stream.StreamSource(this.getClass().getResourceAsStream(xsl));
 
             transformer = trans_fact.newTransformer(ss);
-            logger.debug("Transformer fra xsl " + xsl + " transformer.toString() " + transformer.toString());
         } catch (javax.xml.transform.TransformerConfigurationException transformerPrblm) {
             logger.warn("problem might be: " + transformerPrblm.getMessage());
             transformerPrblm.printStackTrace();
@@ -273,9 +271,6 @@ public abstract class MetadataFormulator {
         }
 
         java.lang.Long hits = this.data_source.getNumberOfHits();
-        if (logger.isDebugEnabled()) {
-            logger.debug(".. found in total " + hits);
-        }
         if (hits >= 0) {
 
             org.w3c.dom.Element root = resultSet.getDocumentElement();
@@ -330,7 +325,6 @@ public abstract class MetadataFormulator {
                     if (hit_number <= 1) {
                         Iterator iter = cobject.getKeywords().iterator();
                         keywordsModsSubjectTopic = "<subject xmlns='urn:x'>";
-                        log.debug("getting tags");
                         while (iter.hasNext()) {
                             Tag tag = (Tag) iter.next();
                             keywordsModsSubjectTopic += "<topic>" + tag.getTag_value() + "</topic>";
@@ -340,7 +334,6 @@ public abstract class MetadataFormulator {
                         keywords = dBuilder.parse(new org.xml.sax.InputSource(keywordReader));
 
                         iter = cobject.getComments().iterator();
-                        log.debug("getting comments");
                         while (iter.hasNext()) {
                             if (comments != null)
                                 comments += "|";
@@ -357,7 +350,6 @@ public abstract class MetadataFormulator {
                         latitude = "" + point.getCoordinates()[0].getX();
                         longitude = "" + point.getCoordinates()[0].getY();
                     }
-                    //logger.debug("lat="+latitude+" lng="+longitude);
                     recordId = cobject.getId();
                     if (cobject.getCorrectness() != null) {
                         correctness = cobject.getCorrectness().toString();
