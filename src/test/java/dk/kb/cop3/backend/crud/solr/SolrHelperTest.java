@@ -41,7 +41,7 @@ public class SolrHelperTest {
         Session session = TestUtil.openDatabaseSession();
 
         SolrHelper solrHelper = new SolrHelper(session);
-        solrHelper.updateCobjectInSolr(id);
+        solrHelper.updateCobjectInSolr(id,true);
         session.close();
     }
 

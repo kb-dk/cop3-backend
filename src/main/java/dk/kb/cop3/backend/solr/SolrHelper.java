@@ -56,15 +56,12 @@ public class SolrHelper {
         return getStringFromDocument(dom);
     }
 
-    public boolean updateCobjectInSolr(String objectId)  {
+    public boolean updateCobjectInSolr(String objectId,boolean commit)  {
         boolean updateWentOk;
         String solrUrl = CopBackendProperties.getSolrBaseurl();
         HttpSolrClient client= new HttpSolrClient.Builder(solrUrl).build();
         String xml = getSolrXmlDocument(objectId);
         DirectXmlRequest xmlReq = new DirectXmlRequest("/update", xml);
-        ModifiableSolrParams params = new ModifiableSolrParams();
-        params.set("softCommit","true");
-        xmlReq.setParams(params);
         try {
             UpdateResponse response = xmlReq.process(client);
             if (response.getStatus() == 0) {
@@ -73,6 +70,10 @@ public class SolrHelper {
                 updateWentOk = false;
                 log.error("Unable to update object in solr "+response);
             }
+            if (commit) {
+                client.commit();
+            }
+            client.close();
         } catch (IOException | SolrServerException | SolrException e) {
             log.error("error updating object in solr ",e);
             updateWentOk = false;
@@ -99,7 +100,6 @@ public class SolrHelper {
             try {
                 UpdateRequest update = new UpdateRequest();
                 update.add(doc);
-                update.setParam("softCommit","true");
                 UpdateResponse response = update.process(client);
                 if (response.getStatus() != 0) {
                     updateWentOK = false;
@@ -111,6 +111,13 @@ public class SolrHelper {
                 updateWentOK = false;
                 log.error("Error sending edition to solr", e);
             }
+        }
+        try {
+            client.commit();
+            client.close();
+        } catch (SolrServerException | IOException | SolrException e) {
+            updateWentOK = false;
+            log.error("Error committing editions solr", e);
         }
         return updateWentOK;
     }
@@ -138,10 +145,9 @@ public class SolrHelper {
     private static boolean addNewCategoriesToSolr(HttpSolrClient solr, String solrXml) throws SolrServerException, IOException {
         UpdateResponse response;
         DirectXmlRequest xmlReq = new DirectXmlRequest("/update", solrXml);
-        ModifiableSolrParams params = new ModifiableSolrParams();
-        params.set("softCommit","true");
-        xmlReq.setParams(params);
         response = xmlReq.process(solr);
+        solr.commit();
+        solr.close();
         if (response.getStatus() != 0) {
             log.error("Unable to update categories "+response);
             return false;
@@ -153,7 +159,6 @@ public class SolrHelper {
         UpdateRequest updateRequest = new UpdateRequest();
         updateRequest.deleteByQuery("bread_crumb_ssim:"+ topCategoryId);
         updateRequest.deleteById(topCategoryId);
-        updateRequest.setParam("softCommit","true");
         UpdateResponse response = updateRequest.process(solr);
         if (response.getStatus() != 0) {
             log.error("Unable to update categories "+response);
@@ -217,8 +222,5 @@ public class SolrHelper {
             log.error("Error transforming opml for edition "+editionId,e);
         }
         return null;
-
     }
-
-
 }

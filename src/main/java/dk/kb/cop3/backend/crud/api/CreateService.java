@@ -93,7 +93,7 @@ public class CreateService {
         }
 
         SolrHelper solrHelper = new SolrHelper(session);
-        if (solrHelper.updateCobjectInSolr(objectId)) {
+        if (solrHelper.updateCobjectInSolr(objectId,true)) {
             session.close();
             return Response.ok().build();
         } else {
@@ -135,7 +135,7 @@ public class CreateService {
         }
 
         SolrHelper solrHelper = new SolrHelper(session);
-        if (solrHelper.updateCobjectInSolr(objectId)) {
+        if (solrHelper.updateCobjectInSolr(objectId,true)) {
             session.close();
             return Response.ok().build();
         } else {

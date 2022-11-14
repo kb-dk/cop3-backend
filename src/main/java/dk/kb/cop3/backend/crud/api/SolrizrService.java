@@ -60,7 +60,7 @@ public class SolrizrService {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		SolrHelper solrHelper = new SolrHelper(session);
 		if (id.startsWith("object")) {
-			updateWentOk = solrHelper.updateCobjectInSolr(cop_id);
+			updateWentOk = solrHelper.updateCobjectInSolr(cop_id,true);
 		} else {
 			updateWentOk = solrHelper.updateCategoriesSolrForEdition(edition_id,id);
 		}
