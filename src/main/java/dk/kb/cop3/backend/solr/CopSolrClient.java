@@ -15,7 +15,6 @@ import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.xalan.processor.TransformerFactoryImpl;
 import org.hibernate.Session;
 import org.w3c.dom.Document;
@@ -37,12 +36,12 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
 
-public class SolrHelper {
-    private static final Logger log = Logger.getLogger(SolrHelper.class);
+public class CopSolrClient {
+    private static final Logger log = Logger.getLogger(CopSolrClient.class);
 
     private final Session session;
 
-    public SolrHelper(Session session) {
+    public CopSolrClient(Session session) {
         this.session = session;
     }
 
@@ -203,7 +202,7 @@ public class SolrHelper {
         try {
             TransformerFactory trans_fact = new TransformerFactoryImpl();
             Transformer transformer =
-                    trans_fact.newTransformer(new StreamSource(SolrHelper.class.getResourceAsStream("/opml2solr.xsl")));
+                    trans_fact.newTransformer(new StreamSource(CopSolrClient.class.getResourceAsStream("/opml2solr.xsl")));
             transformer.setParameter("start_node_id", catId.replaceFirst("subject", ""));
             transformer.setParameter("mode", "deep");
             String baseUrl = CopBackendProperties.getCopBackendUrl();

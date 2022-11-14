@@ -5,7 +5,7 @@ import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataWriter;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.solr.SolrHelper;
+import dk.kb.cop3.backend.solr.CopSolrClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
@@ -92,7 +92,7 @@ public class CreateService {
             return response;
         }
 
-        SolrHelper solrHelper = new SolrHelper(session);
+        CopSolrClient solrHelper = new CopSolrClient(session);
         if (solrHelper.updateCobjectInSolr(objectId,true)) {
             session.close();
             return Response.ok().build();
@@ -134,7 +134,7 @@ public class CreateService {
             return response;
         }
 
-        SolrHelper solrHelper = new SolrHelper(session);
+        CopSolrClient solrHelper = new CopSolrClient(session);
         if (solrHelper.updateCobjectInSolr(objectId,true)) {
             session.close();
             return Response.ok().build();

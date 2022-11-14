@@ -3,8 +3,7 @@ package dk.kb.cop3.backend.scripts;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.migrate.hibernate.ObjectOracle;
-import dk.kb.cop3.backend.solr.SolrHelper;
+import dk.kb.cop3.backend.solr.CopSolrClient;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -26,7 +25,7 @@ public class UpdateIndex {
         String mode = args[0];
 
         Session session = HibernateUtil.getSessionFactory().openSession();
-        SolrHelper solrHelper = new SolrHelper(session);
+        CopSolrClient solrHelper = new CopSolrClient(session);
         if ("all".equals(mode)) {
             int pageSize = 1000;
             int startPage = 0;

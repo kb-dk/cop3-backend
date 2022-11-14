@@ -1,7 +1,7 @@
 package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
-import dk.kb.cop3.backend.solr.SolrHelper;
+import dk.kb.cop3.backend.solr.CopSolrClient;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -31,7 +31,7 @@ public class SolrizrService {
 	public Response solrizeAllEditions(@Context HttpServletRequest httpServletRequest,
 							@Context ServletContext servletContext) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		SolrHelper solrHelper = new SolrHelper(session);
+		CopSolrClient solrHelper = new CopSolrClient(session);
 		boolean updateWentOK = solrHelper.updateEditionsInSolr();
 		if (updateWentOK) {
 			return Response.ok().build();
@@ -58,11 +58,11 @@ public class SolrizrService {
 		boolean updateWentOk;
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		SolrHelper solrHelper = new SolrHelper(session);
+		CopSolrClient copSolrClient = new CopSolrClient(session);
 		if (id.startsWith("object")) {
-			updateWentOk = solrHelper.updateCobjectInSolr(cop_id,true);
+			updateWentOk = copSolrClient.updateCobjectInSolr(cop_id,true);
 		} else {
-			updateWentOk = solrHelper.updateCategoriesSolrForEdition(edition_id,id);
+			updateWentOk = copSolrClient.updateCategoriesSolrForEdition(edition_id,id);
 		}
 
 		if (updateWentOk) {

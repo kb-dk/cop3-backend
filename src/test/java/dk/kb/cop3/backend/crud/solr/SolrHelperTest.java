@@ -2,7 +2,7 @@ package dk.kb.cop3.backend.crud.solr;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.util.TestUtil;
-import dk.kb.cop3.backend.solr.SolrHelper;
+import dk.kb.cop3.backend.solr.CopSolrClient;
 import org.hibernate.Session;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -40,7 +40,7 @@ public class SolrHelperTest {
 
         Session session = TestUtil.openDatabaseSession();
 
-        SolrHelper solrHelper = new SolrHelper(session);
+        CopSolrClient solrHelper = new CopSolrClient(session);
         solrHelper.updateCobjectInSolr(id,true);
         session.close();
     }
@@ -49,7 +49,7 @@ public class SolrHelperTest {
     @Ignore
     public void testSolrizeEditions() throws FileNotFoundException {
         Session session = TestUtil.openDatabaseSession();
-        SolrHelper solrHelper = new SolrHelper(session);
+        CopSolrClient solrHelper = new CopSolrClient(session);
         solrHelper.updateEditionsInSolr();
         session.close();
     }

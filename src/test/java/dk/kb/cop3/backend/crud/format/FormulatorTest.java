@@ -1,27 +1,5 @@
 package dk.kb.cop3.backend.crud.format;
 
-import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
-import dk.kb.cop3.backend.crud.database.MetadataSource;
-import dk.kb.cop3.backend.crud.database.MetadataWriter;
-import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
-import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.util.TestUtil;
-import dk.kb.cop3.backend.solr.SolrHelper;
-import org.apache.solr.common.SolrInputDocument;
-import org.apache.xerces.dom.ElementNSImpl;
-import org.hibernate.Session;
-import org.junit.Test;
-import org.locationtech.jts.util.Assert;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.FileNotFoundException;
-
 /**
  * jUnit tests of formulators, using a fake metadatasource
  *
