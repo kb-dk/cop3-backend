@@ -46,15 +46,19 @@ public class CopBackendProperties {
     }
 
     public static String getCopBackendUrl() {
-        return (String) props.getProperty("cop2_backend.baseurl");
+        return props.getProperty("cop2_backend.baseurl");
+    }
+
+    public static String getSolrUrl() {
+        return props.getProperty("solr.baseurl");
     }
 
     public static String getGuiUri() {
-        return (String) props.getProperty("gui.uri");
+        return props.getProperty("gui.uri");
     }
 
     public static String getSolrBaseurl() {
-        return (String) props.getProperty("solr.baseurl");
+        return props.getProperty("solr.baseurl");
     }
 
     public static String getCopBackendInternalBaseurl() {

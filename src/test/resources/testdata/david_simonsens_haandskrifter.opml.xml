@@ -1,0 +1,14 @@
+<opml xmlns:exslt="http://exslt.org/common" version="2.0">
+    <head>
+        <title>David Simonsens Håndskrifter</title>
+    </head>
+    <body>
+        <outline htmlUrl="/editions/any/2009/jul/editions/" text="Hjem" text-en="Home" url="/cop/navigation/" xmlUrl="/cop/editions/">
+            <outline htmlUrl="http://www.kb.dk/manus/judsam/2009/sep/dsh/subject315/" id="315" nodeId="315" text="David Simonsens Håndskrifter" text-en="The David Simonsen Manuscripts" url="http://www.kb.dk/cop/navigation/manus/judsam/2009/sep/dsh/subject315/" xmlUrl="http://www.kb.dk/cop/syndication/manus/judsam/2009/sep/dsh/subject315/">
+                <outline htmlUrl="http://www.kb.dk/manus/judsam/2009/sep/dsh/subject322/" id="322" nodeId="322" text="Ophavsland" text-en="Country of origin" url="http://www.kb.dk/cop/navigation/manus/judsam/2009/sep/dsh/subject322/" xmlUrl="http://www.kb.dk/cop/syndication/manus/judsam/2009/sep/dsh/subject322/"/>
+                <outline htmlUrl="http://www.kb.dk/manus/judsam/2009/sep/dsh/subject316/" id="316" nodeId="316" text="Opstillingssignatur" text-en="Shelf mark" url="http://www.kb.dk/cop/navigation/manus/judsam/2009/sep/dsh/subject316/" xmlUrl="http://www.kb.dk/cop/syndication/manus/judsam/2009/sep/dsh/subject316/"/>
+                <outline htmlUrl="http://www.kb.dk/manus/judsam/2009/sep/dsh/subject319/" id="319" nodeId="319" text="Sprog" text-en="Language" url="http://www.kb.dk/cop/navigation/manus/judsam/2009/sep/dsh/subject319/" xmlUrl="http://www.kb.dk/cop/syndication/manus/judsam/2009/sep/dsh/subject319/"/>
+            </outline>
+        </outline>
+    </body>
+</opml>
