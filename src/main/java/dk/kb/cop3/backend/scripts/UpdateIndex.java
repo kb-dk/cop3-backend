@@ -36,7 +36,7 @@ public class UpdateIndex {
             for (int pageNo = startPage; pageNo == startPage || !objects.isEmpty(); pageNo++) {
                 logger.info("fetching object from oracle. page: "+pageNo);
                 Transaction trans = session.beginTransaction();
-                objects = session.createQuery("from Object")
+                objects = session.createQuery("from Object o order by o.lastModified desc")
                         .setMaxResults(pageSize)
                         .setFirstResult(pageNo * pageSize)
                         .list();
