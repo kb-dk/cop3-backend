@@ -55,7 +55,7 @@ public class CopSolrClient {
         return getStringFromDocument(dom);
     }
 
-    public boolean updateCobjectInSolr(String objectId,boolean commit)  {
+    public boolean updateCobjectInSolr(String objectId,boolean doCommit)  {
         boolean updateWentOk;
         String solrUrl = CopBackendProperties.getSolrBaseurl();
         HttpSolrClient client= new HttpSolrClient.Builder(solrUrl).build();
@@ -69,7 +69,7 @@ public class CopSolrClient {
                 updateWentOk = false;
                 log.error("Unable to update object in solr "+response);
             }
-            if (commit) {
+            if (doCommit) {
                 client.commit();
             }
             client.close();
