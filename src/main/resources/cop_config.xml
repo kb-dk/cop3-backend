@@ -4,7 +4,7 @@
     <comment>Configuration for cop2_backend.</comment>
 
     <!-- base uri for the gui -->
-    <entry key="gui.uri">http://dsfl-test-01.kb.dk</entry>
+    <entry key="gui.uri">http://localhost:8082</entry>
 
     <entry key="cop2_backend.baseurl">http://localhost:8080/cop</entry>
     <entry key="cop2_backend.internal.baseurl">http://localhost:8080/cop</entry>
