@@ -204,8 +204,8 @@ public class ObjectConverter {
             return null;
         }
         GeometryFactory geoFactory = JTSFactoryFinder.getGeometryFactory();
-        double lat = point.getPoint()[0];
-        double lon = point.getPoint()[1];
+        double lat = point.getPoint()[1];
+        double lon = point.getPoint()[0];
         return geoFactory.createPoint(new Coordinate(lat, lon));
     }
 
