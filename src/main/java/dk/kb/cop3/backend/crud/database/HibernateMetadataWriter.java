@@ -42,8 +42,8 @@ public class HibernateMetadataWriter implements MetadataWriter {
 
     public String createFromMods(String mods) {
         ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
-        Object newObjectFromMods = objectFromModsExtractor.extractFromMods(new Object(), mods, hibSession);
         Transaction trans = hibSession.beginTransaction();
+        Object newObjectFromMods = objectFromModsExtractor.extractFromMods(new Object(), mods, hibSession);
         try {
             if (hibSession.get(Object.class, newObjectFromMods.getId()) != null) {
                 // object allready exists
@@ -96,36 +96,47 @@ public class HibernateMetadataWriter implements MetadataWriter {
         if (!id.equals(bu.getIdFromMods(mods))) {
             return "ids-do-not-match";
         }
-        Object existingCobject = hibSession.get(Object.class, id);
-        if (existingCobject != null) {
+        Transaction transaction = hibSession.beginTransaction();
+        try {
+            Object existingCobject = hibSession.get(Object.class, id);
+            if (existingCobject != null) {
                 if (existingCobject.getLastModified().equals(lastModified)) {
                     AuditTrail auditTrail = createAuditTrail(existingCobject, false);
-                    existingCobject = bu.extractFromMods(existingCobject,
-                             mods,
-                             existingCobject.getObjVersion().add(new BigDecimal("1")),
-                             hibSession);
-                    existingCobject.setInterestingess(existingCobject.getInterestingess().add(new BigDecimal("1")));
-                    existingCobject.setLastModified("" + new Date().getTime()); // set the new lastmodified to just now.
-                    existingCobject.setLastModifiedBy(user);
-                    Transaction trans = hibSession.beginTransaction();
+                    Object modifiedCobject = getModifiedObject(mods, user, bu, existingCobject);
                     try {
-                        hibSession.update(existingCobject);
+                        hibSession.update(modifiedCobject);
                         hibSession.save(auditTrail);
-                        trans.commit();
+                        transaction.commit();
                     } catch (Exception e) {
-                        logger.error("Unable to update cobject",e);
-                        trans.rollback();
+                        logger.error("Unable to update cobject", e);
+                        transaction.rollback();
                         return "error";
                     }
-                    return existingCobject.getLastModified();
-                }else {
+                    return modifiedCobject.getLastModified();
+                } else {
                     logger.error(" Updating cobject " + id + " failed! Out-of-date. Copject have been updated since retrievel.\n " +
                             "Provided " + lastModified + " but found " + existingCobject.getLastModified() + " in db");
                     return "out-of-date";
                 }
-        }else {
-            return "id-not-found";
+            } else {
+                return "id-not-found";
+            }
+        } finally {
+            if (transaction.isActive()) {
+                transaction.commit();
+            }
         }
+    }
+
+    private Object getModifiedObject(String mods, String user, ObjectFromModsExtractor bu, Object existingCobject) {
+        Object modifiedCobject = bu.extractFromMods(existingCobject,
+                mods,
+                existingCobject.getObjVersion().add(new BigDecimal("1")),
+                hibSession);
+        modifiedCobject.setInterestingess(existingCobject.getInterestingess().add(new BigDecimal("1")));
+        modifiedCobject.setLastModified("" + new Date().getTime()); // set the new lastmodified to just now.
+        modifiedCobject.setLastModifiedBy(user);
+        return modifiedCobject;
     }
 
     @Override

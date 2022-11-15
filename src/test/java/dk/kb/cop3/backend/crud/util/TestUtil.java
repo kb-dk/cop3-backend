@@ -96,7 +96,9 @@ public class TestUtil {
     }
 
     public static void createAndSaveTestCobjectFromMods(String TEST_ID, String mods, HibernateMetadataWriter metadataWriter, Session session){
+        Transaction transaction = session.beginTransaction();
         Object cobject = TestUtil.extractCobjectFromMods(mods, session);
+        transaction.commit();
         cobject.setId(TEST_ID);
         try {
             metadataWriter.create(cobject);

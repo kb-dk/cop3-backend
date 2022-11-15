@@ -106,9 +106,11 @@ public class ObjectFromModsExtractor {
         if (copject == null) {
             throw new IllegalArgumentException("copject cannot be null");
         }
+        if (!session.getTransaction().isActive()) {
+            throw new IllegalArgumentException("Session has no active transaction");
+        }
 
         Document modsDocument = parseModsString(modsString);
-        Transaction transaction = session.beginTransaction();
         try {
             populateCopjectWithSimpleFields(copject, version, modsDocument);
             setLatLng(copject, modsDocument);
@@ -122,10 +124,6 @@ public class ObjectFromModsExtractor {
             logger.error("Error evaluating XPath. Error is: " + e.getMessage());
         } catch (HibernateException e) {
             logger.error("Database error while extracting cobject from mods",e);
-        } finally {
-            if(transaction.isActive()) {
-                transaction.commit();
-            }
         }
         return copject;
     }

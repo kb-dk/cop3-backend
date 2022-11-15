@@ -8,6 +8,7 @@ import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

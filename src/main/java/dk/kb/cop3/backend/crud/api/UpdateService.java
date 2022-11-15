@@ -39,8 +39,8 @@ public class UpdateService {
                          @FormParam("title") String title,
                          @FormParam("person") String person,
                          @FormParam("building") String building,
-			             @FormParam("parish") String parish,
-			             @FormParam("street") String street,
+                         @FormParam("parish") String parish,
+                         @FormParam("street") String street,
                          @FormParam("housenumber") String housenumber,
                          @FormParam("zipcode") String zipcode,
                          @FormParam("cadastre") String cadastre,
@@ -66,33 +66,33 @@ public class UpdateService {
             return Response.status(400).build();
         }
         String current_mods = getCurrentMods(uri);
-        if (current_mods == null){
-            return  Response.status(404).build();
+        if (current_mods == null) {
+            return Response.status(404).build();
+        }
+        if (lastModified == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("no last modified").build();
         }
 
+        Session ses = HibernateUtil.getSessionFactory().openSession();
         try {
-            if (lastModified == null) {
-                if ((lat != 0.0) && (lng != 0.0)) {
-                    return updateCoordinatesAndGetHttpReturnCode(user, lat, lng, correctness, uri);
-                }
-            } else {
-                boolean doModsUpdate = false;
-                Reformulator reformulator = new Reformulator(current_mods);
-                doModsUpdate = updateChangedFields(lat, lng, title, person, building, parish, street, housenumber, zipcode, cadastre, area, city, location, note, pdfidentifier, orientation, creator, dateCreated, genre, iiifIdentifier, imageIdentifier, thumbnailIdentifier, doModsUpdate, reformulator);
+            boolean doModsUpdate = false;
+            Reformulator reformulator = new Reformulator(current_mods);
+            doModsUpdate = updateChangedFields(lat, lng, title, person, building, parish, street, housenumber, zipcode, cadastre, area, city, location, note, pdfidentifier, orientation, creator, dateCreated, genre, iiifIdentifier, imageIdentifier, thumbnailIdentifier, doModsUpdate, reformulator);
 
-                if (doModsUpdate) {
-                    String new_mods = reformulator.commitChanges();
-                    if (new_mods == null || "".equals(new_mods)){
-                        return Response.serverError().build();
-                    }
-                    Session ses = HibernateUtil.getSessionFactory().getCurrentSession();
-                    MetadataWriter mdw = new HibernateMetadataWriter(ses);
-                    String result = mdw.updateFromMods(uri, new_mods, lastModified, user);
-                    return getHttpResponseCodeAndUpdateSolr(uri, result);
+            if (doModsUpdate) {
+                String new_mods = reformulator.commitChanges();
+                if (new_mods == null || "".equals(new_mods)) {
+                    return Response.serverError().build();
                 }
+                MetadataWriter mdw = new HibernateMetadataWriter(ses);
+                String result = mdw.updateFromMods(uri, new_mods, lastModified, user);
+                return getHttpResponseCodeAndUpdateSolr(uri, result);
             }
+
         } catch (HibernateException ex) {
             logger.error("hibernate error in updateservice", ex);
+        } finally {
+            ses.close();
         }
         return Response.serverError().build();//If we end here an (Hibernate-) Exception has occurred
     }
@@ -107,7 +107,7 @@ public class UpdateService {
     private Response getHttpResponseCodeAndUpdateSolr(String uri, String result) {
         if (result == null || result.equals("")) {
             return Response.notModified("not modified").build();
-        } else if (result.equals("out-of-date")){
+        } else if (result.equals("out-of-date")) {
             return Response.notModified("out-of-date").build();
         } else {
             sendToSolr(uri);
@@ -117,6 +117,10 @@ public class UpdateService {
 
 
     private boolean updateChangedFields(double lat, double lng, String title, String person, String building, String parish, String street, String housenumber, String zipcode, String cadastre, String area, String city, String location, String note, String pdfidentifier, String orientation, String creator, String dateCreated, String genre, String iiifIdentifier, String imageIdentifier, String thumbnailIdentifier, boolean doModsUpdate, Reformulator reformulator) {
+        if (lat != 0.0 && lng != 0.0) {
+            reformulator.changeField("latlng", String.valueOf(lat) + ", " + String.valueOf(lng));
+            doModsUpdate = true;
+        }
         if (orientation != null && !"".equals(orientation)) {
             reformulator.changeField("orientation", orientation);
             doModsUpdate = true;
@@ -188,17 +192,17 @@ public class UpdateService {
             doModsUpdate = true;
         }
         if (iiifIdentifier != null && !"".equals(iiifIdentifier)) {
-            reformulator.changeField("identifier", iiifIdentifier,"iiif");
+            reformulator.changeField("identifier", iiifIdentifier, "iiif");
             doModsUpdate = true;
         }
 
         if (imageIdentifier != null && !"".equals(imageIdentifier)) {
-            reformulator.changeField("identifier", imageIdentifier,"image");
+            reformulator.changeField("identifier", imageIdentifier, "image");
             doModsUpdate = true;
         }
 
         if (thumbnailIdentifier != null && !"".equals(thumbnailIdentifier)) {
-            reformulator.changeField("identifier", thumbnailIdentifier,"thumbnail");
+            reformulator.changeField("identifier", thumbnailIdentifier, "thumbnail");
             doModsUpdate = true;
         }
         return doModsUpdate;
@@ -206,20 +210,20 @@ public class UpdateService {
 
     private void logInputParams(String user, String lastModified, double lat, double lng, double correctness, String title, String person, String building, String parish, String street, String housenumber, String zipcode, String cadastre, String area, String city, String location, String note, String orientation, String iiifIdentifier, String imageIdentifier, String thumbnailIdentifier, String uri) {
         logger.debug("updating object " + uri);
-        logger.debug("user: "+ user);
-        logger.debug("lastModified: "+ lastModified);
+        logger.debug("user: " + user);
+        logger.debug("lastModified: " + lastModified);
         logger.debug("new coordinates lat,lng =" + lat + "," + lng);
         logger.debug("coordinates correctness =" + correctness);
         logger.debug("title: " + title + " note:" + note);
-        logger.debug("building: "+ building +" "+"person: "+ person);
-        logger.debug("parish: "+ parish +" "+"street: "+ street);
-        logger.debug("housenumber: "+ housenumber +" "+"zipcode: "+ zipcode);
-        logger.debug("cadastre: "+ cadastre +" "+"area: "+ area);
-        logger.debug("city: " + city + " location: "+ location);
-        logger.debug("orientation: "+ orientation);
-        logger.debug("iiifIdentifier: "+ iiifIdentifier);
-        logger.debug("imageIdentifier:"+ imageIdentifier);
-        logger.debug("thumbnailIdentifier:"+ thumbnailIdentifier);
+        logger.debug("building: " + building + " " + "person: " + person);
+        logger.debug("parish: " + parish + " " + "street: " + street);
+        logger.debug("housenumber: " + housenumber + " " + "zipcode: " + zipcode);
+        logger.debug("cadastre: " + cadastre + " " + "area: " + area);
+        logger.debug("city: " + city + " location: " + location);
+        logger.debug("orientation: " + orientation);
+        logger.debug("iiifIdentifier: " + iiifIdentifier);
+        logger.debug("imageIdentifier:" + imageIdentifier);
+        logger.debug("thumbnailIdentifier:" + thumbnailIdentifier);
     }
 
 
@@ -228,17 +232,16 @@ public class UpdateService {
     }
 
     private String getCurrentMods(String uri) {
-        Session ses = HibernateUtil.getSessionFactory().getCurrentSession();
-        ses.beginTransaction();
+        Session ses = HibernateUtil.getSessionFactory().openSession();
         MetadataSource mds = new SolrMetadataSource(ses);
         mds.setSearchterms("id", uri);
         mds.execute();
-        if (!mds.hasMore())   {
-            logger.debug("no object found with id: "+uri);
+        if (!mds.hasMore()) {
+            logger.debug("no object found with id: " + uri);
             return null;
         }
         Object cObject = mds.getAnother();
-        ses.getTransaction().commit();
+        ses.close();
         return cObject.getMods();
     }
 

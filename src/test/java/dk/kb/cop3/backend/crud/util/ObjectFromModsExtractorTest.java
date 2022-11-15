@@ -7,6 +7,7 @@ import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
+import org.hibernate.Transaction;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -54,7 +55,9 @@ public class ObjectFromModsExtractorTest {
         String mods = Files.readString(Path.of(LUFTFOTO_MODS_FILE), StandardCharsets.UTF_8);
         dk.kb.cop3.backend.crud.database.hibernate.Object copject = new Object();
         Session ses = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = ses.beginTransaction();
         copject = objectFromModsExtractor.extractFromMods(copject, mods, ses);
+        transaction.commit();
 
    //     assertEquals("Sylvest Jensen", copject.getCreator());
         assertEquals("Overgård - 1988", copject.getTitle());
@@ -81,8 +84,9 @@ public class ObjectFromModsExtractorTest {
         String mods = Files.readString(Path.of(BOOK_MODS_FILE), StandardCharsets.UTF_8);
         dk.kb.cop3.backend.crud.database.hibernate.Object copject = new Object();
         Session ses = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = ses.beginTransaction();
         copject = objectFromModsExtractor.extractFromMods(copject, mods, ses);
-
+        transaction.commit();
         assertEquals("Torres Naharro, Bartolomé de", copject.getCreator());
         assertEquals("Propalladia", copject.getTitle());
         assertEquals("/books/boghis/2017/dec/tryk/object4724", copject.getId());
