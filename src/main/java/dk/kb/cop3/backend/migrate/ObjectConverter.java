@@ -3,21 +3,13 @@ package dk.kb.cop3.backend.migrate;
 import dk.kb.cop3.backend.crud.database.hibernate.*;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import oracle.jdbc.driver.OracleConnection;
 import dk.kb.cop3.backend.migrate.hibernate.*;
-import org.hibernate.Session;
-
 import dk.kb.cop3.backend.crud.database.type.JGeometryType;
-import java.awt.geom.Point2D;
 import org.geotools.geometry.jts.JTSFactoryFinder;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.Coordinate;
-
 import oracle.spatial.geometry.JGeometry;
 
 import java.util.HashSet;
@@ -29,36 +21,36 @@ import org.apache.log4j.Logger;
 
 public class ObjectConverter {
 
-    private static Logger logger = Logger.getLogger(ObjectConverter.class);
-    
+    private static final Logger logger = Logger.getLogger(ObjectConverter.class);
+
     public static Edition convertEdition(EditionOracle editionOracle) {
         Edition edition = new Edition();
-            edition.setId(editionOracle.getId());
-            edition.setName(editionOracle.getName());
-            edition.setNameEn(editionOracle.getNameEn());
-            edition.setUrlName(editionOracle.getUrlName());
-            edition.setUrlMatrialType(editionOracle.getUrlMatrialType());
-            edition.setUrlPubYear(editionOracle.getUrlPubYear());
-            edition.setUrlPubMonth(editionOracle.getUrlPubMonth());
-            edition.setUrlCollection(editionOracle.getUrlCollection());
-            edition.setCumulusCatalog(editionOracle.getCumulusCatalog());
-            edition.setCumulusTopCatagory(editionOracle.getCumulusTopCatagory());
-            edition.setNormalisationrule(editionOracle.getNormalisationrule());
-            edition.setStatus(editionOracle.getStatus());
-            edition.setUiLanguage(editionOracle.getUiLanguage());
-            edition.setUiSort(editionOracle.getUiSort());
-            edition.setUiShow(editionOracle.getUiShow());
-            edition.setOpml(editionOracle.getOpml());
-            edition.setDescription(editionOracle.getDescription());
-            edition.setCollectionDa(editionOracle.getCollectionDa());
-            edition.setCollectionEn(editionOracle.getCollectionEn());
-            edition.setDepartmentDa(editionOracle.getDepartmentDa());
-            edition.setDepartmentEn(editionOracle.getDepartmentEn());
-            edition.setContactEmail(editionOracle.getContactEmail());
-            edition.setObjects(new HashSet<>());
-            edition.setVisiblePublic(editionOracle.getVisiblePublic());
-            edition.setLastModified(editionOracle.getLastModified());
-            return edition;
+        edition.setId(editionOracle.getId());
+        edition.setName(editionOracle.getName());
+        edition.setNameEn(editionOracle.getNameEn());
+        edition.setUrlName(editionOracle.getUrlName());
+        edition.setUrlMatrialType(editionOracle.getUrlMatrialType());
+        edition.setUrlPubYear(editionOracle.getUrlPubYear());
+        edition.setUrlPubMonth(editionOracle.getUrlPubMonth());
+        edition.setUrlCollection(editionOracle.getUrlCollection());
+        edition.setCumulusCatalog(editionOracle.getCumulusCatalog());
+        edition.setCumulusTopCatagory(editionOracle.getCumulusTopCatagory());
+        edition.setNormalisationrule(editionOracle.getNormalisationrule());
+        edition.setStatus(editionOracle.getStatus());
+        edition.setUiLanguage(editionOracle.getUiLanguage());
+        edition.setUiSort(editionOracle.getUiSort());
+        edition.setUiShow(editionOracle.getUiShow());
+        edition.setOpml(editionOracle.getOpml());
+        edition.setDescription(editionOracle.getDescription());
+        edition.setCollectionDa(editionOracle.getCollectionDa());
+        edition.setCollectionEn(editionOracle.getCollectionEn());
+        edition.setDepartmentDa(editionOracle.getDepartmentDa());
+        edition.setDepartmentEn(editionOracle.getDepartmentEn());
+        edition.setContactEmail(editionOracle.getContactEmail());
+        edition.setObjects(new HashSet<>());
+        edition.setVisiblePublic(editionOracle.getVisiblePublic());
+        edition.setLastModified(editionOracle.getLastModified());
+        return edition;
     }
 
 
@@ -89,28 +81,25 @@ public class ObjectConverter {
 
 
     public static AreasInDk convertArea(AreasInDkOracle oraArea) {
-	AreasInDk area = new AreasInDk();
-
-	area.setAreaId("" + oraArea.getAreaId());
-	area.setNameOfArea(oraArea.getNameOfArea());
-
-	JGeometry     oraGeom   = oraArea.getPolygonCol().getJGeometry();
-	double[]      ordinates = oraGeom.getOrdinatesArray();
-	Coordinate[]  coords    = new Coordinate[ordinates.length/2];
-	
-	for(int i=0;i<ordinates.length;i=i+2) {
-	    coords[i/2] = new Coordinate(ordinates[i], ordinates[i+1]);
-	    System.out.println("coordinate " + i/2 + " " + ordinates[i] + " " +  ordinates[i+1]);
-	}
-	GeometryFactory geoFact = new GeometryFactory();
-
-	Polygon poly            = geoFact.createPolygon(coords);
-	
-	area.setPolygonCol(poly);
-	
-	return area;
+        AreasInDk area = new AreasInDk();
+        area.setAreaId("" + oraArea.getAreaId());
+        area.setNameOfArea(oraArea.getNameOfArea());
+        JGeometry oraGeom = oraArea.getPolygonCol().getJGeometry();
+        Polygon poly = convertJGeometryToPolygon(oraGeom);
+        area.setPolygonCol(poly);
+        return area;
     }
-    
+
+    private static Polygon convertJGeometryToPolygon(JGeometry oraGeom) {
+        double[] ordinates = oraGeom.getOrdinatesArray();
+        Coordinate[] coords = new Coordinate[ordinates.length / 2];
+        for (int i = 0; i < ordinates.length; i = i + 2) {
+            coords[i / 2] = new Coordinate(ordinates[i+1], ordinates[i]);
+        }
+        GeometryFactory geoFact = new GeometryFactory();
+        return geoFact.createPolygon(coords);
+    }
+
     private static UserRole createUserRole(UserOracle oraUser) {
         UserRole userRole = new UserRole();
         userRole.setRoleId(oraUser.getRole().getRoleId());
@@ -150,6 +139,7 @@ public class ObjectConverter {
         userRole.setPermissions(userPermissions);
         return userRole;
     }
+
     public static Category convertCategory(CategoryOracle categoryOracle) {
         Category category = new Category();
         category.setId(categoryOracle.getId());
@@ -170,7 +160,7 @@ public class ObjectConverter {
         object.setEdition(convertEdition(oraObject.getEdition()));
         object.setMods(oraObject.getMods());
         object.setLastModified(oraObject.getLastModified());
-        object.setDeleted(oraObject.getDeleted()==0x00?'n': oraObject.getDeleted());
+        object.setDeleted(oraObject.getDeleted() == 0x00 ? 'n' : oraObject.getDeleted());
         object.setLastModifiedBy(oraObject.getLastModifiedBy());
         object.setType(convertType(oraObject.getType()));
         object.setObjVersion(oraObject.getObjVersion());
@@ -193,7 +183,9 @@ public class ObjectConverter {
 //                        .collect(Collectors.toSet()));
 
         object.setCategories((Set<Category>) oraObject.getCategories().stream()
-                .map(oraCategory->{return convertCategory((CategoryOracle) oraCategory);})
+                .map(oraCategory -> {
+                    return convertCategory((CategoryOracle) oraCategory);
+                })
                 .collect(Collectors.toSet()));
 
         return object;
