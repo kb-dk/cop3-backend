@@ -6,8 +6,6 @@ import dk.kb.cop3.backend.constants.Areas;
 import dk.kb.cop3.backend.constants.DSFLAreas;
 import dk.kb.cop3.backend.crud.database.hibernate.User;
 import dk.kb.cop3.backend.crud.database.hibernate.UserRole;
-import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
-import dk.kb.cop3.backend.crud.exception.UserProvisioningServiceException;
 import dk.kb.cop3.backend.crud.model.UserForThePublic;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -40,7 +38,7 @@ public class UserProvisioningService {
         this.session = session;
     }
 
-    public String fetchOrCreateUserReturnUserJson(String pid, String id, String givenName, String surName, String commonName, Session session) {
+    public String fetchOrCreateUserReturnUserJson(String pid, String id, String givenName, String surName, String commonName) {
         ensureSessionHasOpenTransaction();
         User user = session.get(User.class, pid);
         if (user == null) {//user doesn't exist in the DB so create a new one using the details from the Brugerbase DB
@@ -111,7 +109,7 @@ public class UserProvisioningService {
      * @param pid
      * @param points
      */
-    public void updateScoreInArea(String pid, String points, DSFLAreas area) throws AreaNotFoundException {
+    public void updateScoreInArea(String pid, String points, DSFLAreas area){
         User user = session.get(User.class,pid);
         if (area == DSFLAreas.Danmark) {
             user.setUserScore(user.getUserScore().add(new BigInteger(points)));

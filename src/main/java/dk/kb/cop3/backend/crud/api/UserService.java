@@ -4,7 +4,6 @@ package dk.kb.cop3.backend.crud.api;
 import dk.kb.cop3.backend.constants.Areas;
 import dk.kb.cop3.backend.constants.DSFLAreas;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
-import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
 import dk.kb.cop3.backend.crud.services.GeoProvisioningService;
 import dk.kb.cop3.backend.crud.services.UserProvisioningService;
 import org.apache.commons.httpclient.HttpStatus;
@@ -49,7 +48,7 @@ public class UserService {
         UserProvisioningService userService = new UserProvisioningService(session);
         Transaction transaction = session.beginTransaction();
         try {
-            return userService.fetchOrCreateUserReturnUserJson(pid, id, givenName, surName, commonName, session);
+            return userService.fetchOrCreateUserReturnUserJson(pid, id, givenName, surName, commonName);
         } catch (HibernateException e) {
             LOGGER.error("error getting user", e);
             return e.getMessage();
@@ -110,7 +109,7 @@ public class UserService {
             }
             userProvisioningService.updateScoreInArea(pid, points, area);
             return  Response.ok().entity("score updated").build();
-        } catch (HibernateException | AreaNotFoundException e) {
+        } catch (HibernateException e) {
             LOGGER.error("error getting username from pid", e);
             return Response.serverError().build();
         } finally {
