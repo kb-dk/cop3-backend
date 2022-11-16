@@ -1,11 +1,15 @@
 package dk.kb.cop3.backend.crud.api;
 
+import dk.kb.cop3.backend.constants.DSFLAreas;
+import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
 import dk.kb.cop3.backend.crud.services.GeoProvisioningService;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ws.rs.*;
 import java.util.Arrays;
+import java.util.List;
 
 @Path("/geo-services")
 public class GeoService {
@@ -47,14 +51,9 @@ public class GeoService {
 
     private String getArea(@FormParam("lat") double latitude, @FormParam("lng") double longitude) {
         LOGGER.debug("GEOSERVICE POST GET lat:" + latitude + " longitude " + longitude );
-        GeoProvisioningService geoProvisioningService = new GeoProvisioningService();
-        Object[] areaDetails;
-        try {
-            areaDetails = geoProvisioningService.getAreaDetailsForPoint(latitude, longitude);
-        } catch (AreaNotFoundException e) {
-            LOGGER.error(e.getMessage());
-            return e.getMessage();
-        }
-        return Arrays.toString(areaDetails);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        GeoProvisioningService geoProvisioningService = new GeoProvisioningService(session);
+        DSFLAreas area = geoProvisioningService.getAreaNotDanmark(latitude,longitude);
+        return area.toString();
     }
 }
