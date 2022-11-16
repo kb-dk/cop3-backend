@@ -1,5 +1,7 @@
 package dk.kb.cop3.backend.crud.model;
 
+import dk.kb.cop3.backend.crud.database.hibernate.User;
+
 import java.math.BigInteger;
 
 /**
@@ -10,55 +12,26 @@ import java.math.BigInteger;
 public class UserForThePublic {
 
     /**
-     * Construct a public object of a user without social security number and e-mail.
-     * @param commonName
-     * @param pid
-     * @param email
-     * @param userScore
+      * Construct a public object of a user without social security number and e-mail.
+      * @param user user object from the database
      */
-    @Deprecated
-    public UserForThePublic(String commonName, String pid, String email, BigInteger userScore) {
-        this.commonName = commonName;
-        this.pid = pid;
-        this.email = email;
-        this.userScore = userScore;
-    }
-
-    /**
-     * Construct a public object of a user without social security number, userscores and e-mail.
-     * @param commonName
-     * @param pid
-     * @param email
-     * @param userScore   Danmark
-     * @param userScore1  Fyn
-     * @param userScore2  Bornholm
-     * @param userScore3  Hovedstaden
-     * @param userScore4  Kattegat
-     * @param userScore5  LollandFalster
-     * @param userScore6  Midtjylland
-     * @param userScore7  Nordjylland
-     * @param userScore8  Sjælland
-     * @param userScore9  Sønderjylland
-     */
-    public UserForThePublic(String commonName, String pid, String email, BigInteger userScore, BigInteger userScore1, BigInteger userScore2, BigInteger userScore3, BigInteger userScore4, BigInteger userScore5, BigInteger userScore6, BigInteger userScore7, BigInteger userScore8, BigInteger userScore9) {
-        this.commonName = commonName;
-        this.pid = pid;
-        this.email = email;
-        this.userScore = userScore;
-        this.userScore1 = userScore1;
-        this.userScore2 = userScore2;
-        this.userScore3 = userScore3;
-        this.userScore4 = userScore4;
-        this.userScore5 = userScore5;
-        this.userScore6 = userScore6;
-        this.userScore7 = userScore7;
-        this.userScore8 = userScore8;
-        this.userScore9 = userScore9;
+    public UserForThePublic(User user) {
+        this.commonName = user.getCommonName();
+        this.pid = user.getPid();
+        this.userScore = user.getUserScore();
+        this.userScore1 = user.getUserScore1();
+        this.userScore2 = user.getUserScore2();
+        this.userScore3 = user.getUserScore3();
+        this.userScore4 = user.getUserScore4();
+        this.userScore5 = user.getUserScore5();
+        this.userScore6 = user.getUserScore6();
+        this.userScore7 = user.getUserScore7();
+        this.userScore8 = user.getUserScore8();
+        this.userScore9 = user.getUserScore9();
     }
 
     private String commonName;
     private String pid;//library user id - corresponds to primary key in the USERS table, generated from an external source
-    private String email;
     private BigInteger userScore;
     private BigInteger userScore1;
     private BigInteger userScore2;
@@ -85,14 +58,6 @@ public class UserForThePublic {
 
     public void setPid(String pid) {
         this.pid = pid;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public BigInteger getUserScore() {
@@ -180,7 +145,6 @@ public class UserForThePublic {
         return "UserForThePublic{" +
                 "commonName='" + commonName + '\'' +
                 ", pid='" + pid + '\'' +
-                ", email='" + email + '\'' +
                 ", userScore=" + userScore +
                 ", userScore1=" + userScore1 +
                 ", userScore2=" + userScore2 +

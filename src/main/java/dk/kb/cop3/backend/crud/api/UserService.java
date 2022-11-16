@@ -1,19 +1,14 @@
 package dk.kb.cop3.backend.crud.api;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
 import dk.kb.cop3.backend.constants.Areas;
 import dk.kb.cop3.backend.constants.DSFLAreas;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
-import dk.kb.cop3.backend.crud.database.hibernate.User;
-import dk.kb.cop3.backend.crud.database.hibernate.UserRole;
 import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
-import dk.kb.cop3.backend.crud.exception.UserProvisioningServiceException;
-import dk.kb.cop3.backend.crud.model.UserForThePublic;
 import dk.kb.cop3.backend.crud.services.GeoProvisioningService;
 import dk.kb.cop3.backend.crud.services.UserProvisioningService;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -22,10 +17,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * kb.dk
@@ -107,16 +98,21 @@ public class UserService {
     @POST
     @Path("/add-to-score-in-area")
     @Produces("text/plain")
-    public String postWithGeoCoords(@FormParam("pid") String pid, @FormParam("points") String points,  @FormParam("lat") double lat, @FormParam("lng") double lng) {
+    public Response postWithGeoCoords(@FormParam("pid") String pid, @FormParam("points") String points,  @FormParam("lat") double lat, @FormParam("lng") double lng) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         UserProvisioningService userProvisioningService = new UserProvisioningService(session);
+        GeoProvisioningService geoProvisioningService = new GeoProvisioningService(session);
         Transaction transaction = session.beginTransaction();
         try {
-            userProvisioningService.updateScoreInArea(pid, points, lat, lng);
-            return "addes score in area";
+            DSFLAreas area = geoProvisioningService.getAreaNotDanmark(lat,lng);
+            if (area == null) {
+                return Response.status(HttpStatus.SC_BAD_REQUEST).entity("point not in any area").build();
+            }
+            userProvisioningService.updateScoreInArea(pid, points, area);
+            return  Response.ok().entity("score updated").build();
         } catch (HibernateException | AreaNotFoundException e) {
             LOGGER.error("error getting username from pid", e);
-            return e.getMessage();
+            return Response.serverError().build();
         } finally {
             transaction.commit();
             session.close();
@@ -140,7 +136,7 @@ public class UserService {
         UserProvisioningService userProvisioningService = new UserProvisioningService(session);
         Transaction transaction = session.beginTransaction();
         try {
-            String topUsersJson = userProvisioningService.getUsersForTopList(numberOfUsers);
+            String topUsersJson = userProvisioningService.getUsersTopListForAreaAsJson(numberOfUsers,DSFLAreas.Danmark);
             final Response myResponse = Response.status(Response.Status.OK)
                     .entity(topUsersJson)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON + "; charset=UTF-8") //"; charset=ISO-8859-1"
@@ -163,7 +159,6 @@ public class UserService {
      * @param numberOfUsers
      * @return a List og users in JSON with no sensitive information like e-mail or CPR number.
      */
-
     @GET
     @Path("/get-users/{nameOfArea}")
     @Produces("application/json")
@@ -172,12 +167,11 @@ public class UserService {
         UserProvisioningService userService = new UserProvisioningService(session);
         Transaction transaction = session.beginTransaction();
         try {
-            UserProvisioningService userProvisioningService = new UserProvisioningService(session);
             DSFLAreas areaToPullTopUsersFrom = Areas.getAreaEnumByName(nameOfArea);
-            String usersInAreaJson = userProvisioningService.getUsersFromAreaForTopList(numberOfUsers, areaToPullTopUsersFrom);// getUsersForTopList(numberOfUsers);
+            String usersInAreaJson = userService.getUsersTopListForAreaAsJson(numberOfUsers, areaToPullTopUsersFrom);
             final Response myResponse = Response.status(Response.Status.OK)
                     .entity(usersInAreaJson)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON + "; charset=UTF-8") //"; charset=ISO-8859-1"
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON + "; charset=UTF-8")
                     .build();
             return myResponse;
         }catch (Exception ex) {
@@ -188,6 +182,4 @@ public class UserService {
             session.close();
         }
     }
-
-
 }
