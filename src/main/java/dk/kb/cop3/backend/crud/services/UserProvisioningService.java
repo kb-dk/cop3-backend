@@ -1,11 +1,19 @@
 package dk.kb.cop3.backend.crud.services;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dk.kb.cop3.backend.constants.DSFLAreas;
 import dk.kb.cop3.backend.crud.database.UserDao;
+import dk.kb.cop3.backend.crud.database.UserDaoImpl;
 import dk.kb.cop3.backend.crud.database.UserRoleDao;
+import dk.kb.cop3.backend.crud.database.UserRoleDaoImpl;
 import dk.kb.cop3.backend.crud.database.hibernate.User;
 import dk.kb.cop3.backend.crud.database.hibernate.UserRole;
+import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
 import dk.kb.cop3.backend.crud.exception.UserProvisioningServiceException;
+import dk.kb.cop3.backend.crud.model.UserForThePublic;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -14,6 +22,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,57 +38,45 @@ import java.util.List;
 @Transactional
 public class UserProvisioningService {
 
-    Logger LOGGER = LoggerFactory.getLogger(UserProvisioningService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserProvisioningService.class);
+    private static final int KB_USER_ROLE_ID = 1;
 
-    private static final ApplicationContext COPII_CONTEXT = new ClassPathXmlApplicationContext("copII-dao-context.xml");
+    private Session session;
 
-    public UserProvisioningService() {}
-
-    /**
-     * Calls the DAO layer to create a user for the given domain object
-     *
-     * @param user User domain object
-     * @throws UserProvisioningServiceException
-     *
-     */
-    public void createUser(User user) throws UserProvisioningServiceException {
-
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
-        LOGGER.trace("createUser successfully retrieved UserDao from Spring application context");
-
-        try {
-            LOGGER.debug("Calling DAO layer to create new user...");
-            userDao.addUser(user);
-            LOGGER.debug("DAO layer created user successfully");
-        } catch (DataAccessException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new UserProvisioningServiceException("Det var ikke muligt at tilføje en ny bruger på grund af en serverfejl");
-        }
+    public UserProvisioningService(Session session) {
+        this.session = session;
     }
 
-    /**
-     * Gets a User from the DAO layer
-     *
-     * @param pid - pid of the user to be retrieved
-     * @return User domain object from the DAO layer
-     * @throws UserProvisioningServiceException
-     *
-     */
-    public User getUserByPid(String pid) throws UserProvisioningServiceException {
-
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
-        LOGGER.trace("getUserByPid successfully retrieved UserDao from Spring application context");
-        User user;
-        try {
-            LOGGER.debug("Calling DAO layer to get user {}", pid);
-            user = userDao.getUser(pid);
-            LOGGER.debug("DAO layer retrieved user successfully");
-        } catch (DataAccessException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new UserProvisioningServiceException("Det var ikke muligt at tilføje en ny bruger på grund af en serverfejl");
+    public String fetchOrCreateUserReturnUserJson(String pid, String id, String givenName, String surName, String commonName, Session session) {
+        User user = session.get(User.class, pid);
+        if (user == null) {//user doesn't exist in the DB so create a new one using the details from the Brugerbase DB
+            User newUser = new User();
+            newUser.setPid(pid);
+            newUser.setId(id);
+            newUser.setGivenName(givenName);
+            newUser.setCommonName(commonName);
+            newUser.setSurName(surName);
+            UserRole userRole = session.get(UserRole.class,KB_USER_ROLE_ID);
+            newUser.setRole(userRole);
+            newUser.setRoleId(KB_USER_ROLE_ID);
+            newUser.setLastActive(new Timestamp(System.currentTimeMillis()));
+            newUser.setUserScore(new BigInteger("0"));
+            newUser.setUserScore1(new BigInteger("0"));
+            newUser.setUserScore2(new BigInteger("0"));
+            newUser.setUserScore3(new BigInteger("0"));
+            newUser.setUserScore4(new BigInteger("0"));
+            newUser.setUserScore5(new BigInteger("0"));
+            newUser.setUserScore6(new BigInteger("0"));
+            newUser.setUserScore7(new BigInteger("0"));
+            newUser.setUserScore8(new BigInteger("0"));
+            newUser.setUserScore9(new BigInteger("0"));
+            session.save(newUser);
+            user = newUser;
         }
-
-        return user;
+        //Encode the response as JSON
+        Gson gson = new GsonBuilder().create();
+        String userJson = gson.toJson(user);
+        return userJson;
     }
 
     /**
@@ -89,24 +87,13 @@ public class UserProvisioningService {
      * @throws UserProvisioningServiceException
      *
      */
-    public String getUserNameByPid(String pid) throws UserProvisioningServiceException {
+    public String getUserNameByPid(String pid)  {
 
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
-        LOGGER.trace("getUserByPid successfully retrieved UserDao from Spring application context");
-        String userName = null;
-        try {
-            LOGGER.debug("Calling DAO layer to get user name {}", pid);
-            User user = userDao.getUser(pid);
-            if (user != null) {
-                userName = user.getCommonName();
-            }
-            LOGGER.debug("Retrieved user name: {}", userName);
-
-        } catch (DataAccessException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new UserProvisioningServiceException("Det var ikke muligt at tilføje en ny bruger på grund af en serverfejl");
+        String userName = "unknown user";
+        User user = session.get(User.class,pid);
+        if (user != null) {
+            userName = user.getCommonName();
         }
-
         return userName;
     }
 
@@ -116,11 +103,20 @@ public class UserProvisioningService {
      * @param numberOfUsers number Of Users.
      * @return the list of Hibernate Users.
      */
-    public List<User> getUsersForTopList(int numberOfUsers) {
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
-        List<User> x = userDao.getUsers(numberOfUsers);
+    public String getUsersForTopList(int numberOfUsers) {
+        LOGGER.info("Getting users from the DB ordered by score. Number of Users to retrieve " + numberOfUsers);
+        Query queryResult = session.createQuery("from User user order by user.userScore desc ");
+        queryResult.setMaxResults(numberOfUsers);
+        List<User> allUsersInternal  = queryResult.list();
 
-        return x;
+        List<UserForThePublic> allUsersPublic = new ArrayList<UserForThePublic>();
+        for (int i = 0; i < allUsersInternal.size(); i++) {
+            UserForThePublic user = new UserForThePublic(allUsersInternal.get(i).getCommonName(), allUsersInternal.get(i).getPid(), allUsersInternal.get(i).getEmail(), allUsersInternal.get(i).getUserScore());
+            allUsersPublic.add(user);
+        }
+        Gson gson = new GsonBuilder().create();
+        String userJson = gson.toJson(allUsersPublic);
+        return userJson;
     }
 
 
@@ -130,11 +126,27 @@ public class UserProvisioningService {
      * @param numberOfUsers number Of Users.
      * @return the list of Hibernate Users.
      */
-    public List<User> getUsersFromAreaForTopList(int numberOfUsers, DSFLAreas aSpecificArea) {
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
-        List<User> x = userDao.getUsers(numberOfUsers, aSpecificArea);
-
-        return x;
+    public String getUsersFromAreaForTopList(int numberOfUsers, DSFLAreas aSpecificArea) {
+        UserDao userDao = new UserDaoImpl();
+        List<User> allUsersInternal = userDao.getUsers(numberOfUsers, aSpecificArea);
+        List<UserForThePublic> allUsersPublic = new ArrayList<UserForThePublic>();
+        for (int i = 0; i < allUsersInternal.size(); i++) {
+            UserForThePublic user = new UserForThePublic(allUsersInternal.get(i).getCommonName(), allUsersInternal.get(i).getPid(), allUsersInternal.get(i).getEmail(),
+                    allUsersInternal.get(i).getUserScore(),
+                    allUsersInternal.get(i).getUserScore1(),
+                    allUsersInternal.get(i).getUserScore2(),
+                    allUsersInternal.get(i).getUserScore3(),
+                    allUsersInternal.get(i).getUserScore4(),
+                    allUsersInternal.get(i).getUserScore5(),
+                    allUsersInternal.get(i).getUserScore6(),
+                    allUsersInternal.get(i).getUserScore7(),
+                    allUsersInternal.get(i).getUserScore8(),
+                    allUsersInternal.get(i).getUserScore9());
+            allUsersPublic.add(user);
+        }
+        Gson gson = new GsonBuilder().create();
+        String userJson = gson.toJson(allUsersPublic);
+        return userJson;
     }
 
     /**
@@ -147,7 +159,7 @@ public class UserProvisioningService {
      */
     public UserRole getUserRole(int userRoleId) throws UserProvisioningServiceException {
 
-        UserRoleDao userRoleDao = (UserRoleDao) COPII_CONTEXT.getBean("userRoleDao");
+        UserRoleDao userRoleDao = new UserRoleDaoImpl();
         UserRole userRole;
         try {
             LOGGER.debug("Calling DAO layer to get user role {}", userRoleId);
@@ -160,32 +172,20 @@ public class UserProvisioningService {
         return userRole;
     }
 
-    @Deprecated
-    public void updateScore(String pid, String points) {
-        LOGGER.debug("adding " + points + " points for user " + pid);
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
-
-        User user = userDao.getUser(pid);
-        LOGGER.debug("user: " + user);
-        user.setUserScore(user.getUserScore().add(new BigInteger(points)));
-        userDao.modifyUser(user);
-    }
 
     /**
      * Updating the national score and adding to a specific area userscore
      *
      * @param pid
      * @param points
-     * @param aSpecificArea
+     * @param lat lattitude of point
+     * @param lng longitue of point
      */
-    public void updateScore(String pid, String points, DSFLAreas aSpecificArea) {
-        LOGGER.debug("adding " + points + " points for user " + pid);
-        UserDao userDao = (UserDao) COPII_CONTEXT.getBean("userDao");
-        LOGGER.debug("aSpecificArea = {}", aSpecificArea.toString());
-
+    public void updateScoreInArea(String pid, String points, double lat, double lng) throws AreaNotFoundException {
+        GeoProvisioningService geoProvisioningService = new GeoProvisioningService();
+        DSFLAreas aSpecificArea = geoProvisioningService.getArea(lat, lng);
+        UserDao userDao = new UserDaoImpl();
         User user = userDao.getUser(pid);
-        LOGGER.debug("user: " + user);
-
         if (aSpecificArea == DSFLAreas.Danmark) {
             user.setUserScore(user.getUserScore().add(new BigInteger(points)));
         } else if (aSpecificArea == DSFLAreas.Fyn) {
@@ -218,7 +218,6 @@ public class UserProvisioningService {
         } else {
             LOGGER.error("No area to distribute points!!!");
         }
-
-        userDao.modifyUser(user);
+        session.update(user);
     }
 }

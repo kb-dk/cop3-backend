@@ -28,11 +28,6 @@ public class UserDaoImpl implements UserDao {
 
     private SessionFactory sessionFactory;
 
-    public UserDaoImpl(){
-        this.sessionFactory = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
-
-    }
 
     /**
      * Save a new user to the USERS table
@@ -43,11 +38,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public String addUser(User user) throws DataAccessException {
 
-        Session session = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx  = null;
         try {
             LOGGER.debug("Saving new user to DB...");
-            session = sessionFactory.openSession();
             tx = session.beginTransaction();
             String userPid = (String) session.save(user);
             LOGGER.debug("User saved successfully with pid: " + userPid);
@@ -78,16 +72,11 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUser(String userPid) throws DataAccessException {
 
-        Session session = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             LOGGER.debug("Getting user from the DB with Pid: " + userPid);
-            session = sessionFactory.openSession();
             transaction = session.beginTransaction();
-
-            Query query = session.createSQLQuery(" select user from users  where user_pid='"+userPid+"'");
-//OLD:            Query query = session.createSQLQuery(" select user0_.USER_PID as USER1_8_0_, user0_.USER_ID as USER2_8_0_, user0_.USER_GIVEN_NAME as USER3_8_0_, user0_.USER_SURNAME as USER4_8_0_, user0_.USER_COMMON_NAME as USER5_8_0_, user0_.USER_ROLE_ID as USER6_8_0_, user0_.USER_EMAIL as USER7_8_0_, user0_.USER_SCORE as USER8_8_0_, user0_.USERSCORE1 as USERSCORE9_8_0_, user0_.LAST_ACTIVE_DATE as LAST10_8_0_  from COP2.USERS user0_  where user0_.USER_PID='"+userPid+"'");
-            query.list();
             User user = (User) session.get(User.class, userPid);
             transaction.commit();
             LOGGER.debug("Successfully performed DB query");

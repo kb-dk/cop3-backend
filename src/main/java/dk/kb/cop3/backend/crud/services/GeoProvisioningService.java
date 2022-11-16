@@ -19,8 +19,6 @@ public class GeoProvisioningService {
     Logger LOGGER = Logger.getLogger(GeoProvisioningService.class);
 
     public DSFLAreas getArea(double lat, double lng) throws AreaNotFoundException {
-        LOGGER.debug("lat: "+ lat);
-        LOGGER.debug("lng: "+ lng);
         GeoInfoDaoImpl geoInfoDao = new GeoInfoDaoImpl();
         geoInfoDao.setSessionFactory(HibernateUtil.getSessionFactory());
         String area =  geoInfoDao.getAreaDetails(lat, lng)[1].toString();
