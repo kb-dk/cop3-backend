@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.*;
+import org.locationtech.jts.geom.Coordinate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -151,12 +152,20 @@ public class ApiTest {
         return (NodeList) xpath.evaluate(xp, document, XPathConstants.NODESET);
     }
 
-    private Object getLatLonFromRSS(Document document) throws XPathExpressionException {
+    private Coordinate[] getCoordinatesFromRSS(Document document) throws XPathExpressionException {
         NodeList records = extractXpathFromRSS("rss/channel/item", document);
-        logger.info(records.getLength());
-        showNodeList(records);
-        getLatLonFromRecords(records);
-        return null;
+        return getLatLonFromRecords(records);
+    }
+
+    private void checkIfAllCoordinatesAreInsideTheBoundingBox(Coordinate[] coordinates, String boundingBox) {
+        for (Coordinate coordinate : coordinates) {
+            assertTrue(coordinate.x + ' ' + coordinate.y + " should be located in the bounding box:", isCoordinateInsideBoundingBox(coordinate, boundingBox));
+        }
+    }
+
+    private Boolean isCoordinateInsideBoundingBox(Coordinate coordinate, String boundingBox) {
+        String[] bb = boundingBox.split(",");
+        return Double.parseDouble(bb[3]) <= coordinate.x && coordinate.x <= Double.parseDouble(bb[1]) && Double.parseDouble(bb[2]) <= coordinate.y && coordinate.y <= Double.parseDouble(bb[0]);
     }
 
     private void showNodeList(NodeList nodeList){
@@ -165,12 +174,15 @@ public class ApiTest {
         }
     }
 
-    private void getLatLonFromRecords(NodeList nodeList){
+    private Coordinate[] getLatLonFromRecords(NodeList nodeList){
+        Coordinate[] coords = new Coordinate[nodeList.getLength()];
         for (int i = 0; i < nodeList.getLength(); i++) {
             Element el = (Element) nodeList.item(i);
-            logger.info(el.getElementsByTagName("geo:lat").item(0).getTextContent());
-            logger.info(el.getElementsByTagName("geo:long").item(0).getTextContent());
+            double lat = Double.parseDouble(el.getElementsByTagName("geo:lat").item(0).getTextContent());
+            double lon = Double.parseDouble(el.getElementsByTagName("geo:long").item(0).getTextContent());
+            coords[i] = new Coordinate(lat, lon);
         }
+        return coords;
     }
     private NamespaceContext getNameSpace(){
         return new NamespaceContext() {
@@ -222,7 +234,7 @@ public class ApiTest {
     }
 
     @Test
-    public void testSyndicationAllObjectsInSubject5() throws XPathExpressionException, IOException {
+    public void testSyndicationAllObjectsInSubject5ItemPerRequest() throws XPathExpressionException, IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?itemsPerPage=5", "list of objects");
         testConnectionToSolr(get.getStatusCode(), 200);
         Document document = parseModsString(get.getResponseBodyAsString());
@@ -235,13 +247,8 @@ public class ApiTest {
         testConnectionToSolr(get.getStatusCode(), 200);
         Document document = parseModsString(get.getResponseBodyAsString());
         compareTheActualNumberOfRecordsWithExpectedNumberInRSS(document, 10);
-        Object coordinate = getLatLonFromRSS(document);
-    }
-
-    @Test //TODO check the totalResults
-    public void testSyndicationAllObjectsInBBO() {
-        GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&random=0.8&itemsPerPage=10", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        Coordinate[] coordinates = getCoordinatesFromRSS(document);
+        checkIfAllCoordinatesAreInsideTheBoundingBox(coordinates, BOUNDING_BOX);
     }
 
     @Test //TODO check the totalResults
