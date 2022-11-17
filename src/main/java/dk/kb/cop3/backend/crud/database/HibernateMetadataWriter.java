@@ -44,15 +44,19 @@ public class HibernateMetadataWriter implements MetadataWriter {
         ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
         Transaction trans = hibSession.beginTransaction();
         Object newObjectFromMods = objectFromModsExtractor.extractFromMods(new Object(), mods, hibSession);
+        newObjectFromMods.setId("/images/luftfo/2011/maj/luftfoto/objectXXXXXX");
+        newObjectFromMods.setTitle("TEST-FOTO");
         try {
-            if (hibSession.get(Object.class, newObjectFromMods.getId()) != null) {
+            final boolean objectAllreadyExists = hibSession.get(Object.class, newObjectFromMods.getId()) != null;
+            if (objectAllreadyExists) {
                 // object allready exists
                 trans.commit();
                 return "conflict";
+            }else{
+                hibSession.save(newObjectFromMods);
+                trans.commit();
+                return newObjectFromMods.getId();
             }
-            hibSession.save(newObjectFromMods);
-            trans.commit();
-            return newObjectFromMods.getId();
         } catch (Exception ex) {
             logger.error("Error creating new cobject",ex);
             if (trans != null && trans.isActive()) {
