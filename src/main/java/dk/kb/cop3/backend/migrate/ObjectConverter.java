@@ -99,8 +99,15 @@ public class ObjectConverter {
 	Coordinate[]  coords    = new Coordinate[ordinates.length/2];
 	
 	for(int i=0;i<ordinates.length;i=i+2) {
-	    coords[i/2] = new Coordinate(ordinates[i], ordinates[i+1]);
-	    System.out.println("coordinate " + i/2 + " " + ordinates[i] + " " +  ordinates[i+1]);
+
+	    // OK you usually don't comment out code like this when
+	    // you have versioning control, but this is so close to
+	    // the impossibility to remember what is left and right in
+	    // a coordinate system.  coords[i/2] = new
+	    // Coordinate(ordinates[i], ordinates[i+1]);
+	    
+	    coords[i/2] = new Coordinate(ordinates[i+1], ordinates[i]);
+	    System.out.println("coordinate " + i/2 + " " + ordinates[i+1] + " " +  ordinates[i]);
 	}
 	GeometryFactory geoFact = new GeometryFactory();
 
