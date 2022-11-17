@@ -2,9 +2,6 @@ package dk.kb.cop3.backend.crud.services;
 
 import dk.kb.cop3.backend.constants.Areas;
 import dk.kb.cop3.backend.constants.DSFLAreas;
-import dk.kb.cop3.backend.crud.database.GeoInfoDaoImpl;
-import dk.kb.cop3.backend.crud.database.HibernateUtil;
-import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
