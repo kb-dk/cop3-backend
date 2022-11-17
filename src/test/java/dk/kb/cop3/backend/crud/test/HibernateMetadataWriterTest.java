@@ -27,7 +27,6 @@ public class HibernateMetadataWriterTest {
 
     private static Logger logger = Logger.getLogger(HibernateMetadataWriterTest.class);
     private static Session session;
-    final static String TEST_ID = "/images/luftfo/2011/maj/luftfoto/object/Test";
     final static String NEW_TITLE = "New Title";
 
     @Before
@@ -44,10 +43,10 @@ public class HibernateMetadataWriterTest {
     public void create() throws XPathExpressionException {
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
         String testMods = TestUtil.getTestMods();
-        TestUtil.createAndSaveDefaultTestCobject(TEST_ID, metadataWriter, session);
-        final Object savedCopject = TestUtil.getCobject(TEST_ID, session);
+        TestUtil.createAndSaveDefaultTestCobject(TestUtil.TEST_ID, metadataWriter, session);
+        final Object savedCopject = TestUtil.getCobject(TestUtil.TEST_ID, session);
         Assert.assertEquals("Danmark, Fyn, Langsted", savedCopject.getLocation());
-        TestUtil.deleteFromDatabase(Object.class,TEST_ID, session);
+        TestUtil.deleteFromDatabase(Object.class,TestUtil.TEST_ID, session);
     }
 
     @Test
@@ -56,7 +55,7 @@ public class HibernateMetadataWriterTest {
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
         String id = metadataWriter.createFromMods(testMods);
         Assert.assertNotEquals("",id);
-        TestUtil.deleteFromDatabase(Object.class, "/images/luftfo/2011/maj/luftfoto/object182167", session);
+//        TestUtil.deleteFromDatabase(Object.class, "/images/luftfo/2011/maj/luftfoto/object182167", session);
     }
 
     @Test
@@ -64,17 +63,17 @@ public class HibernateMetadataWriterTest {
         final String TEST_LOCATION = "Testlocation";
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
         String testMods = TestUtil.getTestMods();
-        TestUtil.createAndSaveDefaultTestCobject(TEST_ID, metadataWriter, session);
+        TestUtil.createAndSaveDefaultTestCobject(TestUtil.TEST_ID, metadataWriter, session);
         //Get created cobject
-        Object savedCopject = TestUtil.getCobject(TEST_ID, session);
+        Object savedCopject = TestUtil.getCobject(TestUtil.TEST_ID, session);
         Assert.assertFalse(savedCopject.getLocation().equalsIgnoreCase(TEST_LOCATION));
         String lastModified = savedCopject.getLastModified();
         //change and update copject
         savedCopject.setLocation(TEST_LOCATION);
         metadataWriter.updateCobject(savedCopject, lastModified);
-        savedCopject = TestUtil.getCobject(TEST_ID, session);
+        savedCopject = TestUtil.getCobject(TestUtil.TEST_ID, session);
         Assert.assertTrue(savedCopject.getLocation().equalsIgnoreCase(TEST_LOCATION));
-        TestUtil.deleteFromDatabase(Object.class, TEST_ID, session);
+        TestUtil.deleteFromDatabase(Object.class, TestUtil.TEST_ID, session);
     }
 
     @Test
@@ -83,19 +82,19 @@ public class HibernateMetadataWriterTest {
         String testMods = TestUtil.getTestMods();
         ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
         //If cobject and mods-recordIdentifier dosn't correspond, update will fail.
-        final String modsWithTestId = changeIdInMods(TEST_ID, testMods, objectFromModsExtractor);
-        TestUtil.createAndSaveTestCobjectFromMods(TEST_ID, modsWithTestId, metadataWriter, session);
-        testUpdatedCobject(TEST_ID, NEW_TITLE, metadataWriter);
-        TestUtil.deleteFromDatabase(Object.class, TEST_ID, session);
-        TestUtil.deleteAuditTrail(TEST_ID, session);
+        final String modsWithTestId = changeIdInMods(TestUtil.TEST_ID, testMods, objectFromModsExtractor);
+        TestUtil.createAndSaveTestCobjectFromMods(TestUtil.TEST_ID, modsWithTestId, metadataWriter, session);
+        testUpdatedCobject(TestUtil.TEST_ID, NEW_TITLE, metadataWriter);
+        TestUtil.deleteFromDatabase(Object.class, TestUtil.TEST_ID, session);
+        TestUtil.deleteAuditTrail(TestUtil.TEST_ID, session);
     }
 
     @Test
     public void updateGeo() throws XPathExpressionException {
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
         String testMods = TestUtil.getTestMods();
-        TestUtil.createAndSaveDefaultTestCobject(TEST_ID, metadataWriter, session);
-        final Object savedCopject = TestUtil.getCobject(TEST_ID, session);
+        TestUtil.createAndSaveDefaultTestCobject(TestUtil.TEST_ID, metadataWriter, session);
+        final Object savedCopject = TestUtil.getCobject(TestUtil.TEST_ID, session);
         double x = savedCopject.getPoint().getCoordinate().getX();
         double y = savedCopject.getPoint().getCoordinate().getY();
         double correctness = 0.000001d;
@@ -103,10 +102,10 @@ public class HibernateMetadataWriterTest {
         Assert.assertEquals(10.177794479921577, y, correctness);
         final double LAT = 2.2;
         final double LON = 3.3;
-        metadataWriter.updateGeo(TEST_ID, LAT, LON, TEST_ID, savedCopject.getLastModified(), correctness);
-        assertUpdatedGeo(TEST_ID, correctness, LAT, LON);
-        TestUtil.deleteFromDatabase(Object.class, TEST_ID, session);
-        TestUtil.deleteAuditTrail(TEST_ID, session);
+        metadataWriter.updateGeo(TestUtil.TEST_ID, LAT, LON, TestUtil.TEST_ID, savedCopject.getLastModified(), correctness);
+        assertUpdatedGeo(TestUtil.TEST_ID, correctness, LAT, LON);
+        TestUtil.deleteFromDatabase(Object.class, TestUtil.TEST_ID, session);
+        TestUtil.deleteAuditTrail(TestUtil.TEST_ID, session);
 
     }
 

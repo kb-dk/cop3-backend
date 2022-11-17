@@ -30,6 +30,7 @@ import static java.math.BigInteger.valueOf;
 
 public class TestUtil {
     private static final String LUFTFOTO_MODS_FILE = "src/test/resources/testdata/luftfoto_object182167.mods.xml";
+    public final static String TEST_ID = "/images/luftfo/2011/maj/luftfoto/objectTEST";
 
     public static String getTestMods() {
         try {
@@ -95,16 +96,16 @@ public class TestUtil {
         createAndSaveTestCobjectFromMods(TEST_ID, testMods, metadataWriter, session);
     }
 
-    public static void createAndSaveTestCobjectFromMods(String TEST_ID, String mods, HibernateMetadataWriter metadataWriter, Session session){
+    public static void createAndSaveTestCobjectFromMods(String testId, String mods, HibernateMetadataWriter metadataWriter, Session session){
         Transaction transaction = session.beginTransaction();
         Object cobject = TestUtil.extractCobjectFromMods(mods, session);
         transaction.commit();
-        cobject.setId(TEST_ID);
+        cobject.setId(testId);
         try {
             metadataWriter.create(cobject);
         }catch (PersistenceException e) {
             //Chances are an old test failed and (c)object is not deleted
-            TestUtil.deleteFromDatabase(Object.class, TEST_ID, session);
+            TestUtil.deleteFromDatabase(Object.class, testId, session);
             metadataWriter.create(cobject);
         }
     }
