@@ -3,6 +3,7 @@ package dk.kb.cop3.backend.crud.api;
 import dk.kb.cop3.backend.commonutils.DomUtils;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
+import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.commons.httpclient.HttpClient;
@@ -42,11 +43,13 @@ public class ApiTest {
     private static final String SOLR_SUBJECT_NAME = "subject203";
     private static final String OBJECT_NAME = "object62132";
     private static final String OBJECT2_NAME = "object135334";
-    private static final String OBJECT3_NAME = "object223212";
+    private static final String OBJECT3_NAME = "object182167";
+    private static final String OBJECT4_NAME = "object1111111111";
     private static final String OBJECT_PATH = "/images/luftfo/2011/maj/luftfoto/";
     private static final String OBJECT_URI = OBJECT_PATH + OBJECT_NAME;
     private static final String OBJECT2_URI = OBJECT_PATH + OBJECT2_NAME;
     private static final String OBJECT3_URI = OBJECT_PATH + OBJECT3_NAME;
+    private static final String OBJECT4_URI = OBJECT_PATH + OBJECT4_NAME;
     private static final String SUBJECT_URI = OBJECT_PATH + SOLR_SUBJECT_NAME;
     private static final String OBJECT_ID = "/images/luftfo/2011/maj/luftfoto";
     private final static String UPDATE_SERVICE_URI = "/update";
@@ -54,11 +57,12 @@ public class ApiTest {
     private static final String SYNDICATION_SERVICE_URI = "/syndication" ;
     private static final String CONTENT_SERVICE_URI = "/content" ;
     private static final String NAVIGATION_SERVICE_URI = "/navigation" ;
-    private static final String SYNDICATION_OBJECT_URI = SYNDICATION_SERVICE_URI + OBJECT_PATH + OBJECT3_NAME;
+    private static final String SYNDICATION_OBJECT4_URI = SYNDICATION_SERVICE_URI + OBJECT_PATH + OBJECT4_NAME;
     private static final String SYNDICATION_SUBJECT_URI = SYNDICATION_SERVICE_URI + SUBJECT_URI;
     private static final String BOUNDING_BOX = "10.772781372070312,55.384376628312815,10.331611633300783,55.23587533144054";
     private static final String TEST_FILES_PATH = "src/test/resources/testdata/";
     private static final String LUFTFOTO_MODS_FILE_For_OBJECT3 = TEST_FILES_PATH + "luftfoto_"+ OBJECT3_NAME +".mods.xml";
+    private static final String OBJECT4_MODS = TEST_FILES_PATH + "luftfoto_"+ OBJECT4_NAME +".mods.xml";
     private static final String OPML_FILE = TEST_FILES_PATH + "david_simonsens_haandskrifter.opml.xml";
 
     /**
@@ -279,21 +283,27 @@ public class ApiTest {
     // GET SINGLE OBJECTS
 
     @Test
-    public void testSyndicationObject() {
-        GetMethod get = getResponse(SYNDICATION_OBJECT_URI, "object");
+    public void testSyndicationObject() throws FileNotFoundException {
+        createObjectInDB(OBJECT4_URI);
+        GetMethod get = getResponse(SYNDICATION_OBJECT4_URI, "object");
         testConnectionToDB(get.getStatusCode(), 200);
+        deleteObjectIfExists(OBJECT4_URI);
     }
 
     @Test
-    public void testSyndicationObjectMods() {
-        GetMethod get = getResponse(SYNDICATION_OBJECT_URI + "/da?format=mods", "object");
+    public void testSyndicationObjectMods() throws FileNotFoundException {
+        createObjectInDB(OBJECT4_URI);
+        GetMethod get = getResponse(SYNDICATION_OBJECT4_URI + "/da?format=mods", "object");
         testConnectionToDB(get.getStatusCode(), 200);
+        deleteObjectIfExists(OBJECT4_URI);
     }
 
     @Test
-    public void testSyndicationObjectUnknown() {
-        GetMethod get = getResponse(SYNDICATION_OBJECT_URI + "/da?format=unknown", "object");
+    public void testSyndicationObjectUnknown() throws FileNotFoundException {
+        createObjectInDB(OBJECT4_URI);
+        GetMethod get = getResponse(SYNDICATION_OBJECT4_URI + "/da?format=unknown", "object");
         testConnectionToDB(get.getStatusCode(), 404);
+        deleteObjectIfExists(OBJECT4_URI);
     }
 
     // Navigation service
@@ -365,14 +375,6 @@ public class ApiTest {
 
 
     //************************* CREATE AND UPDATE *******************//
-    @Test
-    public void testCreateObjectService() throws  FileNotFoundException{
-        deleteObjectIfExists(OBJECT3_URI);
-        int statusCode = createObject(OBJECT3_URI, LUFTFOTO_MODS_FILE_For_OBJECT3);
-        assertEquals(201, statusCode);
-        revertCreatingObject(OBJECT3_URI);
-    }
-
     private void deleteObjectIfExists(String object) throws FileNotFoundException {
         final Session ses = TestUtil.openDatabaseSession();
         ses.beginTransaction();
@@ -405,6 +407,7 @@ public class ApiTest {
         } catch (SAXException e) {
             throw new RuntimeException(e);
         }
+        logger.info(put.getStatusCode());
         return put.getStatusCode();
     }
 
@@ -441,7 +444,7 @@ public class ApiTest {
             client.executeMethod(get);
             lastModified = get.getResponseHeader("Last-Modified-Time-Stamp").getValue();
         } catch (Exception ex) {
-            logger.error("Error fetching object at:  " + SYNDICATION_OBJECT_URI);
+            logger.error("Error fetching object at:  " + SYNDICATION_OBJECT4_URI);
         }
         assertEquals(200, get.getStatusCode());
         return lastModified;
@@ -470,15 +473,15 @@ public class ApiTest {
     public void testUpdateGeoService() throws  FileNotFoundException {
         PostMethod post = new PostMethod();
         final Session session = TestUtil.openDatabaseSession();
-        createObject(OBJECT3_URI, LUFTFOTO_MODS_FILE_For_OBJECT3);
+        createObjectInDB(OBJECT3_URI);
 
         Object cobject = TestUtil.getCobject(OBJECT3_URI, session);
         logger.info(OBJECT3_URI);
         final double lat = cobject.getPoint().getCoordinate().getX();
         final double lon = cobject.getPoint().getCoordinate().getY();
-        post = updateGeoService(post, 10.423, 55.423);
-        assertEquals("lat", 10.423, cobject.getPoint().getCoordinate().getX(), 0.1);
-        assertEquals("lon", 55.423, cobject.getPoint().getCoordinate().getY(), 0.1);
+        post = updateGeoService(post, 55.423, 10.423);
+        assertEquals("lat", 55.423, cobject.getPoint().getCoordinate().getX(), 0.1);
+        assertEquals("lon", 10.423, cobject.getPoint().getCoordinate().getY(), 0.1);
         revertUpdateGeoService(post, lat, lon);
         assertEquals("lat", lat, cobject.getPoint().getCoordinate().getX(), 0.1);
         assertEquals("lon", lon, cobject.getPoint().getCoordinate().getY(), 0.1);
@@ -506,6 +509,8 @@ public class ApiTest {
 
     private PostMethod prepareUpdatePost(PostMethod post, double lat, double lon) {
         post.setPath(HOST_NAME + UPDATE_SERVICE_URI + OBJECT3_URI);
+        logger.debug(HOST_NAME + UPDATE_SERVICE_URI + OBJECT3_URI);
+
         post.setParameter("lat", Double.toString(lat));
         post.setParameter("lng", Double.toString(lon));
         post.setParameter("user", "Mr. JUNIT ");
@@ -527,6 +532,13 @@ public class ApiTest {
         }
         logger.debug("code: " + post.getStatusCode() + " status text" + post.getStatusText());
         assertEquals(400, post.getStatusCode());
+    }
+
+
+    private void createObjectInDB(String object_uri) throws FileNotFoundException {
+        final Session session = TestUtil.openDatabaseSession();
+        HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
+        TestUtil.createAndSaveDefaultTestCobject(object_uri, metadataWriter, session);
     }
 
     private static void close(org.apache.commons.httpclient.HttpMethod method) {
