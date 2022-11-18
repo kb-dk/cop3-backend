@@ -2,10 +2,12 @@ package dk.kb.cop3.backend.crud.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dk.kb.cop3.backend.crud.database.StatisticsDao;
-import dk.kb.cop3.backend.crud.database.StatisticsDaoImpl;
+import dk.kb.cop3.backend.crud.database.HibernateUtil;
+import dk.kb.cop3.backend.crud.database.StatisticsFacade;
 import dk.kb.cop3.backend.crud.model.StatisticsForAnEditionPublic;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
@@ -59,20 +61,22 @@ public class StatisticsService {
     @Produces("application/json")
     public Response getStatistics(@DefaultValue("luftfo") @QueryParam("eid") String editionId,
                                 @DefaultValue("") @QueryParam("cid") String categoryId) {
-        StatisticsForAnEditionPublic response = new StatisticsForAnEditionPublic();
+        StatisticsForAnEditionPublic response = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        StatisticsFacade statisticsFacade = new StatisticsFacade(session);
+        Transaction transaction = session.beginTransaction();
 
-        LOGGER.info("get statistics: " + editionId);
-        StatisticsDao dao = new StatisticsDaoImpl();
         try {
-             response = dao.getStatistics(editionId,categoryId);
+             response = statisticsFacade.getStatsForCategoryAndEdition(editionId,categoryId);
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            LOGGER.error("error getting all statistics",e);
+            return Response.serverError().build();
+        } finally {
+            transaction.commit();
+            session.close();
         }
 
-        //Encode the response as JSON
         Gson gson = new GsonBuilder().create();
-
-        //Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
         String responseJson = gson.toJson(response);
         final Response myResponse = Response.status(Response.Status.OK)
                 .entity(responseJson)
@@ -93,26 +97,25 @@ public class StatisticsService {
     @Path("/all")
     @Produces("application/json")
     public Response getAllStatistics() {
-        Map response = null;
-
-        LOGGER.info("get All statistics: " );
-        StatisticsDao dao = new StatisticsDaoImpl();
+        Map response;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        StatisticsFacade statisticsFacade = new StatisticsFacade(session);
+        Transaction transaction = session.beginTransaction();
         try {
-             response = dao.getAllStatistics();
+             response = statisticsFacade.getAllStatistics();
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            LOGGER.error("error getting all statistics",e);
+            return Response.serverError().build();
+        } finally {
+            transaction.commit();
+            session.close();
         }
-
-        //Encode the response as JSON
         Gson gson = new GsonBuilder().create();
-
-        //Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
         String responseJson = gson.toJson(response.values());
         final Response myResponse = Response.status(Response.Status.OK)
                 .entity(responseJson)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON + "; charset=UTF-8") //"; charset=ISO-8859-1"
                 .build();
-            return myResponse;
-
+        return myResponse;
     }
 }

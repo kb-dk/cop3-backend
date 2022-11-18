@@ -2,10 +2,12 @@ package dk.kb.cop3.backend.crud.services;
 
 import dk.kb.cop3.backend.constants.Areas;
 import dk.kb.cop3.backend.constants.DSFLAreas;
-import dk.kb.cop3.backend.crud.database.GeoInfoDaoImpl;
-import dk.kb.cop3.backend.crud.database.HibernateUtil;
-import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * kb.dk
@@ -16,21 +18,34 @@ import org.apache.log4j.Logger;
  */
 public class GeoProvisioningService {
 
-    Logger LOGGER = Logger.getLogger(GeoProvisioningService.class);
+    private static final Logger LOGGER = Logger.getLogger(GeoProvisioningService.class);
 
-    public DSFLAreas getArea(double lat, double lng) throws AreaNotFoundException {
-        GeoInfoDaoImpl geoInfoDao = new GeoInfoDaoImpl();
-        geoInfoDao.setSessionFactory(HibernateUtil.getSessionFactory());
-        String area =  geoInfoDao.getAreaDetails(lat, lng)[1].toString();
-        DSFLAreas enumArea = Areas.getAreaEnumByName(area);
-        return enumArea;
+    private Session session;
+
+    public GeoProvisioningService(Session session) {
+        this.session = session;
     }
 
-    public Object[] getAreaDetailsForPoint(double lat, double lng) throws AreaNotFoundException {
-        LOGGER.debug("lat: "+ lat);
-        LOGGER.debug("lng: " + lng);
-        GeoInfoDaoImpl geoInfoDao = new GeoInfoDaoImpl();
-        geoInfoDao.setSessionFactory(HibernateUtil.getSessionFactory());
-        return geoInfoDao.getAreaDetails(lat, lng);
+    public DSFLAreas getAreaNotDanmark(double lat, double lng)  {
+        Optional<DSFLAreas> areaOptional = getAreasContainingPoint(lat, lng).stream().filter(area -> area != DSFLAreas.Danmark).findFirst();
+        if (areaOptional.isPresent()) {
+            return areaOptional.get();
+        }
+        return null;
+    }
+
+    public  List<DSFLAreas> getAreasContainingPoint(double lat, double lng) {
+        if (!session.getTransaction().isActive()) {
+            throw new IllegalArgumentException("Geoprovisioningservice: session has no active transaction");
+        }
+        List<DSFLAreas> areas = (List<DSFLAreas>) session.createSQLQuery("select area_id, name_of_area from areas_in_dk where "
+                        + "st_within(st_geomfromtext('POINT("
+                        + Double.toString(lat) + " "
+                        + Double.toString(lng)
+                        + ")',0),ST_GeomFromEWKT(polygon_col))")
+                .list().stream().map(row -> {
+                    return Areas.getAreaEnumByName(((Object[])row)[1].toString());
+                }).collect(Collectors.toList());
+        return areas;
     }
 }
