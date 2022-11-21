@@ -5,13 +5,14 @@ import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.*;
 import org.locationtech.jts.geom.Coordinate;
 import org.w3c.dom.Document;
@@ -446,13 +447,14 @@ public class ApiTest {
 
     @Test
     public void testUpdateGeoService() throws FileNotFoundException, XPathExpressionException {
-        final Session session = TestUtil.openDatabaseSession();
+        Session session = TestUtil.openDatabaseSession();
         createTestObjectInDB(session);
         Object cobject = TestUtil.getCobject(TestUtil.TEST_ID, session);
         post = prepareUpdatePost(55.423, 10.423, cobject.getLastModified());
         int responseStatus = updateGeoService(post);
+        session.refresh(cobject);
         assertEquals(200,responseStatus);
-        cobject = TestUtil.getCobject(TestUtil.TEST_ID, session);
+        cobject = session.get(Object.class,TestUtil.TEST_ID);
         assertEquals("lat", 55.423, cobject.getPoint().getCoordinate().getX(), 0.1);
         assertEquals("lon", 10.423, cobject.getPoint().getCoordinate().getY(), 0.1);
         deleteTestObject(session);
