@@ -5,11 +5,13 @@ import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.*;
 import org.locationtech.jts.geom.Coordinate;
 import org.w3c.dom.Document;
@@ -57,7 +59,7 @@ public class ApiTest {
     private static final String SYNDICATION_SERVICE_URI = "/syndication" ;
     private static final String CONTENT_SERVICE_URI = "/content" ;
     private static final String NAVIGATION_SERVICE_URI = "/navigation" ;
-    private static final String SYNDICATION_OBJECT4_URI = SYNDICATION_SERVICE_URI + OBJECT_PATH + OBJECT4_NAME;
+    private static final String SYNDICATION_OBJECT4_URI = SYNDICATION_SERVICE_URI + TestUtil.TEST_ID;
     private static final String SYNDICATION_SUBJECT_URI = SYNDICATION_SERVICE_URI + SUBJECT_URI;
     private static final String BOUNDING_BOX = "10.772781372070312,55.384376628312815,10.331611633300783,55.23587533144054";
     private static final String TEST_FILES_PATH = "src/test/resources/testdata/";
@@ -283,27 +285,31 @@ public class ApiTest {
     // GET SINGLE OBJECTS
 
     @Test
-    public void testSyndicationObject() throws FileNotFoundException {
-        createObjectInDB(OBJECT4_URI);
+    public void testSyndicationObject() throws FileNotFoundException, XPathExpressionException {
+        final Session session = TestUtil.openDatabaseSession();
+        createTestObjectInDB(session);
         GetMethod get = getResponse(SYNDICATION_OBJECT4_URI, "object");
         testConnectionToDB(get.getStatusCode(), 200);
-        deleteObjectIfExists(OBJECT4_URI);
+        deleteTestObject(session);
+        session.close();
     }
 
     @Test
-    public void testSyndicationObjectMods() throws FileNotFoundException {
-        createObjectInDB(OBJECT4_URI);
+    public void testSyndicationObjectMods() throws FileNotFoundException, XPathExpressionException {
+        final Session session = TestUtil.openDatabaseSession();
+        createTestObjectInDB(session);
         GetMethod get = getResponse(SYNDICATION_OBJECT4_URI + "/da?format=mods", "object");
         testConnectionToDB(get.getStatusCode(), 200);
-        deleteObjectIfExists(OBJECT4_URI);
+        deleteTestObject(session);
     }
 
     @Test
-    public void testSyndicationObjectUnknown() throws FileNotFoundException {
-        createObjectInDB(OBJECT4_URI);
+    public void testSyndicationObjectUnknown() throws FileNotFoundException, XPathExpressionException {
+        final Session session = TestUtil.openDatabaseSession();
+        createTestObjectInDB(session);
         GetMethod get = getResponse(SYNDICATION_OBJECT4_URI + "/da?format=unknown", "object");
         testConnectionToDB(get.getStatusCode(), 404);
-        deleteObjectIfExists(OBJECT4_URI);
+        deleteTestObject(session);
     }
 
     // Navigation service
@@ -377,48 +383,12 @@ public class ApiTest {
 
 
     //************************* CREATE AND UPDATE *******************//
-    private void deleteObjectIfExists(String object) throws FileNotFoundException {
-        final Session ses = TestUtil.openDatabaseSession();
-        ses.beginTransaction();
-        try {
-            dk.kb.cop3.backend.crud.database.hibernate.Object cObject = ses.get(Object.class, object);
-            if (cObject != null) {
-                TestUtil.deleteAuditTrail(cObject.getId(), ses);
-                ses.delete(cObject);
-                ses.getTransaction().commit();
-            }
-        } catch (Exception ex) {
-            logger.debug("error "+ex.getMessage());
-            ses.getTransaction().rollback();
-            assertTrue("testCreateObjectService hibernate error "+ex.getMessage(),false);
-        } finally {
-            ses.close();
-        }
+    private void deleteTestObject(Session session) {
+            TestUtil.deleteFromDatabase(Object.class, TestUtil.TEST_ID, session);
+            TestUtil.deleteAuditTrail(TestUtil.TEST_ID, session);
     }
 
-    private int createObject(String object, String mods_file_name){
-        PutMethod put = new PutMethod();
-        put.setPath(HOST_NAME + CREATE_SERVICE_URI + object);
-        logger.info(HOST_NAME + CREATE_SERVICE_URI + object);
-        try {
-            org.w3c.dom.Document dom = builder.parse(new File(mods_file_name));
-            RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
-            put.setRequestEntity(entity);
-            logger.debug(put.getPath());
-            client.executeMethod(put);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error putting object to:  " + CREATE_SERVICE_URI);
-            logger.debug(io.getMessage());
-        } catch (SAXException e) {
-            throw new RuntimeException(e);
-        }
-        logger.info(put.getStatusCode());
-        return put.getStatusCode();
-    }
 
-    private void revertCreatingObject(String object) throws FileNotFoundException {
-        deleteObjectIfExists(object);
-    }
 
     @Test
     public void testUpdateObjectService() throws SAXException {
@@ -475,33 +445,23 @@ public class ApiTest {
 
 
     @Test
-    public void testUpdateGeoService() throws  FileNotFoundException {
-        PostMethod post = new PostMethod();
+    public void testUpdateGeoService() throws FileNotFoundException, XPathExpressionException {
         final Session session = TestUtil.openDatabaseSession();
-        createObjectInDB(OBJECT3_URI);
-
-        Object cobject = TestUtil.getCobject(OBJECT3_URI, session);
-        logger.info(OBJECT3_URI);
-        final double lat = cobject.getPoint().getCoordinate().getX();
-        final double lon = cobject.getPoint().getCoordinate().getY();
-        post = updateGeoService(post, 55.423, 10.423);
+        createTestObjectInDB(session);
+        Object cobject = TestUtil.getCobject(TestUtil.TEST_ID, session);
+        post = prepareUpdatePost(55.423, 10.423, cobject.getLastModified());
+        int responseStatus = updateGeoService(post);
+        assertEquals(200,responseStatus);
+        cobject = TestUtil.getCobject(TestUtil.TEST_ID, session);
         assertEquals("lat", 55.423, cobject.getPoint().getCoordinate().getX(), 0.1);
         assertEquals("lon", 10.423, cobject.getPoint().getCoordinate().getY(), 0.1);
-        revertUpdateGeoService(post, lat, lon);
-        assertEquals("lat", lat, cobject.getPoint().getCoordinate().getX(), 0.1);
-        assertEquals("lon", lon, cobject.getPoint().getCoordinate().getY(), 0.1);
-
-        deleteObjectIfExists(OBJECT3_URI);
+        deleteTestObject(session);
         session.close();
         close(post);
     }
 
-    private void revertUpdateGeoService(PostMethod post, double lat, double lon) throws FileNotFoundException {
-        updateGeoService(post, lat, lon);
-    }
 
-    private PostMethod updateGeoService(PostMethod post, double lat, double lon) throws FileNotFoundException {
-        post = prepareUpdatePost(post, lat, lon);
+    private int updateGeoService(PostMethod post) throws FileNotFoundException {
         try {
             client.executeMethod(post);
         } catch (java.io.IOException io) {
@@ -509,21 +469,16 @@ public class ApiTest {
             logger.error(io);
         }
         logger.debug("code: " + post.getStatusCode() + " status text" + post.getStatusText());
-        assertEquals(200, post.getStatusCode());
-        return post;
+        return post.getStatusCode();
     }
 
-    private PostMethod prepareUpdatePost(PostMethod post, double lat, double lon) throws FileNotFoundException {
+    private PostMethod prepareUpdatePost(double lat, double lon, String lastmodified) throws FileNotFoundException {
+        post = new PostMethod();
         post.setPath(HOST_NAME + UPDATE_SERVICE_URI + OBJECT3_URI);
-        logger.debug(HOST_NAME + UPDATE_SERVICE_URI + OBJECT3_URI + lat + lon);
-        final Session session = TestUtil.openDatabaseSession();
-        Object cobject = TestUtil.getCobject(OBJECT3_URI, session);
-
         post.setParameter("lat", Double.toString(lat));
         post.setParameter("lng", Double.toString(lon));
         post.setParameter("user", "Mr. JUNIT ");
-        post.setParameter("lastmodified", cobject.getLastModified());
-
+        post.setParameter("lastmodified",lastmodified);
         return post;
     }
 
@@ -544,10 +499,12 @@ public class ApiTest {
     }
 
 
-    private void createObjectInDB(String object_uri) throws FileNotFoundException {
-        final Session session = TestUtil.openDatabaseSession();
+    private void createTestObjectInDB(Session session) throws FileNotFoundException, XPathExpressionException {
+        String testMods = TestUtil.getTestMods();
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
-        TestUtil.createAndSaveDefaultTestCobject(object_uri, metadataWriter, session);
+        ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
+        final String modsWithTestId = TestUtil.changeIdInMods(TestUtil.TEST_ID, testMods, objectFromModsExtractor);
+        TestUtil.createAndSaveTestCobjectFromMods(TestUtil.TEST_ID, modsWithTestId, metadataWriter, session);
     }
 
     private static void close(org.apache.commons.httpclient.HttpMethod method) {

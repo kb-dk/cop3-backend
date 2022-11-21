@@ -16,9 +16,17 @@ import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.junit.Assert;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +38,7 @@ import static java.math.BigInteger.valueOf;
 
 public class TestUtil {
     private static final String LUFTFOTO_MODS_FILE = "src/test/resources/testdata/luftfoto_object182167.mods.xml";
-    public final static String TEST_ID = "/images/luftfo/2011/maj/luftfoto/objectTEST";
+    public final static String TEST_ID = "/images/luftfo/2011/maj/luftfoto/object000000000000";
 
     public static String getTestMods() {
         try {
@@ -154,4 +162,32 @@ public class TestUtil {
         final TransactionStatus status = transaction.getStatus();
     }
 
+    public static String getStringFromDocument(Document doc)
+    {
+        try
+        {
+            DOMSource domSource = new DOMSource(doc);
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.transform(domSource, result);
+            return writer.toString();
+        }
+        catch(TransformerException ex)
+        {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String changeIdInMods(String TEST_ID, String testMods, ObjectFromModsExtractor objectFromModsExtractor) throws XPathExpressionException {
+        Document modsDocument = objectFromModsExtractor.parseModsString(testMods);
+        String idExtract = objectFromModsExtractor.extract(ObjectFromModsExtractor.ID_XPATH, modsDocument);
+
+        final Node item = modsDocument.getDocumentElement().getElementsByTagName("md:recordIdentifier").item(0);
+        item.getFirstChild().setNodeValue(TEST_ID);
+        final String modsWithTestId = getStringFromDocument(modsDocument);
+        return modsWithTestId;
+    }
 }

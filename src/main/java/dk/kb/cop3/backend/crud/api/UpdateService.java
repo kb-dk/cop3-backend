@@ -227,7 +227,8 @@ public class UpdateService {
     }
 
 
-    private void sendToSolr(String uri) {
+    private void
+    sendToSolr(String uri) {
         //TODO call solrizr for uri
     }
 

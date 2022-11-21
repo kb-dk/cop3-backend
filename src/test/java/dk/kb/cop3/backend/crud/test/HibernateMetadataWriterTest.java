@@ -8,19 +8,11 @@ import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.*;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.FileNotFoundException;
-import java.io.StringWriter;
 
 
 public class HibernateMetadataWriterTest {
@@ -82,7 +74,7 @@ public class HibernateMetadataWriterTest {
         String testMods = TestUtil.getTestMods();
         ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
         //If cobject and mods-recordIdentifier dosn't correspond, update will fail.
-        final String modsWithTestId = changeIdInMods(TestUtil.TEST_ID, testMods, objectFromModsExtractor);
+        final String modsWithTestId = TestUtil.changeIdInMods(TestUtil.TEST_ID, testMods, objectFromModsExtractor);
         TestUtil.createAndSaveTestCobjectFromMods(TestUtil.TEST_ID, modsWithTestId, metadataWriter, session);
         testUpdatedCobject(TestUtil.TEST_ID, NEW_TITLE, metadataWriter);
         TestUtil.deleteFromDatabase(Object.class, TestUtil.TEST_ID, session);
@@ -137,7 +129,7 @@ public class HibernateMetadataWriterTest {
         Assert.assertTrue(NEW_TITLE.equalsIgnoreCase(title));
     }
 
-    private Object updateModsInCobject(ObjectFromModsExtractor objectFromModsExtractor, MetadataWriter metadataWriter, String TEST_ID, String NEW_TITLE) throws XPathExpressionException {
+    private static Object updateModsInCobject(ObjectFromModsExtractor objectFromModsExtractor, MetadataWriter metadataWriter, String TEST_ID, String NEW_TITLE) throws XPathExpressionException {
         Object cobject = TestUtil.getCobject(TEST_ID, session);
         String mods = cobject.getMods();
         Document modsDocument = objectFromModsExtractor.parseModsString(mods);
@@ -152,39 +144,10 @@ public class HibernateMetadataWriterTest {
         modsDocument = objectFromModsExtractor.parseModsString(newMods);
         titleExtractedFromMods = objectFromModsExtractor.extract(ObjectFromModsExtractor.TITLE_XPATH, modsDocument);
         Assert.assertTrue(NEW_TITLE.equalsIgnoreCase(titleExtractedFromMods));
-        final String stringFromDocument = getStringFromDocument(modsDocument);
+        final String stringFromDocument = TestUtil.getStringFromDocument(modsDocument);
         cobject.setMods(stringFromDocument);
         metadataWriter.updateFromMods(TEST_ID, stringFromDocument, cobject.getLastModified(), TEST_ID);
         return cobject;
-    }
-
-    private String changeIdInMods(String TEST_ID, String testMods, ObjectFromModsExtractor objectFromModsExtractor) throws XPathExpressionException {
-        Document modsDocument = objectFromModsExtractor.parseModsString(testMods);
-        String idExtract = objectFromModsExtractor.extract(ObjectFromModsExtractor.ID_XPATH, modsDocument);
-
-        final Node item = modsDocument.getDocumentElement().getElementsByTagName("md:recordIdentifier").item(0);
-        item.getFirstChild().setNodeValue(TEST_ID);
-        final String modsWithTestId = getStringFromDocument(modsDocument);
-        return modsWithTestId;
-    }
-
-    public String getStringFromDocument(Document doc)
-    {
-        try
-        {
-            DOMSource domSource = new DOMSource(doc);
-            StringWriter writer = new StringWriter();
-            StreamResult result = new StreamResult(writer);
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer transformer = tf.newTransformer();
-            transformer.transform(domSource, result);
-            return writer.toString();
-        }
-        catch(TransformerException ex)
-        {
-            ex.printStackTrace();
-            return null;
-        }
     }
 
 }

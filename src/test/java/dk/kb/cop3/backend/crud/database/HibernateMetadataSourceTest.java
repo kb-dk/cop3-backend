@@ -39,13 +39,17 @@ public class HibernateMetadataSourceTest{
 
     @Test
     public void testSearch() {
+        HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
+        String testMods = TestUtil.getTestMods();
+        TestUtil.createAndSaveDefaultTestCobject(TestUtil.TEST_ID, metadataWriter, session);
         mds = new HibernateMetadataSource(session);
-        mds.setSearchterms("id","/images/luftfo/2011/maj/luftfoto/object60810");
+        mds.setSearchterms("id",TestUtil.TEST_ID);
         mds.execute();
         final Long numberOfHits = mds.getNumberOfHits();
         Assert.assertTrue(numberOfHits == 1);
         final Object cobject = mds.getAnother();
-        Assert.assertTrue(cobject.getLocation().equalsIgnoreCase("Danmark, Fyn, Strandhuse"));
+        Assert.assertEquals(TestUtil.TEST_ID,cobject.getId());
+        TestUtil.deleteFromDatabase(Object.class,TestUtil.TEST_ID, session);
     }
 
 
