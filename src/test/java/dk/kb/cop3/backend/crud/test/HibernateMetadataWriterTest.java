@@ -82,6 +82,23 @@ public class HibernateMetadataWriterTest {
     }
 
     @Test
+    public void updateGeoFromMods() throws XPathExpressionException {
+        HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
+        String testMods = TestUtil.getTestMods();
+        TestUtil.createAndSaveTestCobjectFromMods(TestUtil.TEST_ID,testMods,metadataWriter,session);
+        Object savedCobject = TestUtil.getCobject(TestUtil.TEST_ID,session);
+        ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
+        final String modsWithTestId = TestUtil.changeIdInMods(TestUtil.TEST_ID, testMods, objectFromModsExtractor);
+        final String modsWithChangedLatLng= TestUtil.changeLatLngInMods(modsWithTestId,44.5,8.7);
+        metadataWriter.updateFromMods(TestUtil.TEST_ID,modsWithChangedLatLng,savedCobject.getLastModified(),"Junit");
+        savedCobject = TestUtil.getCobject(TestUtil.TEST_ID,session);
+        double correctness = 0.000001d;
+        Assert.assertEquals(44.5,savedCobject.getPoint().getCoordinate().getX(),correctness);
+        Assert.assertEquals(8.7,savedCobject.getPoint().getCoordinate().getY(),correctness);
+    }
+
+
+    @Test
     public void updateGeo() throws XPathExpressionException {
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
         String testMods = TestUtil.getTestMods();

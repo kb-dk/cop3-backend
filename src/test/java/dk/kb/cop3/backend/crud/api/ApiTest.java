@@ -4,6 +4,7 @@ import dk.kb.cop3.backend.commonutils.DomUtils;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
+import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
@@ -29,8 +30,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.util.Iterator;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 
 /**
  * This class is the main reference for the supported URI's in the CRUD engine.
@@ -386,21 +387,52 @@ public class ApiTest {
     //************************* CREATE AND UPDATE *******************//
     private void deleteTestObject(Session session) {
             TestUtil.deleteFromDatabase(Object.class, TestUtil.TEST_ID, session);
+            TestUtil.deleteTestObjectFromSolr(TestUtil.TEST_ID,session);
             TestUtil.deleteAuditTrail(TestUtil.TEST_ID, session);
     }
 
 
+    @Test
+    public void testCreateObjectFromMods() throws XPathExpressionException {
+        String testMods = TestUtil.getTestMods();
+        ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
+        final String modsWithTestId = TestUtil.changeIdInMods(TestUtil.TEST_ID, testMods, objectFromModsExtractor);
+        put.setPath(HOST_NAME + CREATE_SERVICE_URI + TestUtil.TEST_ID);
+        try {
+            RequestEntity entity = new StringRequestEntity(modsWithTestId, "application/xml", "UTF-8");
+            put.setRequestEntity(entity);
+            client.executeMethod(put);
+            Assert.assertEquals(200,put.getStatusCode());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        } catch (HttpException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Object cobjectFromDb = session.get(Object.class,TestUtil.TEST_ID);
+        assertNotNull(cobjectFromDb);
+        assertEquals(TestUtil.TEST_ID,cobjectFromDb.getId());
+        deleteTestObject(session);
+    }
 
     @Test
-    public void testUpdateObjectService() throws SAXException {
-        String lastModified = getLastModifiedFromExistingObject();
+    public void testUpdateCobjectFromMods() throws SAXException, XPathExpressionException, FileNotFoundException {
+        Session session = TestUtil.openDatabaseSession();
+        createTestObjectInDB(session);
+        Object cobject = TestUtil.getCobject(TestUtil.TEST_ID, session);
+        String lastModified = cobject.getLastModified();
         String lastModifiedBy = "TEST";
+        String testMods = cobject.getMods();
 
-        post.setPath(HOST_NAME + CREATE_SERVICE_URI + OBJECT3_URI + "?lastmodified=" + lastModified + "&user=" + lastModifiedBy);
-        logger.info(HOST_NAME + CREATE_SERVICE_URI + OBJECT3_URI + "?lastmodified=" + lastModified + "&user=" + lastModifiedBy);
+        post.setPath(HOST_NAME + CREATE_SERVICE_URI + TestUtil.TEST_ID + "?lastmodified=" + lastModified + "&user=" + lastModifiedBy);
+        logger.info(HOST_NAME + CREATE_SERVICE_URI + TestUtil.TEST_ID + "?lastmodified=" + lastModified + "&user=" + lastModifiedBy);
         try {
-            org.w3c.dom.Document dom = builder.parse(new File(LUFTFOTO_MODS_FILE_For_OBJECT3));
-            RequestEntity entity = new StringRequestEntity(DomUtils.doc2String(dom), "application/xml", "UTF-8");
+            Reformulator reformulator = new Reformulator(testMods);
+            reformulator.changeField("title","a new title");
+            String modifiedMods = reformulator.commitChanges();
+            RequestEntity entity = new StringRequestEntity(modifiedMods, "application/xml", "UTF-8");
             post.setRequestEntity(entity);
             client.executeMethod(post);
         } catch (java.io.IOException io) {
@@ -409,6 +441,8 @@ public class ApiTest {
         }
         logger.debug("post.getStatusCode() = " + post.getStatusCode());
         assertEquals(200, post.getStatusCode());
+        session.refresh(cobject);
+        Assert.assertEquals("a new title",cobject.getTitle());
     }
 
     private String getLastModifiedFromExistingObject() {
@@ -476,7 +510,7 @@ public class ApiTest {
 
     private PostMethod prepareUpdatePost(double lat, double lon, String lastmodified) throws FileNotFoundException {
         post = new PostMethod();
-        post.setPath(HOST_NAME + UPDATE_SERVICE_URI + OBJECT3_URI);
+        post.setPath(HOST_NAME + UPDATE_SERVICE_URI + TestUtil.TEST_ID);
         post.setParameter("lat", Double.toString(lat));
         post.setParameter("lng", Double.toString(lon));
         post.setParameter("user", "Mr. JUNIT ");

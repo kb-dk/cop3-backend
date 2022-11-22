@@ -7,6 +7,9 @@ import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
+import dk.kb.cop3.backend.crud.update.Reformulator;
+import dk.kb.cop3.backend.solr.CopSolrClient;
+import org.apache.solr.client.solrj.impl.SolrHttpClientBuilder;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -183,11 +186,20 @@ public class TestUtil {
 
     public static String changeIdInMods(String TEST_ID, String testMods, ObjectFromModsExtractor objectFromModsExtractor) throws XPathExpressionException {
         Document modsDocument = objectFromModsExtractor.parseModsString(testMods);
-        String idExtract = objectFromModsExtractor.extract(ObjectFromModsExtractor.ID_XPATH, modsDocument);
-
         final Node item = modsDocument.getDocumentElement().getElementsByTagName("md:recordIdentifier").item(0);
         item.getFirstChild().setNodeValue(TEST_ID);
         final String modsWithTestId = getStringFromDocument(modsDocument);
         return modsWithTestId;
+    }
+
+    public static String changeLatLngInMods(String testMods, double lat, double lng) {
+        Reformulator reformulator = new Reformulator(testMods);
+        reformulator.changeField("latlng", String.valueOf(lat) + ", " + String.valueOf(lng));
+        return reformulator.commitChanges();
+    }
+
+    public static void deleteTestObjectFromSolr(String testId,Session session) {
+        CopSolrClient solrClient = new CopSolrClient(session);
+        solrClient.deleteCobjectFromSolr(testId);
     }
 }

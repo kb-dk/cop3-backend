@@ -44,12 +44,9 @@ public class HibernateMetadataWriter implements MetadataWriter {
         ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
         Transaction trans = hibSession.beginTransaction();
         Object newObjectFromMods = objectFromModsExtractor.extractFromMods(new Object(), mods, hibSession);
-        newObjectFromMods.setId("/images/luftfo/2011/maj/luftfoto/objectXXXXXX");
-        newObjectFromMods.setTitle("TEST-FOTO");
         try {
             final boolean objectAllreadyExists = hibSession.get(Object.class, newObjectFromMods.getId()) != null;
             if (objectAllreadyExists) {
-                // object allready exists
                 trans.commit();
                 return "conflict";
             }else{

@@ -222,4 +222,18 @@ public class CopSolrClient {
         }
         return null;
     }
+
+    public  void deleteCobjectFromSolr(String objectId) {
+        String solrUrl = CopBackendProperties.getSolrBaseurl();
+        HttpSolrClient client= new HttpSolrClient.Builder(solrUrl).build();
+        try {
+            client.deleteById(objectId);
+            client.commit();
+        } catch (SolrServerException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -97,6 +97,7 @@ public class CreateService {
             session.close();
             return Response.ok().build();
         } else {
+            session.delete(objectId,Object.class);
             session.close();
             return Response.serverError().entity("error updating solr").build();
         }
@@ -115,19 +116,19 @@ public class CreateService {
                                                  @QueryParam("user") String user,
                                                  @Context HttpServletRequest httpServletRequest,
                                                  String mods) {
-        String idFromRequest = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
+        String objectIdFromRequest = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
         Session session = HibernateUtil.getSessionFactory().openSession();
-        String objectId;
+        String lastmodifiedReturned;
         try {
             MetadataWriter mdw = new HibernateMetadataWriter(session);
-            objectId = mdw.updateFromMods(idFromRequest, mods, lastModified, user);
+            lastmodifiedReturned = mdw.updateFromMods(objectIdFromRequest, mods, lastModified, user);
         } catch (HibernateException ex) {
             logger.error("Cannot create object from mods", ex);
             session.close();
             return Response.serverError().entity("error").build();
         }
 
-        Response response = checkMetadatawriterResponse(objectId);
+        Response response = checkMetadatawriterResponse(lastmodifiedReturned);
         if (response != null) {
             // something went wrong, return
             session.close();
@@ -135,7 +136,7 @@ public class CreateService {
         }
 
         CopSolrClient solrHelper = new CopSolrClient(session);
-        if (solrHelper.updateCobjectInSolr(objectId,true)) {
+        if (solrHelper.updateCobjectInSolr(objectIdFromRequest,true)) {
             session.close();
             return Response.ok().build();
         } else {
@@ -157,6 +158,9 @@ public class CreateService {
             return Response.status(HttpStatus.SC_NOT_FOUND)
                     .entity("object not found")
                     .build();
+        }
+        if ("conflict".equals(objectId)) {
+            return Response.status(409).entity("conflict").build();
         }
         return null;
 
