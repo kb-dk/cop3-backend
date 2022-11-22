@@ -29,6 +29,7 @@
         <logger name="dk.kb.cop3">
           <level value="debug"/>
             <appender-ref ref="coplog" />
+            <appender-ref ref="console"/>
         </logger>
 
       <!-- Logger for  exporter-->
