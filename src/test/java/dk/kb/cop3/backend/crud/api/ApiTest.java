@@ -6,6 +6,7 @@ import dk.kb.cop3.backend.constants.DatacontrollerConstants;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
+import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.commons.httpclient.HttpClient;
@@ -38,22 +39,17 @@ public class ApiTest {
     private static final String COP_CONFIG = "src/test/resources/cop_config.xml";
     private static String HOST_NAME = "";
     static HttpClient client = new HttpClient();
-    static GetMethod get = new GetMethod();
-    static PutMethod put = new PutMethod();
-    static PostMethod post = new PostMethod();
+    static GetMethod get;
+    static PutMethod put;
+    static PostMethod post;
     private static final Logger logger = Logger.getLogger(ApiTest.class);
     private static final String SOLR_SUBJECT_NAME = "subject203";
     private static final String OBJECT_NAME = "object62132";
-    private static final String OBJECT2_NAME = "object135334";
     private static final String OBJECT3_NAME = "object182167";
-    private static final String OBJECT4_NAME = "object1111111111";
     private static final String OBJECT_PATH = "/images/luftfo/2011/maj/luftfoto/";
     private static final String OBJECT_URI = OBJECT_PATH + OBJECT_NAME;
-    private static final String OBJECT2_URI = OBJECT_PATH + OBJECT2_NAME;
     private static final String OBJECT3_URI = OBJECT_PATH + OBJECT3_NAME;
-    private static final String OBJECT4_URI = OBJECT_PATH + OBJECT4_NAME;
     private static final String SUBJECT_URI = OBJECT_PATH + SOLR_SUBJECT_NAME;
-    private static final String OBJECT_ID = "/images/luftfo/2011/maj/luftfoto";
     private final static String UPDATE_SERVICE_URI = "/update";
     private final static String CREATE_SERVICE_URI = "/create";
     private static final String SYNDICATION_SERVICE_URI = "/syndication" ;
@@ -64,8 +60,9 @@ public class ApiTest {
     private static final String BOUNDING_BOX = "10.772781372070312,55.384376628312815,10.331611633300783,55.23587533144054";
     private static final String TEST_FILES_PATH = "src/test/resources/testdata/";
     private static final String LUFTFOTO_MODS_FILE_For_OBJECT3 = TEST_FILES_PATH + "luftfoto_"+ OBJECT3_NAME +".mods.xml";
-    private static final String OBJECT4_MODS = TEST_FILES_PATH + "luftfoto_"+ OBJECT4_NAME +".mods.xml";
     private static final String OPML_FILE = TEST_FILES_PATH + "david_simonsens_haandskrifter.opml.xml";
+    private static Session session;
+
 
     /**
      * Classes for building a DOM Document from the result stream
@@ -94,10 +91,28 @@ public class ApiTest {
      * @throws Exception
      */
     @AfterClass
-    public static void postTest() throws Exception {
+    public static void postTest() {
+    }
+
+    @Before
+    public void beforeEachTest() throws FileNotFoundException, XPathExpressionException {
+        session = TestUtil.openDatabaseSession();
+        createTestObjectInDB(session);
+        get = new GetMethod();
+        put = new PutMethod();
+        post = new PostMethod();
+    }
+
+    @After
+    public void afterEachTest() {
+        deleteTestObject(session);
+        session.close();
         close(get);
         close(put);
+        close(post);
     }
+
+
 
     private void testConnectionToSolr(int statusCode){
         assertEquals(200, statusCode);
@@ -285,38 +300,28 @@ public class ApiTest {
     // GET SINGLE OBJECTS
 
     @Test
-    public void testSyndicationObject() throws FileNotFoundException, XPathExpressionException {
-        final Session session = TestUtil.openDatabaseSession();
-        createTestObjectInDB(session);
+    public void testSyndicationObject() {
         GetMethod get = getResponse(SYNDICATION_OBJECT4_URI, "object");
         testConnectionToDB(get.getStatusCode(), 200);
-        deleteTestObject(session);
-        session.close();
     }
 
     @Test
-    public void testSyndicationObjectMods() throws FileNotFoundException, XPathExpressionException {
-        final Session session = TestUtil.openDatabaseSession();
-        createTestObjectInDB(session);
+    public void testSyndicationObjectMods() {
         GetMethod get = getResponse(SYNDICATION_OBJECT4_URI + "/da?format=mods", "object");
         testConnectionToDB(get.getStatusCode(), 200);
-        deleteTestObject(session);
     }
 
     @Test
-    public void testSyndicationObjectUnknown() throws FileNotFoundException, XPathExpressionException {
-        final Session session = TestUtil.openDatabaseSession();
-        createTestObjectInDB(session);
+    public void testSyndicationObjectUnknown() {
         GetMethod get = getResponse(SYNDICATION_OBJECT4_URI + "/da?format=unknown", "object");
         testConnectionToDB(get.getStatusCode(), 404);
-        deleteTestObject(session);
     }
 
     // Navigation service
     @Ignore("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlFull() {
-        GetMethod get = getResponse(NAVIGATION_SERVICE_URI + OBJECT_ID, "opml");
+        GetMethod get = getResponse(NAVIGATION_SERVICE_URI + OBJECT_PATH, "opml");
         testConnectionToDB(get.getStatusCode(), 200);
     }
 
@@ -383,46 +388,46 @@ public class ApiTest {
 
 
     //************************* CREATE AND UPDATE *******************//
-    private void deleteTestObject(Session session) {
-            TestUtil.deleteFromDatabase(Object.class, TestUtil.TEST_ID, session);
-            TestUtil.deleteTestObjectFromSolr(TestUtil.TEST_ID,session);
-            TestUtil.deleteAuditTrail(TestUtil.TEST_ID, session);
+    private static void deleteTestObject(Session session) {
+        TestUtil.deleteAuditTrail(TestUtil.TEST_ID, session);
+        TestUtil.deleteFromDatabase(Object.class, TestUtil.TEST_ID, session);
+        TestUtil.deleteTestObjectFromSolr(TestUtil.TEST_ID,session);
     }
 
 
     @Test
-    public void testCreateObjectFromMods() throws XPathExpressionException {
+    public void testCreateObjectFromMods() throws XPathExpressionException, FileNotFoundException {
+        undoBeforeMethod();
+
         String testMods = TestUtil.getTestMods();
         ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
         final String modsWithTestId = TestUtil.changeIdInMods(TestUtil.TEST_ID, testMods, objectFromModsExtractor);
         put.setPath(HOST_NAME + CREATE_SERVICE_URI + TestUtil.TEST_ID);
+        logger.debug(HOST_NAME + CREATE_SERVICE_URI + TestUtil.TEST_ID);
         try {
             RequestEntity entity = new StringRequestEntity(modsWithTestId, "application/xml", "UTF-8");
             put.setRequestEntity(entity);
             client.executeMethod(put);
             Assert.assertEquals(200,put.getStatusCode());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        } catch (HttpException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        session = TestUtil.openDatabaseSession();
         Object cobjectFromDb = session.get(Object.class,TestUtil.TEST_ID);
         assertNotNull(cobjectFromDb);
         assertEquals(TestUtil.TEST_ID,cobjectFromDb.getId());
-        deleteTestObject(session);
+    }
+
+    private void undoBeforeMethod() {
+        afterEachTest();
     }
 
     @Test
-    public void testUpdateCobjectFromMods() throws SAXException, XPathExpressionException, FileNotFoundException {
-        Session session = TestUtil.openDatabaseSession();
-        createTestObjectInDB(session);
-        Object cobject = TestUtil.getCobject(TestUtil.TEST_ID, session);
-        String lastModified = cobject.getLastModified();
+    public void testUpdateCopObjectFromMods() {
+        Object copObject = TestUtil.getCobject(TestUtil.TEST_ID, session);
+        String lastModified = copObject.getLastModified();
         String lastModifiedBy = "TEST";
-        String testMods = cobject.getMods();
+        String testMods = copObject.getMods();
 
         post.setPath(HOST_NAME + CREATE_SERVICE_URI + TestUtil.TEST_ID + "?lastmodified=" + lastModified + "&user=" + lastModifiedBy);
         logger.info(HOST_NAME + CREATE_SERVICE_URI + TestUtil.TEST_ID + "?lastmodified=" + lastModified + "&user=" + lastModifiedBy);
@@ -439,29 +444,14 @@ public class ApiTest {
         }
         logger.debug("post.getStatusCode() = " + post.getStatusCode());
         assertEquals(200, post.getStatusCode());
-        session.refresh(cobject);
-        Assert.assertEquals("a new title",cobject.getTitle());
-    }
-
-    private String getLastModifiedFromExistingObject() {
-        get = new GetMethod();
-        get.setPath(HOST_NAME + "/syndication" + OBJECT3_URI);
-        String lastModified = "";
-        try {
-            logger.debug(get.getPath());
-            client.executeMethod(get);
-            lastModified = get.getResponseHeader("Last-Modified-Time-Stamp").getValue();
-        } catch (Exception ex) {
-            logger.error("Error fetching object at:  " + SYNDICATION_OBJECT4_URI);
-        }
-        assertEquals(200, get.getStatusCode());
-        return lastModified;
+        session.refresh(copObject);
+        Assert.assertEquals("a new title",copObject.getTitle());
     }
 
     @Test
     public void testUpdateNavigationService() {
         put = new PutMethod();
-        put.setPath(HOST_NAME + CREATE_SERVICE_URI + OBJECT_ID);
+        put.setPath(HOST_NAME + CREATE_SERVICE_URI + OBJECT_PATH);
         try {
             System.out.println(put.getPath());
             Document opml = builder.parse(new File(OPML_FILE));
@@ -469,7 +459,7 @@ public class ApiTest {
             put.setRequestEntity(entity);
             client.executeMethod(put);
         } catch (java.io.IOException io) {
-            logger.error("IO Error putting opml to:  " + OBJECT_ID);
+            logger.error("IO Error putting opml to:  " + OBJECT_PATH);
         } catch (SAXException e) {
             throw new RuntimeException(e);
         }
@@ -478,9 +468,7 @@ public class ApiTest {
 
 
     @Test
-    public void testUpdateGeoService() throws FileNotFoundException, XPathExpressionException {
-        Session session = TestUtil.openDatabaseSession();
-        createTestObjectInDB(session);
+    public void testUpdateGeoService() throws FileNotFoundException {
         Object cobject = TestUtil.getCobject(TestUtil.TEST_ID, session);
         post = prepareUpdatePost(55.423, 10.423, cobject.getLastModified());
         int responseStatus = updateGeoService(post);
@@ -489,13 +477,11 @@ public class ApiTest {
         cobject = session.get(Object.class,TestUtil.TEST_ID);
         assertEquals("lat", 55.423, cobject.getPoint().getCoordinate().getX(), 0.1);
         assertEquals("lon", 10.423, cobject.getPoint().getCoordinate().getY(), 0.1);
-        deleteTestObject(session);
-        session.close();
         close(post);
     }
 
 
-    private int updateGeoService(PostMethod post) throws FileNotFoundException {
+    private int updateGeoService(PostMethod post) {
         try {
             client.executeMethod(post);
         } catch (java.io.IOException io) {
@@ -518,22 +504,18 @@ public class ApiTest {
 
 
         @Test
-    public void testUpdateGeoServiceFailsWithoutUser() {
-        post.setPath(HOST_NAME + UPDATE_SERVICE_URI + OBJECT3_URI);
-        post.setParameter("lat", "10.42");
-        post.setParameter("lng", "55.42");
-        logger.debug(post.getPath());
-        try {
-            client.executeMethod(post);
-        } catch (java.io.IOException io) {
-            logger.error("IO Error posting new geo coordinates to :  " + UPDATE_SERVICE_URI);
-        }
-        logger.debug("code: " + post.getStatusCode() + " status text" + post.getStatusText());
-        assertEquals(400, post.getStatusCode());
+    public void testUpdateGeoServiceFailsWithoutUser() throws FileNotFoundException {
+            Object cobject = TestUtil.getCobject(TestUtil.TEST_ID, session);
+            post = prepareUpdatePost(55.423, 10.423, cobject.getLastModified());
+            post.removeParameter("user");
+            int responseStatus = updateGeoService(post);
+            session.refresh(cobject);
+            assertEquals(400,responseStatus);
+            close(post);
     }
 
 
-    private void createTestObjectInDB(Session session) throws FileNotFoundException, XPathExpressionException {
+    private static void createTestObjectInDB(Session session) throws XPathExpressionException {
         String testMods = TestUtil.getTestMods();
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
         ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
