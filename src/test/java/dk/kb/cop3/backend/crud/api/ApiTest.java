@@ -4,7 +4,6 @@ import dk.kb.cop3.backend.commonutils.DomUtils;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
-import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
@@ -397,7 +396,7 @@ public class ApiTest {
 
     @Test
     public void testCreateObjectFromMods() throws XPathExpressionException, FileNotFoundException {
-        undoBeforeMethod();
+        undoCreateObjectInBeforeMethod();
 
         String testMods = TestUtil.getTestMods();
         ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
@@ -418,8 +417,9 @@ public class ApiTest {
         assertEquals(TestUtil.TEST_ID,cobjectFromDb.getId());
     }
 
-    private void undoBeforeMethod() {
-        afterEachTest();
+    private void undoCreateObjectInBeforeMethod() {
+        deleteTestObject(session);
+        session.close();
     }
 
     @Test
