@@ -6,11 +6,9 @@ import dk.kb.cop3.backend.constants.DatacontrollerConstants;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -101,8 +99,8 @@ public class ApiTest {
         close(put);
     }
 
-    private void testConnectionToSolr(int statusCode, int expectedStatusCode){
-        assertEquals(expectedStatusCode, statusCode);
+    private void testConnectionToSolr(int statusCode){
+        assertEquals(200, statusCode);
     }
 
     private void testConnectionToDB(int statusCode, int expectedStatusCode){
@@ -212,7 +210,7 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInSubjectMods() throws XPathExpressionException, IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?format=mods&itemsPerPage=10", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        testConnectionToSolr(get.getStatusCode());
         Document document = parseModsString(get.getResponseBodyAsString());
         compareTheActualNumberOfRecordsWithExpectedNumberInMods(document, 10);
     }
@@ -220,7 +218,7 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInSubject() throws XPathExpressionException, IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?itemsPerPage=10", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        testConnectionToSolr(get.getStatusCode());
         Document document = parseModsString(get.getResponseBodyAsString());
         compareTheActualNumberOfRecordsWithExpectedNumberInRSS(document, 10);
     }
@@ -237,14 +235,14 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInFraction() throws IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?format=mods&random=0.8&itemsPerPage=10", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        testConnectionToSolr(get.getStatusCode());
         logger.info(get.getResponseBodyAsString());
     }
 
     @Test
     public void testSyndicationAllObjectsInSubject5ItemPerRequest() throws XPathExpressionException, IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?itemsPerPage=5", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        testConnectionToSolr(get.getStatusCode());
         Document document = parseModsString(get.getResponseBodyAsString());
         compareTheActualNumberOfRecordsWithExpectedNumberInRSS(document, 5);
     }
@@ -252,7 +250,7 @@ public class ApiTest {
     @Test
     public void testSyndicationAllObjectsInSubjectInBBO() throws XPathExpressionException, IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&itemsPerPage=10", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        testConnectionToSolr(get.getStatusCode());
         Document document = parseModsString(get.getResponseBodyAsString());
         compareTheActualNumberOfRecordsWithExpectedNumberInRSS(document, 10);
         Coordinate[] coordinates = getCoordinatesFromRSS(document);
@@ -262,25 +260,25 @@ public class ApiTest {
     @Test //TODO check the totalResults
     public void testSyndicationAllObjectsInSubjectInBBOWithFreeText() {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=jensen&itemsPerPage=10", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        testConnectionToSolr(get.getStatusCode());
     }
 
     @Test //TODO check the totalResults
     public void testSyndicationAllObjectsInSubjectInBBOWithFieldedSearch() {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=person:jensen&itemsPerPage=10&itemsPerPage=10", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        testConnectionToSolr(get.getStatusCode());
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithYearRange() {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&notBefore=1939-01-01&notAfter=1945-01-01&itemsPerPage=10", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        testConnectionToSolr(get.getStatusCode());
     }
 
     @Test
     public void testSyndicationAllThingsCombined() {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=person:sylvest+jensen%26location:fyn&random=0.8&itemsPerPage=10", "list of objects");
-        testConnectionToSolr(get.getStatusCode(), 200);
+        testConnectionToSolr(get.getStatusCode());
     }
 
 
