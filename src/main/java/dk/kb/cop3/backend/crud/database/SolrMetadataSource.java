@@ -265,6 +265,7 @@ public class SolrMetadataSource implements MetadataSource {
      */
     public SolrMetadataSource(org.hibernate.Session session) {
         this.session = session;
+        initializeAllowedSearchTerms();
     }
 
 
@@ -598,6 +599,17 @@ public class SolrMetadataSource implements MetadataSource {
     @Override
     public void setSearchterms(String field, String terms) {
         this.searchterms.put(field, terms);
+    }
+
+    private void initializeAllowedSearchTerms() {
+        this.allowedSearchTerms.add("mods");
+        this.allowedSearchTerms.add("id");
+        this.allowedSearchTerms.add("building");
+        this.allowedSearchTerms.add("creator");
+        this.allowedSearchTerms.add("location");
+        this.allowedSearchTerms.add("person");
+        this.allowedSearchTerms.add("title");
+        this.allowedSearchTerms.add("sted");
     }
 
 }
