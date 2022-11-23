@@ -117,11 +117,6 @@ public class ApiTest {
         return get;
     }
 
-    private void compareTheActualNumberOfRecordsWithExpectedNumberInMods(Document document, int expectedNumber) throws XPathExpressionException {
-        int actualNumberOfRecords = extractXpathFromMods("/modsCollection/mods/recordInfo", document).getLength();
-        assertEquals(expectedNumber, actualNumberOfRecords);
-    }
-
     public Document parseModsString(String xmlString) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
@@ -215,7 +210,8 @@ public class ApiTest {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?format=mods&itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
         Document document = parseModsString(get.getResponseBodyAsString());
-        compareTheActualNumberOfRecordsWithExpectedNumberInMods(document, 10);
+        int actualNumberOfRecords = extractXpathFromMods("/modsCollection/mods/recordInfo", document).getLength();
+        assertEquals(10, actualNumberOfRecords);
     }
 
     @Test
@@ -304,7 +300,6 @@ public class ApiTest {
     public void testSyndicationObject() throws IOException, XPathExpressionException {
         GetMethod get = getResponse(SYNDICATION_OBJECT_URI, "object");
         testConnectionToDB(get.getStatusCode(), 200);
-
         Document document = parseModsString(get.getResponseBodyAsString());
         NodeList recordList = extractXpathFromRSS("rss/channel/item", document);
         int numberOfTheRecords = recordList.getLength();
@@ -312,9 +307,12 @@ public class ApiTest {
     }
 
     @Test
-    public void testSyndicationObjectMods() {
+    public void testSyndicationObjectMods() throws IOException, XPathExpressionException {
         GetMethod get = getResponse(SYNDICATION_OBJECT_URI + "/da?format=mods", "object");
         testConnectionToDB(get.getStatusCode(), 200);
+        Document document = parseModsString(get.getResponseBodyAsString());
+        int actualNumberOfRecords = extractXpathFromMods("/modsCollection/mods/recordInfo", document).getLength();
+        assertEquals(1, actualNumberOfRecords);
     }
 
     @Test
