@@ -28,7 +28,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.util.Iterator;
-
 import static org.junit.Assert.*;
 
 /**
@@ -276,11 +275,16 @@ public class ApiTest {
         assertEquals(numberOfTheRecords, numberOfRecordsContainingQueryString);
     }
 
-    //TODO test the result
     @Test
-    public void testSyndicationAllObjectsInSubjectInBBOWithFieldedSearch() {
-        GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=person:jensen&itemsPerPage=10&itemsPerPage=10", "list of objects");
+    public void testSyndicationAllObjectsInSubjectInBBOWithFieldedSearchInMods() throws IOException, XPathExpressionException {
+        String queryString = "person:jensen";
+        GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=" + queryString + "&itemsPerPage=10&itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
+        Document document = parseModsString(get.getResponseBodyAsString());
+        NodeList recordList = extractXpathFromMods("/modsCollection/mods/subject/name/namePart", document);
+        int numberOfTheRecords = recordList.getLength();
+        int numberOfRecordsContainingQueryString = getNumberOfRecordsContainingQueryString(recordList, queryString.split(":")[1]);
+        assertEquals(numberOfTheRecords, numberOfRecordsContainingQueryString);
     }
 
     @Test
