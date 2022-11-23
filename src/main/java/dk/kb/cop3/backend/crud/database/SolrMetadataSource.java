@@ -33,6 +33,7 @@ import java.util.*;
 
 /**
  * Implementation of MetadataSource interface, that uses both Solr
+ * Implementation of MetadataSource interface, that uses both Solr
  * server and a hibernate session to perform searches and retrieve
  * data, respectively
  *
@@ -374,23 +375,13 @@ public class SolrMetadataSource implements MetadataSource {
             for (String field : fields) {
                 logger.debug("search field '"+field+"' value '"+searchterms.get(field)+"'");
                 if (isAllowedSearchField(field)) {
-                    /*
-                        if searchfield is "mods" or "query", search in all fields
-                     */
                     if ("mods".equals(field)) {
-                        solr_q += "{!edismax qf=\"title_tdsim author_tsim creator_tsim coverage_tdsim subject_tdsim description_tsim citySection_street_tsim citySection_housenumber_tsim citySection_zipcode_tsim local_id_fngsi\"}"+searchterms.get(field);
+                        solr_q += searchterms.get(field);
                     }
-                    /*
-                        special searchfield "sted" for searching in boeth vejnavn and
-                     */
                     if ("sted".equals(field)) {
                         if (!"".equals(solr_q)) solr_q += " AND ";
-                        solr_q += "{!edismax qf=\"area_area_tsim citySection_street_tsim cobject_location_tsim\"}"+searchterms.get(field);
+                        solr_q += "(area_area_tsim:"+searchterms.get(field)+" OR citySection_street_tsim:"+searchterms.get(field)+" OR cobject_location_tsim:"+searchterms.get(field)+")";
                     }
-
-                    /* search in specific fields, current allowed fields are
-                            building, creator, location, person, title
-                     */
                     if ("title".equals(field)) {
                         if (!"".equals(solr_q)) solr_q += " AND ";
                         solr_q += "full_title_tsim:"+searchterms.get(field);
