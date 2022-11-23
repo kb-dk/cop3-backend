@@ -123,11 +123,6 @@ public class ApiTest {
         assertEquals(expectedNumber, actualNumberOfRecords);
     }
 
-    private void compareTheActualNumberOfRecordsWithExpectedNumberInRSS(Document document, int expectedNumber) throws XPathExpressionException {
-        int actualNumberOfRecords = extractXpathFromRSS("rss/channel/item", document).getLength();
-        assertEquals(expectedNumber, actualNumberOfRecords);
-    }
-
     public Document parseModsString(String xmlString) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
@@ -179,6 +174,16 @@ public class ApiTest {
         }
     }
 
+    private int getNumberOfRecordsContainingQueryString(NodeList nodeList, String queryString){
+        int numberOfRecordsContainingQueryString = 0;
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            if (nodeList.item(i).getTextContent().toLowerCase().contains(queryString.toLowerCase())){
+                numberOfRecordsContainingQueryString ++;
+            }
+        }
+        return numberOfRecordsContainingQueryString;
+    }
+
     private Coordinate[] getLatLonFromRecords(NodeList nodeList){
         Coordinate[] coords = new Coordinate[nodeList.getLength()];
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -219,7 +224,8 @@ public class ApiTest {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
         Document document = parseModsString(get.getResponseBodyAsString());
-        compareTheActualNumberOfRecordsWithExpectedNumberInRSS(document, 10);
+        int actualNumberOfRecords = extractXpathFromRSS("rss/channel/item", document).getLength();
+        assertEquals(10, actualNumberOfRecords);
     }
 
     @Ignore("Ignored since language parameter has no effect on the response!")
@@ -243,7 +249,8 @@ public class ApiTest {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?itemsPerPage=5", "list of objects");
         testConnectionToSolr(get.getStatusCode());
         Document document = parseModsString(get.getResponseBodyAsString());
-        compareTheActualNumberOfRecordsWithExpectedNumberInRSS(document, 5);
+        int actualNumberOfRecords = extractXpathFromRSS("rss/channel/item", document).getLength();
+        assertEquals(5, actualNumberOfRecords);
     }
 
     @Test
@@ -251,16 +258,22 @@ public class ApiTest {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
         Document document = parseModsString(get.getResponseBodyAsString());
-        compareTheActualNumberOfRecordsWithExpectedNumberInRSS(document, 10);
+        int actualNumberOfRecords = extractXpathFromRSS("rss/channel/item", document).getLength();
+        assertEquals(10, actualNumberOfRecords);
         Coordinate[] coordinates = getCoordinatesFromRSS(document);
         checkIfAllCoordinatesAreInsideTheBoundingBox(coordinates, BOUNDING_BOX);
     }
 
-    //TODO test the result
     @Test
-    public void testSyndicationAllObjectsInSubjectInBBOWithFreeText() {
-        GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=jensen&itemsPerPage=10", "list of objects");
+    public void testSyndicationAllObjectsInSubjectInBBOWithFreeText() throws IOException, XPathExpressionException {
+        String queryString = "jensen";
+        GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=" + queryString + "&itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
+        Document document = parseModsString(get.getResponseBodyAsString());
+        NodeList recordList = extractXpathFromRSS("rss/channel/item", document);
+        int numberOfTheRecords = recordList.getLength();
+        int numberOfRecordsContainingQueryString = getNumberOfRecordsContainingQueryString(recordList, queryString);
+        assertEquals(numberOfTheRecords, numberOfRecordsContainingQueryString);
     }
 
     //TODO test the result
