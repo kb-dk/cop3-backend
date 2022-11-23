@@ -301,9 +301,14 @@ public class ApiTest {
 
     // GET SINGLE OBJECTS
     @Test
-    public void testSyndicationObject() {
+    public void testSyndicationObject() throws IOException, XPathExpressionException {
         GetMethod get = getResponse(SYNDICATION_OBJECT_URI, "object");
         testConnectionToDB(get.getStatusCode(), 200);
+
+        Document document = parseModsString(get.getResponseBodyAsString());
+        NodeList recordList = extractXpathFromRSS("rss/channel/item", document);
+        int numberOfTheRecords = recordList.getLength();
+        assertEquals(1, numberOfTheRecords);
     }
 
     @Test
