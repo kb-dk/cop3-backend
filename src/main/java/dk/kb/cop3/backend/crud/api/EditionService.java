@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response;
 @Path("/editions/")
 public class EditionService {
     private static Logger myLogger = Logger.getLogger(EditionService.class);
-    private static final String dummyResponse = "<?xml version='1.0' encoding='UTF-8'?><rss version=\"2.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:md=\"http://www.loc.gov/mods/v3\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:opensearch=\"http://a9.com/-/spec/opensearch/1.1/\" xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"></channel></rss>";
 
     @GET
     @Path("{nn:([^/]+?/)*}{lang:(da|en)?}")

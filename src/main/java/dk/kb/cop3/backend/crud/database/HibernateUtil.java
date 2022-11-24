@@ -140,14 +140,6 @@ public class HibernateUtil {
         return t;
     }
 
-    public static Category getCategoryById(Session ses, String id) {
-        Category cat = ses.load(Category.class, id);
-
-        myLogger.debug("Found " + id + " category " + cat);
-        return cat;
-    }
-
-
 
     public static Category getCategoryElseCreate(Session ses, String id, String categoryText) {
         myLogger.debug(" ID: " + id + " categoryText: " + categoryText);
