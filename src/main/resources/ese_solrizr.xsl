@@ -422,7 +422,7 @@
 
     <xsl:choose>
       <xsl:when test="$mods//md:mods/md:relatedItem[md:identifier]">
-	<xsl:for-each select="$mods//md:mods/md:relatedItem[md:relatedItem[@type='constituent'] and md:identifier]">
+	<xsl:for-each select="$mods//md:mods/md:relatedItem[md:identifier]">
 	  <xsl:call-template name="make_page_field"/>
 	  <xsl:for-each select=".//md:relatedItem[@type='constituent' and md:identifier]">
 	    <xsl:sort order="{$sort_direction}" 
@@ -436,9 +436,16 @@
 	<xsl:for-each select="ese:isShownBy">
 	  <xsl:element name="field">
 	    <xsl:attribute name="name">content_metadata_image_iiif_info_ssm</xsl:attribute>
-	    <xsl:value-of select="concat('http://kb-images.kb.dk',
-				  substring-after(substring-before(.,'.jpg'),'imageService'),
-				  '/info.json')"/>
+            <xsl:choose>
+              <xsl:when test="contains(.,'imageService')">
+	        <xsl:value-of select="concat('http://kb-images.kb.dk',
+				      substring-after(substring-before(.,'.jpg'),'imageService'),
+				      '/info.json')"/>
+              </xsl:when>
+              <xsl:otherwise>
+	        <xsl:value-of select="concat(substring-before(.,'/full/full'),'/info.json')"/>
+              </xsl:otherwise>
+            </xsl:choose>
 	  </xsl:element>
 	</xsl:for-each>
       </xsl:otherwise>
