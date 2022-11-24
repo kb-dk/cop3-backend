@@ -95,9 +95,6 @@
 
     <xsl:variable name="lang" select="$mods//md:languageOfCataloging/md:languageTerm"/>
 
-    <xsl:comment> uri <xsl:value-of select="concat($internal_url_prefix,$local_id,'?format=mods')"/> </xsl:comment>
-    <xsl:comment> lang <xsl:value-of select="$lang"/> </xsl:comment>
-    
     <xsl:variable name="collection">
       <xsl:for-each select="$mods//md:mods/md:recordInfo/md:recordIdentifier">
 	<xsl:call-template name="my_identifier">
