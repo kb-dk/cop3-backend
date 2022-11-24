@@ -1,8 +1,8 @@
 package dk.kb.cop3.backend.crud.update;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /*
 Test af reformulators xslt
@@ -13,7 +13,7 @@ public class ReformulatorTest {
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(ReformulatorTest.class);
     java.lang.String text;
 
-    @BeforeClass
+    @BeforeAll
     public static void initTest() {
     }
 
@@ -33,7 +33,7 @@ public class ReformulatorTest {
     }
 
 
-    @AfterClass
+    @AfterAll
     public static void close() {
     }
 

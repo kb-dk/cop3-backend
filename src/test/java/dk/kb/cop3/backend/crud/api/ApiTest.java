@@ -1,5 +1,4 @@
 package dk.kb.cop3.backend.crud.api;
-
 import dk.kb.cop3.backend.commonutils.DomUtils;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.constants.DatacontrollerConstants;
@@ -12,7 +11,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.locationtech.jts.geom.Coordinate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,7 +27,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.util.Iterator;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class is the main reference for the supported URI's in the CRUD engine.
@@ -69,7 +68,7 @@ public class ApiTest {
      *
      * @throws Exception
      */
-    @BeforeClass
+    @BeforeAll
     public static void initTest() throws Exception {
         CopBackendProperties.initialize(new FileInputStream(COP_CONFIG));
         client.getHttpConnectionManager().getParams().setConnectionTimeout(DatacontrollerConstants.CONN_TIMEOUT);
@@ -79,7 +78,7 @@ public class ApiTest {
         builder = factory.newDocumentBuilder();
     }
 
-    @Before
+    @BeforeEach
     public void beforeEachTest() throws FileNotFoundException, XPathExpressionException {
         session = TestUtil.openDatabaseSession();
         createTestObjectInDB(session);
@@ -88,7 +87,7 @@ public class ApiTest {
         post = new PostMethod();
     }
 
-    @After
+    @AfterEach
     public void afterEachTest() {
         deleteTestObject(session);
         session.close();
@@ -153,7 +152,7 @@ public class ApiTest {
 
     private void checkIfAllCoordinatesAreInsideTheBoundingBox(Coordinate[] coordinates, String boundingBox) {
         for (Coordinate coordinate : coordinates) {
-            assertTrue(coordinate.x + ' ' + coordinate.y + " should be located in the bounding box:", isCoordinateInsideBoundingBox(coordinate, boundingBox));
+            assertTrue(isCoordinateInsideBoundingBox(coordinate, boundingBox), coordinate.x + ' ' + coordinate.y + " should be located in the bounding box:");
         }
     }
 
@@ -227,7 +226,7 @@ public class ApiTest {
         assertEquals(10, actualNumberOfRecords);
     }
 
-    @Ignore("Ignored since language parameter has no effect on the response!")
+    @Disabled("Ignored since language parameter has no effect on the response!")
     @Test
     public void testSyndicationAllObjectsInSubjectLanguage() throws IOException {
         GetMethod get1 = getResponse(SYNDICATION_SUBJECT_URI + "/da?format=mods&itemsPerPage=10", "list of objects");
@@ -235,7 +234,7 @@ public class ApiTest {
         assertEquals("Language should have no effect on the response.", get1.getResponseBodyAsString(), get2.getResponseBodyAsString());
     }
 
-    @Ignore("Ignored since random parameter has no effect on the response!")
+    @Disabled("Ignored since random parameter has no effect on the response!")
     @Test
     public void testSyndicationAllObjectsInFraction() throws IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?format=mods&random=0.8&itemsPerPage=10", "list of objects");
@@ -354,28 +353,28 @@ public class ApiTest {
     }
 
     // Navigation service
-    @Ignore("Ignored because it seems like navigation service is not used!")
+    @Disabled("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlFull() {
         GetMethod get = getResponse(NAVIGATION_SERVICE_URI + OBJECT_PATH, "opml");
         testConnectionToDB(get.getStatusCode(), 200);
     }
 
-    @Ignore("Ignored because it seems like navigation service is not used!")
+    @Disabled("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlFullDa() {
         GetMethod get = getResponse(NAVIGATION_SERVICE_URI + OBJECT_PATH + "da", "opml");
         testConnectionToDB(get.getStatusCode(), 200);
     }
 
-    @Ignore("Ignored because it seems like navigation service is not used!")
+    @Disabled("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlSubject() {
         GetMethod get = getResponse(NAVIGATION_SERVICE_URI + SUBJECT_URI, "opml");
         testConnectionToDB(get.getStatusCode(), 200);
     }
 
-    @Ignore("Ignored because it seems like navigation service is not used!")
+    @Disabled("Ignored because it seems like navigation service is not used!")
     @Test
     public void testNavigationOpmlSubjectDa() {
         GetMethod get = getResponse(NAVIGATION_SERVICE_URI + SUBJECT_URI + "/da", "opml");
@@ -383,14 +382,14 @@ public class ApiTest {
     }
 
     // Content services
-    @Ignore("Ignored because it seems like content service is not used!")
+    @Disabled("Ignored because it seems like content service is not used!")
     @Test
     public void testContentOpml() {
         GetMethod get = getResponse(CONTENT_SERVICE_URI + OBJECT_URI, "object");
         testConnectionToDB(get.getStatusCode(), 200);
     }
 
-    @Ignore("Ignored because it seems like content service is not used!")
+    @Disabled("Ignored because it seems like content service is not used!")
     @Test
     public void testContentOpmlLangDa() {
         GetMethod get = getResponse(CONTENT_SERVICE_URI + OBJECT_URI + "/da", "object");
@@ -442,7 +441,7 @@ public class ApiTest {
             RequestEntity entity = new StringRequestEntity(modsWithTestId, "application/xml", "UTF-8");
             put.setRequestEntity(entity);
             client.executeMethod(put);
-            Assert.assertEquals(200,put.getStatusCode());
+            assertEquals(200,put.getStatusCode());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -480,7 +479,7 @@ public class ApiTest {
         logger.debug("post.getStatusCode() = " + post.getStatusCode());
         assertEquals(200, post.getStatusCode());
         session.refresh(copObject);
-        Assert.assertEquals("a new title",copObject.getTitle());
+        assertEquals("a new title",copObject.getTitle());
     }
 
     @Test
@@ -510,8 +509,8 @@ public class ApiTest {
         session.refresh(cobject);
         assertEquals(200,responseStatus);
         cobject = session.get(Object.class,OBJECT_URI);
-        assertEquals("lat", 55.423, cobject.getPoint().getCoordinate().getX(), 0.1);
-        assertEquals("lon", 10.423, cobject.getPoint().getCoordinate().getY(), 0.1);
+        assertEquals(55.423, cobject.getPoint().getCoordinate().getX());
+        assertEquals(10.423, cobject.getPoint().getCoordinate().getY());
         close(post);
     }
 

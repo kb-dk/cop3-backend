@@ -5,17 +5,12 @@ import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import javax.validation.constraints.AssertTrue;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,7 +25,7 @@ public class HibernateMetadataSourceTest{
     private static HibernateMetadataSource mds;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void initTest() throws FileNotFoundException {
         CopBackendProperties.initialize(new FileInputStream("src/test/resources/cop_config.xml"));
         session = TestUtil.openDatabaseSession().getSession();
@@ -46,14 +41,14 @@ public class HibernateMetadataSourceTest{
         mds.setSearchterms("id",TestUtil.TEST_ID);
         mds.execute();
         final Long numberOfHits = mds.getNumberOfHits();
-        Assert.assertTrue(numberOfHits == 1);
+        assertTrue(numberOfHits == 1);
         final Object cobject = mds.getAnother();
-        Assert.assertEquals(TestUtil.TEST_ID,cobject.getId());
+        assertEquals(TestUtil.TEST_ID,cobject.getId());
         TestUtil.deleteFromDatabase(Object.class,TestUtil.TEST_ID, session);
     }
 
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         session.close();
     }

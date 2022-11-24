@@ -9,14 +9,14 @@ import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.locationtech.jts.geom.Geometry;
-
 import java.io.BufferedReader;
 import java.sql.Clob;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HibernateToDBTest {
 
@@ -32,7 +32,7 @@ public class HibernateToDBTest {
     private static final double ORIGINAL_LAT = 55.275795018274586;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
         SessionFactory sessions = cfg.buildSessionFactory();
@@ -41,7 +41,7 @@ public class HibernateToDBTest {
         hibernateMetadataSource = new HibernateMetadataSource(session);
     }
 
-    @AfterClass
+    @AfterAll
     public static void after() {
          session.close();
     }
@@ -54,8 +54,8 @@ public class HibernateToDBTest {
         Geometry pointForTest = cobject.getPoint();
         double lat = pointForTest.getCoordinate().getX();
         double lon = pointForTest.getCoordinate().getY();
-        Assert.assertTrue(lat == ORIGINAL_LAT);
-        Assert.assertTrue(lon == ORIGINAL_LON);
+        assertTrue(lat == ORIGINAL_LAT);
+        assertTrue(lon == ORIGINAL_LON);
         changeAndTestGeoPoint(metadataWriter, cobject);
         TestUtil.deleteFromDatabase(Object.class, TEST_ID, session);
         TestUtil.deleteAuditTrail(TEST_ID, session);
@@ -100,8 +100,8 @@ public class HibernateToDBTest {
         pointForTest = cobject.getPoint();
         lat = pointForTest.getCoordinate().getX();
         lon = pointForTest.getCoordinate().getY();
-        Assert.assertTrue(lat == NEW_LAT);
-        Assert.assertTrue(lon == NEW_LOM);
+        assertTrue(lat == NEW_LAT);
+        assertTrue(lon == NEW_LOM);
     }
 
     // 10.123355457305593 ,55.53981165831693
@@ -109,7 +109,7 @@ public class HibernateToDBTest {
     public void findEditionList() {
         HibernateEditionSource hibernateEditionSource = new HibernateEditionSource(session);
         hibernateEditionSource.execute();
-        Assert.assertTrue(hibernateEditionSource.getNumberOfHits()>1);
+        assertTrue(hibernateEditionSource.getNumberOfHits()>1);
     }
 
 
@@ -127,7 +127,7 @@ public class HibernateToDBTest {
         List<Edition> editions = session.createSQLQuery("select * from edition")
                 .addEntity("edi", Edition.class)
                 .list();
-        Assert.assertTrue(editions.size()>0);
+        assertTrue(editions.size()>0);
     }
 
 }

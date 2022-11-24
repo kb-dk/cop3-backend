@@ -4,16 +4,15 @@ import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import dk.kb.cop3.backend.solr.CopSolrClient;
 import org.hibernate.Session;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class SolrHelperTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void initTest() throws FileNotFoundException {
         CopBackendProperties.initialize(new FileInputStream("src/test/resources/cop_config.xml"));
     }
@@ -46,7 +45,7 @@ public class SolrHelperTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSolrizeEditions() throws FileNotFoundException {
         Session session = TestUtil.openDatabaseSession();
         CopSolrClient solrHelper = new CopSolrClient(session);

@@ -9,19 +9,16 @@ import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.solr.CopSolrClient;
-import org.apache.solr.client.solrj.impl.SolrHttpClientBuilder;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
-import org.junit.Assert;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import javax.xml.transform.Transformer;
@@ -36,8 +33,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
-
 import static java.math.BigInteger.valueOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUtil {
     private static final String LUFTFOTO_MODS_FILE = "src/test/resources/testdata/luftfoto_object182167.mods.xml";
@@ -153,7 +150,7 @@ public class TestUtil {
         SolrMetadataSource mds = new SolrMetadataSource(session);
         mds.setSearchterms("id",id);
         mds.execute();
-        Assert.assertEquals(Long.valueOf("1"),mds.getNumberOfHits());
+        assertEquals(Long.valueOf("1"),mds.getNumberOfHits());
         return mds.getAnother();
     }
 

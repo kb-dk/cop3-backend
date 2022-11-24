@@ -6,12 +6,7 @@ import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-
 import org.hibernate.Transaction;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,8 +14,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,7 +41,7 @@ public class ObjectFromModsExtractorTest {
 
     ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
 
-    @BeforeClass
+    @BeforeAll
     public static void initTests() throws IOException {
         CopBackendProperties.initialize(new FileInputStream("src/test/resources/cop_config.xml"));
     }
@@ -148,13 +144,23 @@ public class ObjectFromModsExtractorTest {
         assertNull(dates);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testExtractFromModsModsNull() {
-        objectFromModsExtractor.extractFromMods(new Object(), null, null);
+        try{
+            objectFromModsExtractor.extractFromMods(new Object(), null, null);
+            fail();
+        } catch (NullPointerException exception){
+            assertTrue(true);
+        }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testExtractFromModsCopjectNull() {
-        objectFromModsExtractor.extractFromMods(null, mods, null);
+        try{
+            objectFromModsExtractor.extractFromMods(null, mods, null);
+            fail();
+        } catch (IllegalArgumentException exception){
+            assertTrue(true);
+        }
     }
 }

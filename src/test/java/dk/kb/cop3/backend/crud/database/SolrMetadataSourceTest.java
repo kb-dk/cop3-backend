@@ -6,10 +6,10 @@ import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import dk.kb.cop3.backend.crud.util.TestUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
@@ -19,13 +19,13 @@ public class SolrMetadataSourceTest {
 
     private static Session session;
 
-    @Before
+    @BeforeEach
     public void initTest() throws FileNotFoundException {
          session = TestUtil.openDatabaseSession();
          createAndSaveTestData();
      }
 
-     @After
+     @AfterEach
      public void deleteTestData() {
          TestUtil.deleteFromDatabase(Object.class, "test1234", session);
          TestUtil.deleteFromDatabase(Edition.class, "edition1", session);
@@ -40,9 +40,9 @@ public class SolrMetadataSourceTest {
          SolrMetadataSource mds = new SolrMetadataSource(session);
          mds.setSearchterms("id","test1234");
          mds.execute();
-         Assert.assertEquals(Long.valueOf("1"),mds.getNumberOfHits());
+         assertEquals(Long.valueOf("1"),mds.getNumberOfHits());
          Object fetchedObject = mds.getAnother();
-         Assert.assertEquals("test1234",fetchedObject.getId());
+         assertEquals("test1234",fetchedObject.getId());
      }
 
      @Test
@@ -50,9 +50,9 @@ public class SolrMetadataSourceTest {
          SolrMetadataSource mds = new SolrMetadataSource(session);
          mds.setSearchterms("id","non_existing_id");
          mds.execute();
-         Assert.assertEquals(Long.valueOf("0"),mds.getNumberOfHits());
+         assertEquals(Long.valueOf("0"),mds.getNumberOfHits());
          Object fetchedObject = mds.getAnother();
-         Assert.assertNull(fetchedObject);
+         assertNull(fetchedObject);
      }
 
 

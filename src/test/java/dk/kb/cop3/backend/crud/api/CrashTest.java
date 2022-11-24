@@ -1,16 +1,13 @@
-package dk.kb.cop3.backend.crud.server;
-
+package dk.kb.cop3.backend.crud.api;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.log4j.Logger;
-import org.junit.BeforeClass;
-
+import org.junit.jupiter.api.BeforeAll;
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.Random;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *Den eneste brug for denne klasse er at finde den out-of-memory fejl vi roder med.
@@ -36,7 +33,7 @@ public class CrashTest {
     private final static String SYNDICATION_ALL_OBJECTS_IN_SUBJECT_IN_BBO =
             SYNDICATION_ROOT + "subject203?bbo=10.5,55.1,10.68,55.2&format=rss&itemsPerPage=";
 
-    @BeforeClass
+    @BeforeAll
     public static void initTest() throws Exception {
         // 0 = no timeout
         client.getHttpConnectionManager().getParams().setConnectionTimeout(0);
