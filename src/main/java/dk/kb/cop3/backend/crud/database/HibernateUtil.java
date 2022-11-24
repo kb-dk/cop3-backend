@@ -1,12 +1,6 @@
 package dk.kb.cop3.backend.crud.database;
 
-/**
- * User: abwe
- * Date: 4/15/11
- * Time: 2:41 PM
- */
 
-import ORG.oclc.oai.server.verb.OAIInternalServerError;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
@@ -17,9 +11,6 @@ import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.criterion.Restrictions;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +20,7 @@ public class HibernateUtil {
 
 
     private static final SessionFactory sessionFactory = buildSessionFactory();
-    private static Logger myLogger = Logger.getLogger(HibernateUtil.class);
+    private static final Logger myLogger = Logger.getLogger(HibernateUtil.class);
 
     private static SessionFactory buildSessionFactory() {
         try {
@@ -70,7 +61,7 @@ public class HibernateUtil {
             myLogger.error("to many types with " + text + " found in database ");
             return null;
         } else {
-            myLogger.debug("Found " + (Type) types.get(0));
+            myLogger.debug("Found " +  types.get(0));
             return (Type) types.get(0);
         }
 
@@ -93,7 +84,7 @@ public class HibernateUtil {
             myLogger.error("to many edition with " + searchStringtext + " found in database ");
             return null;
         } else {
-            myLogger.debug("Found " + (Edition) editions.get(0));
+            myLogger.debug("Found " +  editions.get(0));
             return (Edition) editions.get(0);
         }
     }
@@ -150,7 +141,7 @@ public class HibernateUtil {
     }
 
     public static Category getCategoryById(Session ses, String id) {
-        Category cat = (Category) ses.load(Category.class, id);
+        Category cat = ses.load(Category.class, id);
 
         myLogger.debug("Found " + id + " category " + cat);
         return cat;
@@ -161,7 +152,7 @@ public class HibernateUtil {
     public static Category getCategoryElseCreate(Session ses, String id, String categoryText) {
         myLogger.debug(" ID: " + id + " categoryText: " + categoryText);
 
-        java.lang.Object o = null;
+        java.lang.Object o;
 
         try {
             //o = ses.load(Category.class, id);
@@ -188,21 +179,5 @@ public class HibernateUtil {
             myLogger.debug("Found " + id + " category " + cat);
             return cat;
         }
-
     }
-
-    public static List<Edition> getAllEditions(Session ses) throws OAIInternalServerError {
-        try {
-            ses.beginTransaction();
-            Criteria crit = ses.createCriteria(Edition.class);
-            List<Edition> result = crit.list();
-            ses.getTransaction().commit();
-            return result;
-        } catch(HibernateException ex) {
-            myLogger.debug("Error getting all editions "+ex.getMessage());
-            throw new OAIInternalServerError("Hibernate error getting all editions");
-        }
-    }
-
-
 }
