@@ -94,6 +94,10 @@
     <xsl:variable name="mods" select="document(concat($internal_url_prefix,$local_id,'?format=mods'))"/>
 
     <xsl:variable name="lang" select="$mods//md:languageOfCataloging/md:languageTerm"/>
+
+    <xsl:comment> uri <xsl:value-of select="concat($internal_url_prefix,$local_id,'?format=mods')"/> </xsl:comment>
+    <xsl:comment> lang <xsl:value-of select="$lang"/> </xsl:comment>
+    
     <xsl:variable name="collection">
       <xsl:for-each select="$mods//md:mods/md:recordInfo/md:recordIdentifier">
 	<xsl:call-template name="my_identifier">
@@ -427,7 +431,7 @@
 	    <xsl:sort order="{$sort_direction}" 
 		      data-type="number"
 		      select="count(preceding::md:relatedItem[md:identifier])"/>
-	    <xsl:call-template name="make_page_field"/>
+	    <xsl:call-template name="make_page_field"/>   xxxxxx
 	  </xsl:for-each>
 	</xsl:for-each>
       </xsl:when>
@@ -437,7 +441,7 @@
 	    <xsl:attribute name="name">content_metadata_image_iiif_info_ssm</xsl:attribute>
 	    <xsl:value-of select="concat('http://kb-images.kb.dk',
 				  substring-after(substring-before(.,'.jpg'),'imageService'),
-				  '/info.json')"/>
+				  '/info.json')"/> yyyyyyy
 	  </xsl:element>
 	</xsl:for-each>
       </xsl:otherwise>
