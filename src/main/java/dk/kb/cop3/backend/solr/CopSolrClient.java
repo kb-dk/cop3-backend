@@ -55,8 +55,8 @@ public class CopSolrClient {
         return getStringFromDocument(dom);
     }
 
-    public boolean updateCobjectInSolr(String objectId,boolean doCommit)  {
-        boolean updateWentOk;
+    public boolean updateCobjectInSolr(String objectId, boolean doCommit)  {
+        boolean updateWentOk = false;
         String solrUrl = CopBackendProperties.getSolrBaseurl();
         HttpSolrClient client= new HttpSolrClient.Builder(solrUrl).build();
         String xml = getSolrXmlDocument(objectId);
@@ -66,7 +66,6 @@ public class CopSolrClient {
             if (response.getStatus() == 0) {
                 updateWentOk = true;
             } else {
-                updateWentOk = false;
                 log.error("Unable to update object in solr "+response);
             }
             if (doCommit) {
@@ -74,8 +73,7 @@ public class CopSolrClient {
             }
             client.close();
         } catch (IOException | SolrServerException | SolrException e) {
-            log.error("error updating object in solr ",e);
-            updateWentOk = false;
+            log.error("error updating object in solr: " + objectId + " ",e);
         }
         return updateWentOk;
     }

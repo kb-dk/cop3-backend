@@ -64,7 +64,6 @@ public class SolrizrService {
 		} else {
 			updateWentOk = copSolrClient.updateCategoriesSolrForEdition(edition_id,id);
 		}
-
 		if (updateWentOk) {
 			return Response.ok().build();
 		} else {

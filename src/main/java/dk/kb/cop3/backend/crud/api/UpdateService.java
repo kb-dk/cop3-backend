@@ -3,10 +3,10 @@ package dk.kb.cop3.backend.crud.api;
 import dk.kb.cop3.backend.crud.database.*;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.update.Reformulator;
+import dk.kb.cop3.backend.solr.CopSolrClient;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -73,7 +73,7 @@ public class UpdateService {
             return Response.status(Response.Status.BAD_REQUEST).entity("no last modified").build();
         }
 
-        Session ses = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             boolean doModsUpdate = false;
             Reformulator reformulator = new Reformulator(current_mods);
@@ -84,34 +84,32 @@ public class UpdateService {
                 if (new_mods == null || "".equals(new_mods)) {
                     return Response.serverError().build();
                 }
-                MetadataWriter mdw = new HibernateMetadataWriter(ses);
+                MetadataWriter mdw = new HibernateMetadataWriter(session);
                 String result = mdw.updateFromMods(uri, new_mods, lastModified, user);
-                return getHttpResponseCodeAndUpdateSolr(uri, result);
+                return getHttpResponseCodeAndUpdateSolr(session, uri, result);
             }
 
         } catch (HibernateException ex) {
             logger.error("hibernate error in updateservice", ex);
         } finally {
-            ses.close();
+            session.close();
         }
         return Response.serverError().build();//If we end here an (Hibernate-) Exception has occurred
     }
 
-    private Response updateCoordinatesAndGetHttpReturnCode(String user, double lat, double lng, double correctness, String uri) {
-        Session ses = HibernateUtil.getSessionFactory().getCurrentSession();
-        MetadataWriter mdw = new HibernateMetadataWriter(ses);
-        String result = mdw.updateGeo(uri, lat, lng, user, null, correctness);
-        return getHttpResponseCodeAndUpdateSolr(uri, result);
-    }
-
-    private Response getHttpResponseCodeAndUpdateSolr(String uri, String result) {
+    private Response getHttpResponseCodeAndUpdateSolr(Session session, String uri, String result) {
         if (result == null || result.equals("")) {
             return Response.notModified("not modified").build();
         } else if (result.equals("out-of-date")) {
             return Response.notModified("out-of-date").build();
         } else {
-            sendToSolr(uri);
-            return Response.ok("Updated").build();
+            final boolean solrUpdateOk = sendToSolr(session, uri);
+            if (solrUpdateOk) {
+                return Response.ok("Updated").build();
+            } else {
+                return Response.ok("Updated, but Solr update failed.").build();// Solr is not dataowner, and if Solr update fails, responseOk is still the answer.
+            }
+
         }
     }
 
@@ -227,9 +225,9 @@ public class UpdateService {
     }
 
 
-    private void
-    sendToSolr(String uri) {
-        //TODO call solrizr for uri
+    private boolean sendToSolr(Session session, String objectId) {
+        CopSolrClient copSolrClient = new CopSolrClient(session);
+        return copSolrClient.updateCobjectInSolr(objectId, true);
     }
 
     private String getCurrentMods(String uri) {

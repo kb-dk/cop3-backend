@@ -94,6 +94,7 @@
     <xsl:variable name="mods" select="document(concat($internal_url_prefix,$local_id,'?format=mods'))"/>
 
     <xsl:variable name="lang" select="$mods//md:languageOfCataloging/md:languageTerm"/>
+
     <xsl:variable name="collection">
       <xsl:for-each select="$mods//md:mods/md:recordInfo/md:recordIdentifier">
 	<xsl:call-template name="my_identifier">
@@ -421,13 +422,13 @@
 
     <xsl:choose>
       <xsl:when test="$mods//md:mods/md:relatedItem[md:identifier]">
-	<xsl:for-each select="$mods//md:mods/md:relatedItem[md:identifier[@displayLabel='iiif']]">
+	<xsl:for-each select="$mods//md:mods/md:relatedItem[md:identifier]">
 	  <xsl:call-template name="make_page_field"/>
-	  <xsl:for-each select=".//md:relatedItem[md:identifier]">
+	  <xsl:for-each select=".//md:relatedItem[@type='constituent' and md:identifier]">
 	    <xsl:sort order="{$sort_direction}" 
 		      data-type="number"
 		      select="count(preceding::md:relatedItem[md:identifier])"/>
-	    <xsl:call-template name="make_page_field"/>
+	    <xsl:call-template name="make_page_field"/> 
 	  </xsl:for-each>
 	</xsl:for-each>
       </xsl:when>
@@ -435,9 +436,16 @@
 	<xsl:for-each select="ese:isShownBy">
 	  <xsl:element name="field">
 	    <xsl:attribute name="name">content_metadata_image_iiif_info_ssm</xsl:attribute>
-	    <xsl:value-of select="concat('http://kb-images.kb.dk',
-				  substring-after(substring-before(.,'.jpg'),'imageService'),
-				  '/info.json')"/>
+            <xsl:choose>
+              <xsl:when test="contains(.,'imageService')">
+	        <xsl:value-of select="concat('http://kb-images.kb.dk',
+				      substring-after(substring-before(.,'.jpg'),'imageService'),
+				      '/info.json')"/>
+              </xsl:when>
+              <xsl:otherwise>
+	        <xsl:value-of select="concat(substring-before(.,'/full/full'),'/info.json')"/>
+              </xsl:otherwise>
+            </xsl:choose>
 	  </xsl:element>
 	</xsl:for-each>
       </xsl:otherwise>
