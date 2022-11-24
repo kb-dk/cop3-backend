@@ -431,7 +431,7 @@
 	    <xsl:sort order="{$sort_direction}" 
 		      data-type="number"
 		      select="count(preceding::md:relatedItem[md:identifier])"/>
-	    <xsl:call-template name="make_page_field"/>   xxxxxx
+	    <xsl:call-template name="make_page_field"/> 
 	  </xsl:for-each>
 	</xsl:for-each>
       </xsl:when>
@@ -441,7 +441,7 @@
 	    <xsl:attribute name="name">content_metadata_image_iiif_info_ssm</xsl:attribute>
 	    <xsl:value-of select="concat('http://kb-images.kb.dk',
 				  substring-after(substring-before(.,'.jpg'),'imageService'),
-				  '/info.json')"/> yyyyyyy
+				  '/info.json')"/>
 	  </xsl:element>
 	</xsl:for-each>
       </xsl:otherwise>
