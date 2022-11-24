@@ -168,11 +168,17 @@ public class ApiTest {
         }
     }
 
-    private int getNumberOfRecordsContainingQueryString(NodeList nodeList, String queryString){
+    private int getNumberOfRecordsContainingQueryString(NodeList nodeList, String[] queryStrings){
         int numberOfRecordsContainingQueryString = 0;
         for (int i = 0; i < nodeList.getLength(); i++) {
-            if (nodeList.item(i).getTextContent().toLowerCase().contains(queryString.toLowerCase())){
-                numberOfRecordsContainingQueryString ++;
+            boolean hasQueryStrings = true;
+            for (String queryString: queryStrings) {
+                if (!(nodeList.item(i).getTextContent().toLowerCase().contains(queryString.toLowerCase()))) {
+                    hasQueryStrings = false;
+                }
+            }
+            if (hasQueryStrings){
+                numberOfRecordsContainingQueryString++;
             }
         }
         return numberOfRecordsContainingQueryString;
@@ -209,8 +215,7 @@ public class ApiTest {
     public void testSyndicationAllObjectsInSubjectMods() throws XPathExpressionException, IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?format=mods&itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
-        Document document = parseModsString(get.getResponseBodyAsString());
-        int actualNumberOfRecords = extractXpathFromMods("/modsCollection/mods/recordInfo", document).getLength();
+        int actualNumberOfRecords = getNumberOfRecordsInMODSResault();
         assertEquals(10, actualNumberOfRecords);
     }
 
@@ -218,8 +223,7 @@ public class ApiTest {
     public void testSyndicationAllObjectsInSubject() throws XPathExpressionException, IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
-        Document document = parseModsString(get.getResponseBodyAsString());
-        int actualNumberOfRecords = extractXpathFromRSS("rss/channel/item", document).getLength();
+        int actualNumberOfRecords = getNumberOfRecordsInRSSResault();
         assertEquals(10, actualNumberOfRecords);
     }
 
@@ -239,12 +243,32 @@ public class ApiTest {
         logger.info(get.getResponseBodyAsString());
     }
 
+    private int getNumberOfRecordsInRSSResault(){
+        Document document = null;
+        try {
+            document = parseModsString(get.getResponseBodyAsString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        NodeList recordList = null;
+        try {
+            recordList = extractXpathFromRSS("rss/channel/item", document);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException(e);
+        }
+        return recordList.getLength();
+    }
+
+    private int getNumberOfRecordsInMODSResault() throws IOException, XPathExpressionException {
+        Document document = parseModsString(get.getResponseBodyAsString());
+        return extractXpathFromMods("/modsCollection/mods/recordInfo", document).getLength();
+    }
+
     @Test
     public void testSyndicationAllObjectsInSubject5ItemPerRequest() throws XPathExpressionException, IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?itemsPerPage=5", "list of objects");
         testConnectionToSolr(get.getStatusCode());
-        Document document = parseModsString(get.getResponseBodyAsString());
-        int actualNumberOfRecords = extractXpathFromRSS("rss/channel/item", document).getLength();
+        int actualNumberOfRecords = getNumberOfRecordsInRSSResault();
         assertEquals(5, actualNumberOfRecords);
     }
 
@@ -252,9 +276,10 @@ public class ApiTest {
     public void testSyndicationAllObjectsInSubjectInBBO() throws XPathExpressionException, IOException {
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
-        Document document = parseModsString(get.getResponseBodyAsString());
-        int actualNumberOfRecords = extractXpathFromRSS("rss/channel/item", document).getLength();
+        int actualNumberOfRecords = getNumberOfRecordsInRSSResault();
         assertEquals(10, actualNumberOfRecords);
+
+        Document document = parseModsString(get.getResponseBodyAsString());
         Coordinate[] coordinates = getCoordinatesFromRSS(document);
         checkIfAllCoordinatesAreInsideTheBoundingBox(coordinates, BOUNDING_BOX);
     }
@@ -264,22 +289,23 @@ public class ApiTest {
         String queryString = "jensen";
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=" + queryString + "&itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
+        int numberOfTheRecords = getNumberOfRecordsInRSSResault();
         Document document = parseModsString(get.getResponseBodyAsString());
         NodeList recordList = extractXpathFromRSS("rss/channel/item", document);
-        int numberOfTheRecords = recordList.getLength();
-        int numberOfRecordsContainingQueryString = getNumberOfRecordsContainingQueryString(recordList, queryString);
+        int numberOfRecordsContainingQueryString = getNumberOfRecordsContainingQueryString(recordList, new String[]{queryString});
         assertEquals(numberOfTheRecords, numberOfRecordsContainingQueryString);
     }
 
     @Test
     public void testSyndicationAllObjectsInSubjectInBBOWithFieldedSearchInMods() throws IOException, XPathExpressionException {
         String queryString = "person:jensen";
-        GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=" + queryString + "&itemsPerPage=10&itemsPerPage=10", "list of objects");
+        GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=" + queryString + "&format=mods&itemsPerPage=10&itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
         Document document = parseModsString(get.getResponseBodyAsString());
         NodeList recordList = extractXpathFromMods("/modsCollection/mods/subject/name/namePart", document);
         int numberOfTheRecords = recordList.getLength();
-        int numberOfRecordsContainingQueryString = getNumberOfRecordsContainingQueryString(recordList, queryString.split(":")[1]);
+        int numberOfRecordsContainingQueryString = getNumberOfRecordsContainingQueryString(recordList, new String[]{queryString.split(":")[1]});
+        logger.info(numberOfTheRecords + numberOfRecordsContainingQueryString);
         assertEquals(numberOfTheRecords, numberOfRecordsContainingQueryString);
     }
 
@@ -290,19 +316,26 @@ public class ApiTest {
     }
 
     @Test
-    public void testSyndicationAllThingsCombined() {
-        GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=person:sylvest+jensen%26location:fyn&random=0.8&itemsPerPage=10", "list of objects");
+    public void testSyndicationAllThingsCombined() throws IOException, XPathExpressionException {
+        String queryString = "person:sylvest+jensen%26location:fyn";
+        GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?bbo=" + BOUNDING_BOX + "&query=" + queryString + "&format=mods&random=0.8&itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
+        int numberOfTheRecords = getNumberOfRecordsInMODSResault();
+        Document document = parseModsString(get.getResponseBodyAsString());
+        NodeList recordList = extractXpathFromMods("/modsCollection/mods/name/namePart", document);
+        int numberOfRecordsContainingQueryString = getNumberOfRecordsContainingQueryString(recordList, new String[]{"sylvest", "jensen"});
+        assertEquals(numberOfTheRecords, numberOfRecordsContainingQueryString);
+        recordList = extractXpathFromMods("/modsCollection/mods/subject/geographic", document);
+        numberOfRecordsContainingQueryString = getNumberOfRecordsContainingQueryString(recordList, new String[]{"fyn"});
+        assertEquals(numberOfTheRecords, numberOfRecordsContainingQueryString);
     }
 
     // GET SINGLE OBJECTS
     @Test
-    public void testSyndicationObject() throws IOException, XPathExpressionException {
+    public void testSyndicationObject(){
         GetMethod get = getResponse(SYNDICATION_OBJECT_URI, "object");
         testConnectionToDB(get.getStatusCode(), 200);
-        Document document = parseModsString(get.getResponseBodyAsString());
-        NodeList recordList = extractXpathFromRSS("rss/channel/item", document);
-        int numberOfTheRecords = recordList.getLength();
+        int numberOfTheRecords = getNumberOfRecordsInRSSResault();
         assertEquals(1, numberOfTheRecords);
     }
 
@@ -310,8 +343,7 @@ public class ApiTest {
     public void testSyndicationObjectMods() throws IOException, XPathExpressionException {
         GetMethod get = getResponse(SYNDICATION_OBJECT_URI + "/da?format=mods", "object");
         testConnectionToDB(get.getStatusCode(), 200);
-        Document document = parseModsString(get.getResponseBodyAsString());
-        int actualNumberOfRecords = extractXpathFromMods("/modsCollection/mods/recordInfo", document).getLength();
+        int actualNumberOfRecords = getNumberOfRecordsInMODSResault();
         assertEquals(1, actualNumberOfRecords);
     }
 
@@ -483,7 +515,6 @@ public class ApiTest {
         close(post);
     }
 
-
     private int updateGeoService(PostMethod post) {
         try {
             client.executeMethod(post);
@@ -527,5 +558,4 @@ public class ApiTest {
     private static void close(org.apache.commons.httpclient.HttpMethod method) {
 	    method.releaseConnection();
     }
-
 }
