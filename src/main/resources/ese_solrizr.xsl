@@ -422,7 +422,7 @@
 
     <xsl:choose>
       <xsl:when test="$mods//md:mods/md:relatedItem[md:identifier]">
-	<xsl:for-each select="$mods//md:mods/md:relatedItem[md:identifier]">
+	<xsl:for-each select="$mods//md:mods/md:relatedItem[md:relatedItem[@type='constituent'] and md:identifier]">
 	  <xsl:call-template name="make_page_field"/>
 	  <xsl:for-each select=".//md:relatedItem[@type='constituent' and md:identifier]">
 	    <xsl:sort order="{$sort_direction}" 
