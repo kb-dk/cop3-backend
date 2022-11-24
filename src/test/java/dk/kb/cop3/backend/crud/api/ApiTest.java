@@ -220,7 +220,7 @@ public class ApiTest {
     }
 
     @Test
-    public void testSyndicationAllObjectsInSubject() throws XPathExpressionException, IOException {
+    public void testSyndicationAllObjectsInSubject(){
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?itemsPerPage=10", "list of objects");
         testConnectionToSolr(get.getStatusCode());
         int actualNumberOfRecords = getNumberOfRecordsInRSSResault();
@@ -265,7 +265,7 @@ public class ApiTest {
     }
 
     @Test
-    public void testSyndicationAllObjectsInSubject5ItemPerRequest() throws XPathExpressionException, IOException {
+    public void testSyndicationAllObjectsInSubject5ItemPerRequest(){
         GetMethod get = getResponse(SYNDICATION_SUBJECT_URI + "?itemsPerPage=5", "list of objects");
         testConnectionToSolr(get.getStatusCode());
         int actualNumberOfRecords = getNumberOfRecordsInRSSResault();
@@ -526,7 +526,7 @@ public class ApiTest {
         return post.getStatusCode();
     }
 
-    private PostMethod prepareUpdatePost(double lat, double lon, String lastmodified) throws FileNotFoundException {
+    private PostMethod prepareUpdatePost(double lat, double lon, String lastmodified) {
         post = new PostMethod();
         post.setPath(HOST_NAME + UPDATE_SERVICE_URI + OBJECT_URI);
         post.setParameter("lat", Double.toString(lat));
