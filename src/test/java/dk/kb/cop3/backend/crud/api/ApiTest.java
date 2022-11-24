@@ -556,6 +556,6 @@ public class ApiTest {
     }
 
     private static void close(org.apache.commons.httpclient.HttpMethod method) {
-	    method.releaseConnection();
+        method.releaseConnection();
     }
 }

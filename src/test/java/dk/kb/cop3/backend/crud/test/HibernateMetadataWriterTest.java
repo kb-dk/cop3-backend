@@ -99,9 +99,8 @@ public class HibernateMetadataWriterTest {
 
 
     @Test
-    public void updateGeo() throws XPathExpressionException {
+    public void updateGeo() {
         HibernateMetadataWriter metadataWriter = new HibernateMetadataWriter(session);
-        String testMods = TestUtil.getTestMods();
         TestUtil.createAndSaveDefaultTestCobject(TestUtil.TEST_ID, metadataWriter, session);
         final Object savedCopject = TestUtil.getCobject(TestUtil.TEST_ID, session);
         double x = savedCopject.getPoint().getCoordinate().getX();
