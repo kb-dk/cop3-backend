@@ -8,7 +8,6 @@
 
     <entry key="cop2_backend.baseurl">http://localhost:8080/cop</entry>
     <entry key="cop2_backend.internal.baseurl">http://localhost:8080/cop</entry>
-    <entry key="annotation.baseurl">http://localhost:8080/annotation</entry>
     <entry key="solr.baseurl">http://localhost:50006//solr/cop-editions</entry>
 
     <entry key="database.url">jdbc:postgresql://localhost:25432/cop</entry>
