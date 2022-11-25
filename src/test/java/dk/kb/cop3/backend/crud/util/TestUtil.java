@@ -33,6 +33,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.TimeZone;
+
 import static java.math.BigInteger.valueOf;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,6 +43,7 @@ public class TestUtil {
     public final static String TEST_ID = "/images/luftfo/2011/maj/luftfoto/object000000000000";
 
     public static String getTestMods() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Copenhagen"));
         try {
             return Files.readString(Path.of(LUFTFOTO_MODS_FILE), StandardCharsets.UTF_8);
         } catch (IOException e) {

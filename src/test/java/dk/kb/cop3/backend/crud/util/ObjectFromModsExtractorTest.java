@@ -4,7 +4,6 @@ import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import java.io.FileInputStream;
@@ -14,35 +13,21 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.TimeZone;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: jac
- * Date: 14-04-11
- * Time: 13:07
- * To change this template use File | Settings | File Templates.
- */
 public class ObjectFromModsExtractorTest {
-
-    /**
-     * The logger called myLogger
-     */
-    private static Logger myLogger = Logger.getLogger(ObjectFromModsExtractorTest.class);
-
     private static String mods = null;
-//    private static String themeMods = null;
-
     private static final String LUFTFOTO_MODS_FILE = "src/test/resources/testdata/luftfoto_object182167.mods.xml";
     private static final String BOOK_MODS_FILE = "src/test/resources/testdata/boghis_object4724.mods.xml";
-
 
     ObjectFromModsExtractor objectFromModsExtractor = ObjectFromModsExtractor.getInstance();
 
     @BeforeAll
     public static void initTests() throws IOException {
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Copenhagen"));
         CopBackendProperties.initialize(new FileInputStream("src/test/resources/cop_config.xml"));
     }
 
@@ -120,7 +105,7 @@ public class ObjectFromModsExtractorTest {
      */
     @Test
     public void testExtractInDifferentFormats(){
-        Date dates[] = objectFromModsExtractor.extractInDifferentFormats("1950");
+        Date[] dates = objectFromModsExtractor.extractInDifferentFormats("1950");
         assertEquals("Sun Jan 01 00:00:00 CET 1950", dates[0].toString());
         assertEquals("Sun Jan 01 00:00:00 CET 1950", dates[1].toString());
 
