@@ -89,7 +89,7 @@ public class ApiTest {
         post = new PostMethod();
     }
 
-     @Nested
+    @Nested
     @DisplayName("Syndication service")
     class syndicationServiceTests {
         @Test
