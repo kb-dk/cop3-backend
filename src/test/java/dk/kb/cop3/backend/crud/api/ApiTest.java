@@ -1,7 +1,6 @@
 package dk.kb.cop3.backend.crud.api;
 import dk.kb.cop3.backend.commonutils.DomUtils;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
-import dk.kb.cop3.backend.constants.DatacontrollerConstants;
 import dk.kb.cop3.backend.crud.database.HibernateMetadataWriter;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.update.Reformulator;
@@ -34,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class ApiTest {
     private static final String COP_CONFIG = "src/test/resources/cop_config.xml";
+    private final static int CONN_TIMEOUT = 120000;
+
     private static String HOST_NAME = "";
     static HttpClient client = new HttpClient();
     static GetMethod get;
@@ -71,8 +72,8 @@ public class ApiTest {
     @BeforeAll
     public static void initTest() throws Exception {
         CopBackendProperties.initialize(new FileInputStream(COP_CONFIG));
-        client.getHttpConnectionManager().getParams().setConnectionTimeout(DatacontrollerConstants.CONN_TIMEOUT);
-        client.getHttpConnectionManager().getParams().setSoTimeout(DatacontrollerConstants.CONN_TIMEOUT);
+        client.getHttpConnectionManager().getParams().setConnectionTimeout(CONN_TIMEOUT);
+        client.getHttpConnectionManager().getParams().setSoTimeout(CONN_TIMEOUT);
         HOST_NAME = CopBackendProperties.getCopBackendUrl();
         logger.debug("Hostname:"+ HOST_NAME);
         builder = factory.newDocumentBuilder();
