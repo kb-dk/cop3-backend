@@ -21,7 +21,6 @@ public class ReformulatorTest {
     public void runTest() {
 	this.text = this.getDocument();
 	Reformulator rf = new Reformulator(text);
-    // TODO: tilføj manglende felter
 	rf.changeField("title","This is the new title");
     rf.changeField("note","This is a note");
 //    rf.changeField("name","this is the new name");

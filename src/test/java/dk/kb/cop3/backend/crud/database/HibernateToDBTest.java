@@ -22,10 +22,11 @@ public class HibernateToDBTest {
 
     private static Session session;
     private static final String LODFOTO = "Lodfoto";
-    private static HibernateMetadataSource hibernateMetadataSource;
+    private static SolrMetadataSource solrMetadataSource;
      private static HibernateMetadataWriter mdw;
     private static final String HIBERNATE_TEST_CATEGORY = "Hibernate-test-category";
     private static final String KATEGORI_TEKST = "slet denne test";
+
     private static final String MODS_FILE = "testdata/cumulus-ex/_OM/205/master_records/L0717_04.tif-mods.xml";
     private static final String TEST_ID = "/images/luftfo/2011/maj/luftfoto/objectTest";
     private static final double ORIGINAL_LON = 10.177794479921577;
@@ -38,7 +39,7 @@ public class HibernateToDBTest {
         SessionFactory sessions = cfg.buildSessionFactory();
         session = sessions.openSession();
         TestUtil.deleteFromDatabase(Object.class, TEST_ID, session);
-        hibernateMetadataSource = new HibernateMetadataSource(session);
+        solrMetadataSource = new SolrMetadataSource(session);
     }
 
     @AfterAll
@@ -65,8 +66,8 @@ public class HibernateToDBTest {
     @Test
     public void typeExistsTest() {
         int konstantID = Types.getTypeByName(LODFOTO);
-        hibernateMetadataSource.setType("" + konstantID);
-        Type type = hibernateMetadataSource.getType();
+        solrMetadataSource.setType("" + konstantID);
+        Type type = solrMetadataSource.getType();
         assertEquals(type.getTypeText(), LODFOTO);
     }
 
@@ -74,18 +75,18 @@ public class HibernateToDBTest {
     public void createAndFindCategory() {
         Category nyCat = new Category(HIBERNATE_TEST_CATEGORY, KATEGORI_TEKST);
         session.save(nyCat);
-        hibernateMetadataSource.setCategory(HIBERNATE_TEST_CATEGORY);
-        assertEquals(nyCat.getCategoryText(), hibernateMetadataSource.getCategory().getCategoryText());
+        solrMetadataSource.setCategory(HIBERNATE_TEST_CATEGORY);
+        assertEquals(nyCat.getCategoryText(), solrMetadataSource.getCategory().getCategoryText());
         //findCategory
-        hibernateMetadataSource.setCategory(HIBERNATE_TEST_CATEGORY);
-        Category cat = hibernateMetadataSource.getCategory();
+        solrMetadataSource.setCategory(HIBERNATE_TEST_CATEGORY);
+        Category cat = solrMetadataSource.getCategory();
         assertEquals(cat.getCategoryText(), KATEGORI_TEKST);
     }
 
     @Test
     public void findEdition() {
-        hibernateMetadataSource.setEdition("/images/luftfo/2011/maj/luftfoto");
-        Edition ed = hibernateMetadataSource.getEdition();
+        solrMetadataSource.setEdition("/images/luftfo/2011/maj/luftfoto");
+        Edition ed = solrMetadataSource.getEdition();
         assertEquals(ed.getName(), "Luftfoto");
     }
 

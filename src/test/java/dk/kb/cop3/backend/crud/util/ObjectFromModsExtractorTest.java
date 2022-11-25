@@ -39,8 +39,6 @@ public class ObjectFromModsExtractorTest {
         Transaction transaction = ses.beginTransaction();
         copject = objectFromModsExtractor.extractFromMods(copject, mods, ses);
         transaction.commit();
-
-   //     assertEquals("Sylvest Jensen", copject.getCreator());
         assertEquals("Overgård - 1988", copject.getTitle());
         assertEquals("/images/luftfo/2011/maj/luftfoto/object182167", copject.getId());
         assertEquals("Iris og Børge Jensen, gårdejere",copject.getPerson());

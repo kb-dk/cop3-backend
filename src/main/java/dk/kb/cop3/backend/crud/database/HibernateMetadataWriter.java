@@ -143,10 +143,6 @@ public class HibernateMetadataWriter implements MetadataWriter {
     @Override
     public String updateGeo(String id, double lat, double lon, String user, String lastModified, double correctness) {
         Transaction trans = hibSession.beginTransaction();
-/*
-        NativeQuery sqlQuery = hibSession.createSQLQuery("alter session set optimizer_mode=first_rows");
-        sqlQuery.executeUpdate();
-*/
         try {
             Object existingCobject = (Object)hibSession.get(Object.class, id);
             // For now we allow for lastmodified to be null (not provided)
