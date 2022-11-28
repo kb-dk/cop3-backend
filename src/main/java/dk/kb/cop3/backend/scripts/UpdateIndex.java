@@ -7,6 +7,7 @@ import dk.kb.cop3.backend.solr.CopSolrClient;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +27,7 @@ public class UpdateIndex {
 
         Session session = HibernateUtil.getSessionFactory().openSession();
         CopSolrClient solrHelper = new CopSolrClient(session);
-        if ("all".equals(mode)) {
+        if ("all".equals(mode) || "edition".equals(mode)) {
             int pageSize = 1000;
             int startPage = 0;
             if (args.length > 1) {
@@ -36,10 +37,15 @@ public class UpdateIndex {
             for (int pageNo = startPage; pageNo == startPage || !objects.isEmpty(); pageNo++) {
                 logger.info("fetching object from oracle. page: "+pageNo);
                 Transaction trans = session.beginTransaction();
-                objects = session.createQuery("from Object o order by o.lastModified desc")
-                        .setMaxResults(pageSize)
-                        .setFirstResult(pageNo * pageSize)
-                        .list();
+                Query query;
+                if ("edition".equals(mode)) {
+                    String eid = args[2];
+                    query = session.createQuery("from Object o where o.edition.id='"+eid+"'order by o.lastModified desc");
+                } else {
+                    query = session.createQuery("from Object o order by o.lastModified desc");
+                }
+                logger.info("query "+query.getQueryString());
+                objects = query.setMaxResults(pageSize).setFirstResult(pageNo * pageSize).list();
                 trans.commit();
                 session.clear();
                 logger.info("index objects");
