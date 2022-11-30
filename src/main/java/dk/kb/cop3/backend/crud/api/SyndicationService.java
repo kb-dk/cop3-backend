@@ -150,16 +150,13 @@ public class SyndicationService {
         if (subjectId != null) {
             // quick fix for problem with category identifiers containing lang
             // always append '/da/'
-            logger.debug("setting subject id: " + subjectId + "/" + language + "/");
             mds.setCategory(subjectId + "/" + language + "/");
         }
         if (objectId != null) {
-            logger.debug("setting Searchterms id: " + editionId + "/" + id + "/");
             mds.setSearchterms("id", editionId + "/" + id);
         }
 
         if (searchwide == null || searchwide.equals("")) {   // ABWE OKT 2011: THIS IS THE WORST cgi-param hacks in the history of modern computing
-            logger.debug("searching for edition.");
             mds.setEdition(editionId);
         }
         if (notAfter != null) {

@@ -38,7 +38,6 @@ public class HibernateUtil {
     }
 
 
-
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
 
@@ -46,7 +45,6 @@ public class HibernateUtil {
 
     @Deprecated
     public static Type getType(Session ses, String text) {
-        //Type x = (Type) ses.load(Type.class, new BigDecimal("1"));
         List types = ses.createCriteria(Type.class)
                 .add(Restrictions.like("typeText", text + "%"))
                 .list();
@@ -61,7 +59,6 @@ public class HibernateUtil {
             myLogger.error("to many types with " + text + " found in database ");
             return null;
         } else {
-            myLogger.debug("Found " +  types.get(0));
             return (Type) types.get(0);
         }
 
@@ -69,7 +66,6 @@ public class HibernateUtil {
 
     @Deprecated
     public static Edition getEditionbyUrlname(Session ses, String searchStringtext) {
-        //Type x = (Type) ses.load(Type.class, new BigDecimal("1"));
         List editions = ses.createCriteria(Edition.class)
                 .add(Restrictions.like("urlName", searchStringtext + "%"))
                 .list();
@@ -84,7 +80,6 @@ public class HibernateUtil {
             myLogger.error("to many edition with " + searchStringtext + " found in database ");
             return null;
         } else {
-            myLogger.debug("Found " +  editions.get(0));
             return (Edition) editions.get(0);
         }
     }
@@ -121,7 +116,6 @@ public class HibernateUtil {
             myLogger.error("too many categories with " + searchStringtext + " found in database ");
             return null;
         } else {
-            myLogger.debug("Found " + (Category) categories.get(0));
             return (Category) categories.get(0);
         }
     }
@@ -129,25 +123,18 @@ public class HibernateUtil {
 
     public static Edition getEditionById(Session ses, String id) {
         Edition ed = ses.get(Edition.class, id);
-        myLogger.debug("Found " + id + " edition " + ed.getName());
         return ed;
     }
 
     public static Type getTypeById(Session ses, int id) {
         Type t = ses.get(Type.class, new BigDecimal(id));
-
-        myLogger.debug("Found " + id + " type " + t);
         return t;
     }
 
 
     public static Category getCategoryElseCreate(Session ses, String id, String categoryText) {
-        myLogger.debug(" ID: " + id + " categoryText: " + categoryText);
-
         java.lang.Object o;
-
         try {
-            //o = ses.load(Category.class, id);
             o = ses.get(Category.class, id);
         } catch (ObjectNotFoundException one) {
             myLogger.info("ObjectNotFoundException ");
@@ -164,11 +151,9 @@ public class HibernateUtil {
             newCategory.setId(id);
             newCategory.setCategoryText(categoryText);
             ses.save(newCategory);
-            myLogger.info("Create new category " + newCategory);
             return newCategory;
         } else {
             Category cat = (Category) o;
-            myLogger.debug("Found " + id + " category " + cat);
             return cat;
         }
     }
