@@ -17,6 +17,7 @@ import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.xalan.processor.TransformerFactoryImpl;
 import org.hibernate.Session;
+import org.hibernate.sql.Update;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -84,7 +85,7 @@ public class CopSolrClient {
         Session session = HibernateUtil.getSessionFactory().openSession();
         List<Edition> editions;
         try {
-            editions = session.createQuery("from Edition").list();
+            editions = session.createQuery("from Edition where visiblePublic = '1'").list();
         } catch (Exception e) {
             log.error("Error getting edition from database",e);
             return false;
@@ -92,10 +93,11 @@ public class CopSolrClient {
             session.close();
         }
         HttpSolrClient client = new HttpSolrClient.Builder(solrUrl).build();
+        UpdateRequest update;
         for (Edition edition : editions) {
             SolrInputDocument doc = getSolrDocFromEdition(edition);
             try {
-                UpdateRequest update = new UpdateRequest();
+                update = new UpdateRequest();
                 update.add(doc);
                 UpdateResponse response = update.process(client);
                 if (response.getStatus() != 0) {
@@ -119,8 +121,7 @@ public class CopSolrClient {
         return updateWentOK;
     }
 
-    public  boolean updateCategoriesSolrForEdition(String editionId, String categoryId) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+    public  boolean updateCategoriesSolrForEdition(String editionId) {
         Edition edition = session.get(Edition.class,editionId);
         if (edition != null) {
             String solr_url = CopBackendProperties.getSolrBaseurl();
@@ -128,12 +129,10 @@ public class CopSolrClient {
             HttpSolrClient solr = new HttpSolrClient.Builder(solr_url).build();
             try {
                 if (removeCurrentCategoriesFromSolr(topCategoryId, solr)) return false;
-                String solrXml = getSolrXMLfromOPML(edition.getOpml(),editionId,categoryId);
+                String solrXml = getSolrXMLfromOPML(edition.getOpml(),editionId,topCategoryId);
                 return addNewCategoriesToSolr(solr, solrXml);
             } catch (SolrException | IOException | SolrServerException e) {
                 log.error("Unable to update categories in solr",e);
-            } finally {
-                session.close();
             }
         }
         return false;

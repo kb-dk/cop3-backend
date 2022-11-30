@@ -199,6 +199,11 @@ public class CreateService {
             return Response.status(500).build();
         }
         ses.getTransaction().commit();
+        CopSolrClient solrClient = new CopSolrClient(ses);
+        solrClient.updateCategoriesSolrForEdition(editionId);
+        if(ses.isOpen()) {
+            ses.close();
+        }
         return Response.status(201).build();
     }
 }

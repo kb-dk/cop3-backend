@@ -62,7 +62,7 @@ public class SolrizrService {
 		if (id.startsWith("object")) {
 			updateWentOk = copSolrClient.updateCobjectInSolr(cop_id,true);
 		} else {
-			updateWentOk = copSolrClient.updateCategoriesSolrForEdition(edition_id,id);
+			updateWentOk = copSolrClient.updateCategoriesSolrForEdition(edition_id);
 		}
 		if (updateWentOk) {
 			return Response.ok().build();
