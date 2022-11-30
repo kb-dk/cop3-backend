@@ -129,21 +129,24 @@ public class ObjectFromModsExtractorTest {
 
     @Test
     public void testExtractFromModsModsNull() {
-        try{
-            objectFromModsExtractor.extractFromMods(new Object(), null, null);
-            fail();
-        } catch (NullPointerException exception){
-            assertTrue(true);
-        }
+        Throwable error = assertThrows(RuntimeException.class, () ->
+                objectFromModsExtractor.extractFromMods(new Object(), null, null));
+        assertEquals( "java.lang.NullPointerException", error.toString());
     }
 
+//    @Test
+//    public void testExtractFromModsCopjectNull() {
+//        try{
+//            objectFromModsExtractor.extractFromMods(null, mods, null);
+//            fail();
+//        } catch (IllegalArgumentException exception){
+//            assertTrue(true);
+//        }
+//    }
     @Test
     public void testExtractFromModsCopjectNull() {
-        try{
-            objectFromModsExtractor.extractFromMods(null, mods, null);
-            fail();
-        } catch (IllegalArgumentException exception){
-            assertTrue(true);
-        }
+        Throwable error = assertThrows(RuntimeException.class, () -> objectFromModsExtractor.extractFromMods(null, mods, null));
+        assertEquals("java.lang.IllegalArgumentException: copject cannot be null", error.toString());
+        assertEquals("copject cannot be null", error.getMessage());
     }
 }
