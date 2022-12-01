@@ -100,7 +100,7 @@ public class DescriptionService {
             DOMResult result = new DOMResult();
 
             SessionFactory fact = HibernateUtil.getSessionFactory();
-            session = fact.getCurrentSession();
+            session = fact.openSession();
             session.beginTransaction();
             Edition editionObj = (Edition) session.get(Edition.class, editionId);
             session.getTransaction().commit();

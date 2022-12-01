@@ -89,7 +89,7 @@ public class HibernateDbLayer implements I_OaiDbLayer {
     public OaiRecordData getRecord(String id) throws OAIInternalServerError {
         Session session = null;
         try {
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session = HibernateUtil.getSessionFactory().openSession();
             session.beginTransaction();
             Object cObject = session.get(Object.class, id);
             session.getTransaction().commit();
@@ -110,7 +110,7 @@ public class HibernateDbLayer implements I_OaiDbLayer {
 
     @Override
     public List<Edition> getSets() throws OAIInternalServerError {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         try {
             return session.createQuery("SELECT e FROM Edition e", Edition.class).getResultList();

@@ -98,7 +98,7 @@ public class UserService {
     @Path("/add-to-score-in-area")
     @Produces("text/plain")
     public Response postWithGeoCoords(@FormParam("pid") String pid, @FormParam("points") String points,  @FormParam("lat") double lat, @FormParam("lng") double lng) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         UserProvisioningService userProvisioningService = new UserProvisioningService(session);
         GeoProvisioningService geoProvisioningService = new GeoProvisioningService(session);
         Transaction transaction = session.beginTransaction();

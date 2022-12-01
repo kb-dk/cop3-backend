@@ -51,7 +51,7 @@ public class EditionService {
 
         } else {    // default
             myLogger.debug("Get Editions. ");
-            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            Session session = HibernateUtil.getSessionFactory().openSession();
             session.beginTransaction();
 
             language = (language.equals("")) ? "da" : language;
