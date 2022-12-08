@@ -12,7 +12,7 @@
             <column name="TYPE_ID" precision="22" scale="0" not-null="true" />
         </many-to-one>
         <many-to-one name="edition" class="dk.kb.cop3.backend.crud.database.hibernate.Edition" fetch="select">
-            <column name="EID" length="1024" not-null="true" />
+            <column name="EID" length="1024" not-null="true" index="object_edition_index" />
         </many-to-one>
         <property name="mods" type="text">
             <column name="MODS" not-null="true" />
@@ -79,16 +79,16 @@
                 <column name="OID" length="1024" not-null="true" />
             </key>
             <many-to-many entity-name="dk.kb.cop3.backend.crud.database.hibernate.Category">
-                <column name="CID" length="1024" not-null="true" />
+                <column name="CID" length="1024" not-null="true" index="object_cid_index"/>
             </many-to-many>
         </set>
 
         <set name="keywords" table="TAG_JOIN" inverse="false" lazy="true" fetch="select">
             <key>
-                <column name="OID" length="1024" not-null="false" />
+                <column name="OID" length="1024" not-null="false" index="keyword_oid_index"/>
             </key>
             <many-to-many entity-name="dk.kb.cop3.backend.crud.database.hibernate.Tag">
-                <column name="TID" length="1024" not-null="false" />
+                <column name="TID" length="1024" not-null="false" index="keyword_tid_index"/>
             </many-to-many>
         </set>
 
@@ -96,7 +96,7 @@
             <key>
                 <column name="XLINK_TO" length="1024" not-null="true" />
             </key>
-            <one-to-many class="dk.kb.cop3.backend.crud.database.hibernate.Comment" />
+            <one-to-many class="dk.kb.cop3.backend.crud.database.hibernate.Comment"/>
         </set>
 
     </class>
