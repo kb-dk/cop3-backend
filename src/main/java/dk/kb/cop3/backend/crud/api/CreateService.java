@@ -179,9 +179,8 @@ public class CreateService {
         String editionId = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition;
         logger.info("PUT Opml Edition ID" + editionId + "opml " + opml);
 
-        SessionFactory fact = HibernateUtil.getSessionFactory();
-        Session ses = fact.getCurrentSession();
-        ses.beginTransaction();
+        Session ses = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = ses.beginTransaction();
         try {
             Edition editionObject = ses.get(Edition.class, editionId);
             if (editionObject == null) {
@@ -190,15 +189,15 @@ public class CreateService {
                 return Response.status(404).build();
             }
             editionObject.setOpml(opml);
+            logger.info("updating opml");
             ses.update(editionObject);
+            transaction.commit();
         } catch (HibernateException ex) {
             logger.warn("Error updating OPML " + ex.getMessage());
-            ses.getTransaction().rollback();
-            ex.printStackTrace();
+            transaction.rollback();
             ses.close();
             return Response.status(500).build();
         }
-        ses.getTransaction().commit();
         CopSolrClient solrClient = new CopSolrClient(ses);
         solrClient.updateCategoriesSolrForEdition(editionId);
         if(ses.isOpen()) {

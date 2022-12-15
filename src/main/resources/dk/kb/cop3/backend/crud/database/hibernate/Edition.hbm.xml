@@ -87,7 +87,7 @@
 
         <set name="objects" table="OBJECT" inverse="true" lazy="true" fetch="select">
             <key>
-                <column name="EID" length="1024" not-null="true" />
+                <column name="EID" length="1024" not-null="true" index="edition_oid_index"/>
             </key>
             <one-to-many class="dk.kb.cop3.backend.crud.database.hibernate.Object" />
         </set>

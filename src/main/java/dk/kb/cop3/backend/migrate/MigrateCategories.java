@@ -17,7 +17,7 @@ public class MigrateCategories {
         MigrationUtils.initializeMigration();
         Session oraSession = MigrationUtils.getOracleSession();
         SessionFactory psqlSessfac = MigrationUtils.getPostgresSessionFactory();
-        List<CategoryOracle> categories = oraSession.createQuery("FROM CategoryOracle").list();
+        List<CategoryOracle> categories = oraSession.createQuery("FROM CategoryOracle c where c.id like '/images/luftfo/2011/maj/luftfoto%'").list();
 
         categories.stream()
                 .map(ObjectConverter::convertCategory)
@@ -29,7 +29,7 @@ public class MigrateCategories {
         logger.debug("Saving category "+category);
         Session session = sessFac.openSession();
         Transaction trans = session.beginTransaction();
-        session.save(category);
+        session.saveOrUpdate(category);
         trans.commit();
         session.close();
     }

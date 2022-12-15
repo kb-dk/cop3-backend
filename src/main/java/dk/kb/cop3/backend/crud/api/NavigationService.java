@@ -87,9 +87,6 @@ public class NavigationService {
 
         // This is what the edition looks like
         String editionId = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition;
-
-        String subjectId = (id.indexOf("subject") > -1) ? editionId + "/" + id : null ;
-
         // The caching key is the concatenation of everything
         String cacheKey =   "edition:" + editionId + ";" +
                 "id:" + id + ";" +

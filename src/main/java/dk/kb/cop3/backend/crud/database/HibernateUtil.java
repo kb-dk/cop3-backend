@@ -19,7 +19,7 @@ import java.util.List;
 public class HibernateUtil {
 
 
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+    private static SessionFactory sessionFactory = buildSessionFactory();
     private static final Logger myLogger = Logger.getLogger(HibernateUtil.class);
 
     private static SessionFactory buildSessionFactory() {
@@ -39,6 +39,9 @@ public class HibernateUtil {
 
 
     public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            sessionFactory = buildSessionFactory();
+        }
         return sessionFactory;
 
     }

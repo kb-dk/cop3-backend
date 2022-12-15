@@ -16,7 +16,7 @@
                 <column name="CID" length="1024" not-null="true" />
             </key>
             <many-to-many entity-name="dk.kb.cop3.backend.crud.database.hibernate.Object">
-                <column name="OID" length="1024" not-null="true" />
+                <column name="OID" length="1024" not-null="true" index="category_oid_index"/>
             </many-to-many>
         </set>
     </class>

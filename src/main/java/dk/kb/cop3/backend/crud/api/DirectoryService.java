@@ -30,7 +30,7 @@ public class DirectoryService {
             @PathParam("lang") String language,
             @DefaultValue("rss") @QueryParam("format") String format
     ) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
 
         language = (language.equals("")) ? "da" : language;
