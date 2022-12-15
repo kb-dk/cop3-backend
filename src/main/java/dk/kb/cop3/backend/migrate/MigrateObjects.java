@@ -15,8 +15,6 @@ public class MigrateObjects {
 
     private static Logger logger = Logger.getLogger(MigrateObjects.class);
 
-
-
     public static void main(String[] args) {
         MigrationUtils.initializeMigration();
         Session oraSession = MigrationUtils.getOracleSession();
@@ -31,14 +29,14 @@ public class MigrateObjects {
         List<ObjectOracle> objects = new ArrayList<>();
         for (int pageNo = startPage; pageNo == startPage || !objects.isEmpty(); pageNo++) {
             logger.info("fetching object from oracle. Firstresult:"+pageNo*pageSize);
-            objects = oraSession.createQuery("from ObjectOracle")
+            objects = oraSession.createQuery("from ObjectOracle o where o.edition.id = '/images/luftfo/2011/maj/luftfoto'")
                     .setMaxResults(pageSize)
                     .setFirstResult(pageNo * pageSize)
                     .list();
             Session psqlSession = psqlSessfac.openSession();
             Transaction trans = psqlSession.beginTransaction();
-            logger.info("Saving objects");
             objects.stream()
+                    .filter(oraObject -> {return "/images/luftfo/2011/maj/luftfoto".equals(oraObject.getEdition().getId());})
                     .map(oraObject -> ObjectConverter.convertObject(oraObject))
                     .forEach(Object -> {
                         saveObjectInPostgres(psqlSession, Object);
@@ -53,6 +51,7 @@ public class MigrateObjects {
     }
 
     private static void saveObjectInPostgres(Session session, Object object) {
+        logger.info("saving "+object.getId());
         session.saveOrUpdate(object);
     }
 
