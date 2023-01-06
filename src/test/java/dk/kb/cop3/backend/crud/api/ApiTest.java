@@ -242,7 +242,7 @@ public class ApiTest {
                 RequestEntity entity = new StringRequestEntity(modsWithTestId, "application/xml", "UTF-8");
                 put.setRequestEntity(entity);
                 client.executeMethod(put);
-                assertEquals(200, put.getStatusCode());
+                assertEquals(201, put.getStatusCode());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
