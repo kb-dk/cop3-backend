@@ -13,12 +13,5 @@ services:
       -  ./postgres-init.d:/docker-entrypoint-initdb.d
     ports:
       - "25432:5432"
-  solr:
-    container_name: solr
-    hostname: solr
-    image: solr:9.0
-    restart: always
-    ports:
-      - "50006:8983"
          
 
