@@ -1,0 +1,6 @@
+v.3.0.0
+Initielt release af COP version 3
+- Skift fra Oracle til Postgres DB
+- Opgradering til Solr 9
+- Opgradering til Java 11
+
