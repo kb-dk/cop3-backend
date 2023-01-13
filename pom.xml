@@ -20,9 +20,6 @@
       <name>SBProjects Nexus Repo manager</name>
       <url>https://sbprojects.statsbiblioteket.dk/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
-    <!-- This needs to be overridden in projects with subproject, where the (sub)projects typically will be deployed to a
-          common site url based on the parent projects artifactId -->
-    <!-- <site> <id>sbforge-nexus</id> <name>SBForge Maven site</name> <url>${project.site.location}</url> </site> -->
   </distributionManagement>
 
   <scm>
