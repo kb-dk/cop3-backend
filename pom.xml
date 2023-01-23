@@ -289,9 +289,9 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <descriptorRefs>
-                <descriptorRef>jar-with-dependencies</descriptorRef>
-              </descriptorRefs>
+              <descriptors>
+                <descriptor>src/main/assembly/cop-jar.xml</descriptor>
+              </descriptors>
             </configuration>
           </execution>
         </executions>
