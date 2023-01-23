@@ -16,5 +16,6 @@ public class CreateDB {
                 .setProperty(Environment.PASS,CopBackendProperties.getDatabasePassword())
                 .setProperty(Environment.HBM2DDL_AUTO,"update");
         configuration.buildSessionFactory();
+        logger.info("Database Created");
     }
 }
