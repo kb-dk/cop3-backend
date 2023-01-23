@@ -5,7 +5,7 @@
   <groupId>dk.kb</groupId>
   <artifactId>cop3-backend</artifactId>
   <packaging>war</packaging>
-  <version>3.0.2-SNAPSHOT</version>
+  <version>3.0.1-SNAPSHOT</version>
   <name>cop3-backend</name>
   <url>http://maven.apache.org</url>
 
