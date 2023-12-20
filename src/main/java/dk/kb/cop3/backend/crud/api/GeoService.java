@@ -2,14 +2,11 @@ package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.constants.DSFLAreas;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
-import dk.kb.cop3.backend.crud.exception.AreaNotFoundException;
 import dk.kb.cop3.backend.crud.services.GeoProvisioningService;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ws.rs.*;
-import java.util.Arrays;
-import java.util.List;
 
 @Path("/geo-services")
 public class GeoService {

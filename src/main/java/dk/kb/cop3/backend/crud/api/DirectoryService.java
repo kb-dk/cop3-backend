@@ -3,7 +3,6 @@ package dk.kb.cop3.backend.crud.api;
 import dk.kb.cop3.backend.crud.database.HibernateEditionSource;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.format.DirectoryFormulator;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
