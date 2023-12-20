@@ -1,16 +1,17 @@
 package dk.kb.cop3.backend.migrate;
 
 import dk.kb.cop3.backend.migrate.hibernate.XLinkOracle;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class MigrateXLink {
-    private static Logger logger = Logger.getLogger(MigrateXLink.class);
+    private static final Logger logger = LoggerFactory.getLogger(MigrateXLink.class);
 
     public static void main(String[] args) {
         MigrationUtils.initializeMigration();

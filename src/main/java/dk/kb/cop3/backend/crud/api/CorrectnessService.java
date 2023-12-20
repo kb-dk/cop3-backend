@@ -2,7 +2,8 @@ package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.crud.database.CorrectnessDAO;
 import dk.kb.cop3.backend.crud.database.CorrectnessDAOImpl;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -10,7 +11,7 @@ import javax.ws.rs.core.Response;
 @Path("/correctness")
 public class CorrectnessService {
 
-    private static Logger logger = Logger.getLogger(CorrectnessService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CorrectnessService.class);
 
 
     @GET

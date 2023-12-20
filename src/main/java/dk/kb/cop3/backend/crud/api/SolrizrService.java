@@ -3,8 +3,9 @@ package dk.kb.cop3.backend.crud.api;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.solr.CopSolrClient;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ import javax.ws.rs.core.UriInfo;
 @Path("/solrizr")
 public class SolrizrService {
 
-	private static final Logger logger = Logger.getLogger(SolrizrService.class);
+	private static final Logger logger = LoggerFactory.getLogger(SolrizrService.class);
 
 	// TODO: do we need this
 	@Context

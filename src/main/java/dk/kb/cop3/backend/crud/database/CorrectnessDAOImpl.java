@@ -1,10 +1,11 @@
 package dk.kb.cop3.backend.crud.database;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 
@@ -15,7 +16,7 @@ import java.math.BigDecimal;
  */
 public class CorrectnessDAOImpl implements CorrectnessDAO {
 
-    private static Logger logger = Logger.getLogger(CorrectnessDAOImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CorrectnessDAOImpl.class);
 
     @Override
     public double getCorrectness(String objectUri) throws Exception {

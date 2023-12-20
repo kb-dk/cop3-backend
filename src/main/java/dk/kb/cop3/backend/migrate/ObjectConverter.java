@@ -11,17 +11,17 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import oracle.spatial.geometry.JGeometry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
-
 public class ObjectConverter {
 
-    private static final Logger logger = Logger.getLogger(ObjectConverter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ObjectConverter.class);
 
     public static Edition convertEdition(EditionOracle editionOracle) {
         Edition edition = new Edition();

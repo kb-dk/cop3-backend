@@ -1,6 +1,8 @@
 package dk.kb.cop3.backend.crud.oai.server.catalog;
 
 import ORG.oclc.oai.server.catalog.RecordFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,7 +16,7 @@ import java.util.Properties;
  * To change this template use File | Settings | File Templates.
  */
 public class COP2RecordFactory extends RecordFactory {
-   private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(COP2RecordFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(COP2RecordFactory.class);
 
    /**
      * Construct an COPRecordFactory capable of producing the Crosswalk(s)

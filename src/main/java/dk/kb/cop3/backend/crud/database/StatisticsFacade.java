@@ -2,8 +2,9 @@ package dk.kb.cop3.backend.crud.database;
 
 import dk.kb.cop3.backend.crud.model.StatisticsAllInfoPublic;
 import dk.kb.cop3.backend.crud.model.StatisticsForAnEditionPublic;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -26,7 +27,7 @@ public class StatisticsFacade {
         this.session = session;
     }
 
-    private static final Logger logger = Logger.getLogger(StatisticsFacade.class);
+    private static final Logger logger = LoggerFactory.getLogger(StatisticsFacade.class);
 
     public StatisticsForAnEditionPublic getStatsForCategoryAndEdition(String eid, String catId) {
         ensureSessionHasActiveTransaction();

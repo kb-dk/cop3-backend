@@ -1,9 +1,10 @@
 package dk.kb.cop3.backend.crud.database;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.Long;
 import java.util.Iterator;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public class HibernateEditionSource {
 
-    private static final Logger logger = Logger.getLogger(HibernateEditionSource.class);
+    private static final Logger logger = LoggerFactory.getLogger(HibernateEditionSource.class);
 
     Edition edition = null;
 

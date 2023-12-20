@@ -1,12 +1,13 @@
 package dk.kb.cop3.backend.migrate;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
-import org.apache.log4j.Logger;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateDB {
-    private static Logger logger = Logger.getLogger(CreateDB.class);
+    private static final Logger logger = LoggerFactory.getLogger(CreateDB.class);
     public static void main(String[] args) {
         MigrationUtils.initializeMigration();
         Configuration configuration = new Configuration();

@@ -1,6 +1,8 @@
 package dk.kb.cop3.backend.constants;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
@@ -14,7 +16,7 @@ import java.util.Properties;
  */
 public class CopBackendProperties {
 
-     private static Logger logger = Logger.getLogger(CopBackendProperties.class);
+    private static final Logger logger = LoggerFactory.getLogger(CopBackendProperties.class);
 
     private static Properties props = null;
 
@@ -25,10 +27,10 @@ public class CopBackendProperties {
         try {
             props.loadFromXML(input);
         } catch (InvalidPropertiesFormatException e) {
-            logger.fatal("Invalid properties");
+            logger.error("Invalid properties");
             throw new RuntimeException(e);
         } catch (IOException e) {
-            logger.fatal("Error reading properties");
+            logger.error("Error reading properties");
             throw new RuntimeException(e);
         }
     }

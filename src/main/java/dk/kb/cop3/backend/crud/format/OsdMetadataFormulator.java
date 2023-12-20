@@ -1,5 +1,7 @@
 package dk.kb.cop3.backend.crud.format;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
@@ -16,8 +18,7 @@ public class OsdMetadataFormulator extends MetadataFormulator {
     private String copBaseUrl = CopBackendProperties.getCopBackendUrl();
     private String baseUrl    = copBaseUrl + "/syndication";
 
-    org.apache.log4j.Logger logger =
-            org.apache.log4j.Logger.getLogger(OsdMetadataFormulator.class.getPackage().getName());
+	protected Logger logger = LoggerFactory.getLogger(OsdMetadataFormulator.class.getPackage().getName());
 
     private java.lang.String xslt     = "/build_mods.xsl";
     private java.lang.String template = "/template_mods_collection.xml";

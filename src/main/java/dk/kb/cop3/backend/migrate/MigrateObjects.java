@@ -2,18 +2,19 @@ package dk.kb.cop3.backend.migrate;
 
 import dk.kb.cop3.backend.migrate.hibernate.ObjectOracle;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MigrateObjects {
 
-    private static Logger logger = Logger.getLogger(MigrateObjects.class);
+    private static final Logger logger = LoggerFactory.getLogger(MigrateObjects.class);
 
     public static void main(String[] args) {
         MigrationUtils.initializeMigration();

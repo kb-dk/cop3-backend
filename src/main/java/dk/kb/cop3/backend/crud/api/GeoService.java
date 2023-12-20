@@ -13,7 +13,7 @@ import java.util.List;
 
 @Path("/geo-services")
 public class GeoService {
-    static final Logger LOGGER = LoggerFactory.getLogger(GeoService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GeoService.class);
 
     /**
      *
@@ -50,7 +50,7 @@ public class GeoService {
     }
 
     private String getArea(@FormParam("lat") double latitude, @FormParam("lng") double longitude) {
-        LOGGER.debug("GEOSERVICE POST GET lat:" + latitude + " longitude " + longitude );
+        logger.debug("GEOSERVICE POST GET lat:" + latitude + " longitude " + longitude );
         Session session = HibernateUtil.getSessionFactory().openSession();
         GeoProvisioningService geoProvisioningService = new GeoProvisioningService(session);
         DSFLAreas area = geoProvisioningService.getAreaNotDanmark(latitude,longitude);

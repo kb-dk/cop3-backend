@@ -4,9 +4,11 @@ import dk.kb.cop3.backend.crud.database.*;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.solr.CopSolrClient;
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,7 +18,7 @@ import javax.ws.rs.core.Response;
 // The class binds to /syndication
 @Path("/update")
 public class UpdateService {
-    private static Logger logger = Logger.getLogger(UpdateService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UpdateService.class);
     /**
      * Post-service. Receives updated fields or geoPoint
      * POST http://localhost:8080/cop/update/uri

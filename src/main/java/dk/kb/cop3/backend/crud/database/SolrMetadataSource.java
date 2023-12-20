@@ -7,7 +7,6 @@ import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -23,6 +22,8 @@ import org.apache.solr.common.SolrDocument;
 import org.hibernate.query.Query;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -40,7 +41,7 @@ import java.util.*;
  */
 public class SolrMetadataSource implements MetadataSource {
 
-    private static final Logger logger = Logger.getLogger(SolrMetadataSource.class);
+    private static final Logger logger = LoggerFactory.getLogger(SolrMetadataSource.class);
 
     protected static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 

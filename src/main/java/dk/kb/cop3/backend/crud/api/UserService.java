@@ -7,10 +7,11 @@ import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.services.GeoProvisioningService;
 import dk.kb.cop3.backend.crud.services.UserProvisioningService;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
@@ -27,7 +28,7 @@ import javax.ws.rs.core.Response;
 @Path("/user-services")
 public class UserService {
 
-    static final Logger LOGGER = Logger.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     /**
      * Get a user from the COPII back-end
@@ -50,7 +51,7 @@ public class UserService {
         try {
             return userService.fetchOrCreateUserReturnUserJson(pid, id, givenName, surName, commonName);
         } catch (HibernateException e) {
-            LOGGER.error("error getting user", e);
+            logger.error("error getting user", e);
             return e.getMessage();
         } finally {
             transaction.commit();
@@ -69,14 +70,14 @@ public class UserService {
     @Produces("text/plain")
     public String post(@FormParam("pid") String pid) {
 
-        LOGGER.debug("Got a request to find a user with pid: " + pid);
+        logger.debug("Got a request to find a user with pid: " + pid);
         Session session = HibernateUtil.getSessionFactory().openSession();
         UserProvisioningService userService = new UserProvisioningService(session);
         Transaction transaction = session.beginTransaction();
         try {
             return userService.getUserNameByPid(pid);
         } catch (HibernateException e) {
-            LOGGER.error("error getting username from pid", e);
+            logger.error("error getting username from pid", e);
             return e.getMessage();
         } finally {
             transaction.commit();
@@ -110,7 +111,7 @@ public class UserService {
             userProvisioningService.updateScoreInArea(pid, points, area);
             return  Response.ok().entity("score updated").build();
         } catch (HibernateException e) {
-            LOGGER.error("error getting username from pid", e);
+            logger.error("error getting username from pid", e);
             return Response.serverError().build();
         } finally {
             transaction.commit();
@@ -142,7 +143,7 @@ public class UserService {
                     .build();
             return myResponse;
         } catch (Exception ex) {
-            LOGGER.error("error getting topuser",ex);
+            logger.error("error getting topuser",ex);
             return Response.serverError().entity("error getting topusers").build();
         } finally {
             transaction.commit();
@@ -174,7 +175,7 @@ public class UserService {
                     .build();
             return myResponse;
         }catch (Exception ex) {
-            LOGGER.error("error getting topuser",ex);
+            logger.error("error getting topuser",ex);
             return Response.serverError().entity("error getting topusers").build();
         } finally {
             transaction.commit();

@@ -1,5 +1,7 @@
 package dk.kb.cop3.backend.crud.format;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -12,8 +14,7 @@ import org.w3c.dom.Element;
 
 public class ModsMetadataFormulator extends MetadataFormulator {
 
-    org.apache.log4j.Logger logger =
-            org.apache.log4j.Logger.getLogger(ModsMetadataFormulator.class.getPackage().getName());
+    protected Logger logger = LoggerFactory.getLogger(ModsMetadataFormulator.class.getPackage().getName());
 
     private java.lang.String xslt     = "/build_mods.xsl";
     private java.lang.String template = "/template_mods_collection.xml";

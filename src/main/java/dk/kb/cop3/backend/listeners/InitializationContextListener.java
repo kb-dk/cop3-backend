@@ -14,7 +14,7 @@ import java.io.InputStream;
 
 public class InitializationContextListener implements ServletContextListener {
 
-    static final Logger log = LoggerFactory.getLogger(InitializationContextListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(InitializationContextListener.class);
     public static String version;
 
     @Override
@@ -26,11 +26,11 @@ public class InitializationContextListener implements ServletContextListener {
             String configfile = (String) ctx.lookup("java:/comp/env/copBackendProperties");
             input = new FileInputStream(configfile);
         } catch (NamingException e) {
-            log.info("No properties file in context using default properties");
+            logger.info("No properties file in context using default properties");
             input = getClass().getResourceAsStream("/cop_config.xml");
 
         } catch (FileNotFoundException e) {
-            log.error("Cannot open propertiesfile",e);
+            logger.error("Cannot open propertiesfile",e);
             throw new RuntimeException(e);
         }
         CopBackendProperties.initialize(input);

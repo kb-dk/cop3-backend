@@ -3,7 +3,8 @@ package dk.kb.cop3.backend.crud.oai.server.catalog;
 import ORG.oclc.oai.server.catalog.AbstractCatalog;
 import ORG.oclc.oai.server.verb.*;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -20,7 +21,7 @@ import java.util.*;
 */
 
 public class COP2OAICatalog extends AbstractCatalog {
-    private static Logger logger = Logger.getLogger(COP2OAICatalog.class);
+    private static final Logger logger = LoggerFactory.getLogger(COP2OAICatalog.class);
     private static final String elementName = "md:mods";
     private static final String elementStart = "<" + elementName;
     private static final String elementEnd = elementName + "/>";

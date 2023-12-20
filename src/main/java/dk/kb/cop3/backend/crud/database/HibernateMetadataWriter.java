@@ -3,7 +3,6 @@ package dk.kb.cop3.backend.crud.database;
 import dk.kb.cop3.backend.crud.database.hibernate.AuditTrail;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.util.ObjectFromModsExtractor;
-import org.apache.log4j.Logger;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.HibernateException;
 
@@ -11,6 +10,8 @@ import org.hibernate.Transaction;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
@@ -18,7 +19,7 @@ import java.util.Date;
 
 
 public class HibernateMetadataWriter implements MetadataWriter {
-    private static Logger logger = Logger.getLogger(HibernateMetadataWriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(HibernateMetadataWriter.class);
     private org.hibernate.Session hibSession;
     public HibernateMetadataWriter(org.hibernate.Session hibSession) {
         this.hibSession = hibSession;

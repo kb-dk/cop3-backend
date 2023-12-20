@@ -3,12 +3,13 @@ package dk.kb.cop3.backend.crud.database;
 import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.model.SimpleSyndicationResponse;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public class SimpleSyndicationDaoImpl implements SimpleSyndicationDao {
 
-    static final Logger logger = Logger.getLogger(SimpleSyndicationDaoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleSyndicationDaoImpl.class);
 
     @Override
     public List<SimpleSyndicationResponse> getCobjects(String eid, String cid) {

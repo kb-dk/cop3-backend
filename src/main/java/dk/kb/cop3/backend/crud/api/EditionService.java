@@ -4,9 +4,10 @@ import dk.kb.cop3.backend.constants.Formats;
 import dk.kb.cop3.backend.crud.database.HibernateEditionSource;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.format.EditionMetadataFormulator;
-import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import javax.servlet.ServletContext;
@@ -24,7 +25,7 @@ import javax.ws.rs.core.Response;
  */
 @Path("/editions/")
 public class EditionService {
-    private static Logger myLogger = Logger.getLogger(EditionService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EditionService.class);
 
     @GET
     @Path("{nn:([^/]+?/)*}{lang:(da|en)?}")
@@ -43,14 +44,14 @@ public class EditionService {
 
         // Search Query provided. Do Syndication Service
         if (query != null && !query.equals("")) {
-            myLogger.debug("Doing wide search from an edition  using Syndication service ");
+            logger.debug("Doing wide search from an edition  using Syndication service ");
             SyndicationService syndicationService = new SyndicationService();    // TODO This might cause some problem if we start using the static cache in the SyndicationService.
             Response response = syndicationService.getObjects("syndication", "any", 2009, "jul", "edtions", "", language, format, 0.0d, 40, page, null, query, notBefore, notAfter, "SEARCHWIDE", "all",null, "randomNumber","asc", httpServletRequest, servletContext);
             syndicationService = null;
             return response;
 
         } else {    // default
-            myLogger.debug("Get Editions. ");
+            logger.debug("Get Editions. ");
             Session session = HibernateUtil.getSessionFactory().openSession();
             session.beginTransaction();
 
@@ -66,13 +67,13 @@ public class EditionService {
             formulator.setFormat(format.toString());
             formulator.setDataSource(source);
             Document responseDoc = formulator.formulate();
-            myLogger.debug("Formulator has returned");
+            logger.debug("Formulator has returned");
 
 
             // editions/any/2009/jul/editions/da/
 
             Response.ResponseBuilder res = Response.ok(responseDoc);
-            myLogger.debug("The response has been built");
+            logger.debug("The response has been built");
             session.beginTransaction().commit();
             return res.build();
         }

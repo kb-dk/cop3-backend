@@ -1,5 +1,7 @@
 package dk.kb.cop3.backend.crud.oai.server.crosswalk;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -25,7 +27,7 @@ import dk.kb.cop3.backend.crud.oai.server.catalog.OaiRecordData;
  * 
  */
 public class MetadataCreator {
-    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(MetadataCreator.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetadataCreator.class);
     private static TransformerFactory tf = TransformerFactory.newInstance();
     private static DocumentBuilderFactory dFactory = DocumentBuilderFactory.newInstance();
     private String xslt_file = "";

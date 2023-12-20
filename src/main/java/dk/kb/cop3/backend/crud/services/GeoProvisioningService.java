@@ -2,8 +2,9 @@ package dk.kb.cop3.backend.crud.services;
 
 import dk.kb.cop3.backend.constants.Areas;
 import dk.kb.cop3.backend.constants.DSFLAreas;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class GeoProvisioningService {
 
-    private static final Logger LOGGER = Logger.getLogger(GeoProvisioningService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GeoProvisioningService.class);
 
     private Session session;
 

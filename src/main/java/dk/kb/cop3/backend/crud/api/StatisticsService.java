@@ -5,9 +5,10 @@ import com.google.gson.GsonBuilder;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.StatisticsFacade;
 import dk.kb.cop3.backend.crud.model.StatisticsForAnEditionPublic;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
@@ -24,7 +25,7 @@ import java.util.Map;
 @Path("/statistics")
 public class StatisticsService {
 
-    static final Logger LOGGER = Logger.getLogger(StatisticsService.class);
+    private static final Logger logger = LoggerFactory.getLogger(StatisticsService.class);
 
 
 
@@ -32,7 +33,7 @@ public class StatisticsService {
        @Path("/info/")
        @Produces("text/plain")
        public Response getNumberOfElementsInEdition() {
-           LOGGER.info("Statistics info service COP-02 - Backend");
+           logger.info("Statistics info service COP-02 - Backend");
            return Response.ok("sample request: http://host:port/cop/statistics/correct/?eid=luftfo&cid=subject205  \n Danish chars: æøåÆØÅ.").build(); // Unsupported type
        }
 
@@ -69,7 +70,7 @@ public class StatisticsService {
         try {
              response = statisticsFacade.getStatsForCategoryAndEdition(editionId,categoryId);
         } catch (Exception e) {
-            LOGGER.error("error getting all statistics",e);
+            logger.error("error getting all statistics",e);
             return Response.serverError().build();
         } finally {
             transaction.commit();
@@ -104,7 +105,7 @@ public class StatisticsService {
         try {
              response = statisticsFacade.getAllStatistics();
         } catch (Exception e) {
-            LOGGER.error("error getting all statistics",e);
+            logger.error("error getting all statistics",e);
             return Response.serverError().build();
         } finally {
             transaction.commit();

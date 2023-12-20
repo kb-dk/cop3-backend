@@ -2,6 +2,8 @@ package dk.kb.cop3.backend.crud.oai.server.crosswalk;
 
 import ORG.oclc.oai.server.crosswalk.Crosswalk;
 import ORG.oclc.oai.server.verb.CannotDisseminateFormatException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
@@ -13,7 +15,7 @@ import java.util.Properties;
  * Lundberg.
  */
 public class COP2Object2mods extends Crosswalk {
-    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(COP2Object2mods.class);
+    private static final Logger logger = LoggerFactory.getLogger(COP2Object2mods.class);
     private MetadataCreator md = new MetadataCreator();
 
     /**

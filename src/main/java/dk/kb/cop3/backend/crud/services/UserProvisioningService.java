@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserProvisioningService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserProvisioningService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserProvisioningService.class);
     private static final int KB_USER_ROLE_ID = 1;
 
     private final Session session;
@@ -141,7 +141,7 @@ public class UserProvisioningService {
             user.setUserScore(user.getUserScore().add(new BigInteger(points)));
             user.setUserScore9(user.getUserScore9().add(new BigInteger(points)));
         } else {
-            LOGGER.error("No area to distribute points!!!");
+            logger.error("No area to distribute points!!!");
         }
         session.update(user);
     }

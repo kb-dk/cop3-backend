@@ -7,7 +7,7 @@ import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.format.MetadataFormulator;
 import dk.kb.cop3.backend.crud.format.SolrMetadataFormulator;
-import org.apache.log4j.Logger;
+import dk.kb.cop3.backend.scripts.UpdateIndex;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.DirectXmlRequest;
@@ -17,7 +17,8 @@ import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.xalan.processor.TransformerFactoryImpl;
 import org.hibernate.Session;
-import org.hibernate.sql.Update;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -38,7 +39,7 @@ import java.io.StringWriter;
 import java.util.List;
 
 public class CopSolrClient {
-    private static final Logger log = Logger.getLogger(CopSolrClient.class);
+    private static final Logger log = LoggerFactory.getLogger(CopSolrClient.class);
 
     private final Session session;
 

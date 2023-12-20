@@ -6,11 +6,13 @@ import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +22,7 @@ public class HibernateUtil {
 
 
     private static SessionFactory sessionFactory = buildSessionFactory();
-    private static final Logger myLogger = Logger.getLogger(HibernateUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(HibernateUtil.class);
 
     private static SessionFactory buildSessionFactory() {
         try {
@@ -53,13 +55,13 @@ public class HibernateUtil {
                 .list();
 
         if (types == null) {
-            myLogger.error("No types found in database related to " + text);
+            logger.error("No types found in database related to " + text);
             return null;
         } else if (types.size() == 0) {
-            myLogger.error("No types with " + text + " found in database ");
+            logger.error("No types with " + text + " found in database ");
             return null;
         } else if (types.size() != 1) {
-            myLogger.error("to many types with " + text + " found in database ");
+            logger.error("to many types with " + text + " found in database ");
             return null;
         } else {
             return (Type) types.get(0);
@@ -74,13 +76,13 @@ public class HibernateUtil {
                 .list();
 
         if (editions == null) {
-            myLogger.error("No types found in database related to " + searchStringtext);
+            logger.error("No types found in database related to " + searchStringtext);
             return null;
         } else if (editions.size() == 0) {
-            myLogger.error("No edition with " + searchStringtext + " found in database ");
+            logger.error("No edition with " + searchStringtext + " found in database ");
             return null;
         } else if (editions.size() > 1) {
-            myLogger.error("to many edition with " + searchStringtext + " found in database ");
+            logger.error("to many edition with " + searchStringtext + " found in database ");
             return null;
         } else {
             return (Edition) editions.get(0);
@@ -91,7 +93,7 @@ public class HibernateUtil {
     @Deprecated
     public static Object getCobject(Session ses, String id) {
         Object cobject =  ses.get(Object.class, id);
-        myLogger.debug(cobject);
+        logger.debug("cobject "+cobject);
         return cobject;
     }
 
@@ -99,7 +101,7 @@ public class HibernateUtil {
     public static Object getCobjectLastModified(Session ses, String id, Date timestamp) {
         Object cobject = (Object) ses.createCriteria(Object.class, id)
                 .add(Restrictions.eq("lastModified", timestamp)).uniqueResult();
-        myLogger.debug(cobject);
+        logger.debug("coject "+cobject);
         return cobject;
     }
 
@@ -110,13 +112,13 @@ public class HibernateUtil {
                 .list();
 
         if (categories == null) {
-            myLogger.error("No types found in database related to " + searchStringtext);
+            logger.error("No types found in database related to " + searchStringtext);
             return null;
         } else if (categories.size() == 0) {
-            myLogger.error("No category with " + searchStringtext + " found in database ");
+            logger.error("No category with " + searchStringtext + " found in database ");
             return null;
         } else if (categories.size() > 1) {
-            myLogger.error("too many categories with " + searchStringtext + " found in database ");
+            logger.error("too many categories with " + searchStringtext + " found in database ");
             return null;
         } else {
             return (Category) categories.get(0);
@@ -140,13 +142,13 @@ public class HibernateUtil {
         try {
             o = ses.get(Category.class, id);
         } catch (ObjectNotFoundException one) {
-            myLogger.info("ObjectNotFoundException ");
+            logger.info("ObjectNotFoundException ");
             o = null;
         } catch (HibernateException e) {
-            myLogger.debug("HibernateException " + e);
+            logger.debug("HibernateException " + e);
             o = null;
         } catch (Exception e) {
-            myLogger.debug("Exception " + e);
+            logger.debug("Exception " + e);
             o = null;
         }
         if (o == null || !(o instanceof Category)) {

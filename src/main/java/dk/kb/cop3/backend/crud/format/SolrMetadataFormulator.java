@@ -2,6 +2,8 @@ package dk.kb.cop3.backend.crud.format;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -20,8 +22,7 @@ public class SolrMetadataFormulator extends MetadataFormulator {
     private String copIntBaseUrl = CopBackendProperties.getCopBackendInternalBaseurl();
     private String internalBaseUrl = copIntBaseUrl + "/syndication";
 
-    org.apache.log4j.Logger logger =
-            org.apache.log4j.Logger.getLogger(SolrMetadataFormulator.class.getPackage().getName());
+    protected Logger logger = LoggerFactory.getLogger(SolrMetadataFormulator.class.getPackage().getName());
 
     private java.lang.String format = "mods";
     private java.lang.String xslt = "/build_mods.xsl";

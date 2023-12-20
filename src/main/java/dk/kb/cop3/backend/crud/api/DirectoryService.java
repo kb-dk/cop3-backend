@@ -3,9 +3,10 @@ package dk.kb.cop3.backend.crud.api;
 import dk.kb.cop3.backend.crud.database.HibernateEditionSource;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.format.DirectoryFormulator;
-import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import javax.ws.rs.*;
@@ -20,7 +21,7 @@ import javax.ws.rs.core.Response;
  */
 @Path("/directory")
 public class DirectoryService {
-    private static Logger myLogger = Logger.getLogger(DescriptionService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DescriptionService.class);
     private static final String dummyResponse = "<?xml version='1.0' encoding='UTF-8'?><rss version=\"2.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:md=\"http://www.loc.gov/mods/v3\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:opensearch=\"http://a9.com/-/spec/opensearch/1.1/\" xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"></channel></rss>";
 
     @GET
@@ -44,13 +45,13 @@ public class DirectoryService {
         formulator.setFormat(format);
         formulator.setDataSource(source);
         Document responseDoc = formulator.formulate();
-        myLogger.debug("Formulator has returned");
+        logger.debug("Formulator has returned");
         Response.ResponseBuilder res = Response.ok(responseDoc);
-        myLogger.debug("The response has been built");
+        logger.debug("The response has been built");
         session.flush();
         session.getTransaction().commit();
         if (session.isConnected()){
-            myLogger.debug("Closing Hibernate session as we're still connected");
+            logger.debug("Closing Hibernate session as we're still connected");
             session.close();
         }
 

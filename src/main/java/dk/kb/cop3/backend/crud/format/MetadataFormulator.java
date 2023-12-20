@@ -6,8 +6,9 @@ import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Tag;
 import dk.kb.cop3.backend.crud.database.hibernate.Comment;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -25,7 +26,6 @@ import java.util.Iterator;
 
 public abstract class MetadataFormulator {
 
-    Logger log = Logger.getLogger(MetadataFormulator.class);
 
     javax.xml.transform.TransformerFactory trans_fact
             = new org.apache.xalan.processor.TransformerFactoryImpl();
@@ -49,8 +49,7 @@ public abstract class MetadataFormulator {
     private java.lang.String language = "da";
     protected String currentRawMods;
 
-    org.apache.log4j.Logger logger =
-            org.apache.log4j.Logger.getLogger(ModsMetadataFormulator.class.getPackage().getName());
+    protected Logger logger = LoggerFactory.getLogger(ModsMetadataFormulator.class.getPackage().getName());
 
     /**
      * An empty constructor

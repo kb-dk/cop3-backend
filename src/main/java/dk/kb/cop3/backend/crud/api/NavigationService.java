@@ -3,11 +3,12 @@ package dk.kb.cop3.backend.crud.api;
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
-import org.apache.log4j.Logger;
 import org.apache.xalan.processor.TransformerFactoryImpl;
 import javax.xml.transform.stream.StreamSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -32,7 +33,7 @@ import java.io.StringReader;
 public class NavigationService {
 
     // Logger object
-    private static Logger logger = Logger.getLogger(NavigationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(NavigationService.class);
 
     // opml massage xslt
     // TODO: move to configuration

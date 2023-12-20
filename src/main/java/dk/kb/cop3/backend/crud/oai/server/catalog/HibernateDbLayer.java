@@ -9,6 +9,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
  * To change this template use File | Settings | File Templates.
  */
 public class HibernateDbLayer implements I_OaiDbLayer {
-    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(HibernateDbLayer.class);
+    private static final Logger logger = LoggerFactory.getLogger(HibernateDbLayer.class);
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     String copServerName;
 

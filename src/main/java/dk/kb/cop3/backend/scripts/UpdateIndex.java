@@ -4,7 +4,8 @@ import dk.kb.cop3.backend.constants.CopBackendProperties;
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.solr.CopSolrClient;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class UpdateIndex {
-    private static final Logger logger = Logger.getLogger(UpdateIndex.class);
+    private static final Logger logger = LoggerFactory.getLogger(UpdateIndex.class);
 
     public static void main(String[] args) {
         initialize();

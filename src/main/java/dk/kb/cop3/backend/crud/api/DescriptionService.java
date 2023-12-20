@@ -2,10 +2,11 @@ package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
-import org.apache.log4j.Logger;
 import org.apache.xalan.processor.TransformerFactoryImpl;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -43,7 +44,7 @@ import java.io.InputStream;
  */
 @Path("/description")
 public class DescriptionService {
-    private static Logger logger = Logger.getLogger(DescriptionService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DescriptionService.class);
 
     TransformerFactory trans_fact;
     private DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
@@ -89,11 +90,11 @@ public class DescriptionService {
                 InputStream in = this.getClass().getResourceAsStream(template);
                 descriptionTemplate = dBuilder.parse(in);
             } catch (ParserConfigurationException e) {
-                logger.error(e);
+                logger.error("Error parsing document",e);
             } catch (SAXException e) {
-                logger.error(e);
+                logger.error("Error parsing document",e);
             } catch (IOException e) {
-                logger.error(e);
+                logger.error("Error parsing document",e);
             }
 
             DOMSource source = new DOMSource(descriptionTemplate);

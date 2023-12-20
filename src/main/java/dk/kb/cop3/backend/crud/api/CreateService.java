@@ -8,11 +8,12 @@ import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.solr.CopSolrClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -26,7 +27,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/create")
 public class CreateService {
-    private static final Logger logger = Logger.getLogger(CreateService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CreateService.class);
 
     @GET
     @Path("/{medium}/{collection}/{year}/{month}/{edition}/{id}")

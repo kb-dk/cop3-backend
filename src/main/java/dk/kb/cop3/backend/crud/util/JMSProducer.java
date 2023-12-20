@@ -3,14 +3,15 @@ package dk.kb.cop3.backend.crud.util;
 import javax.jms.*;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 
 public class JMSProducer {
 
 
-    private static Logger logger = Logger.getLogger(JMSProducer.class);
+    private static final Logger logger = LoggerFactory.getLogger(JMSProducer.class);
 
     private Session session;
     private MessageProducer producer;

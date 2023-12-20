@@ -2,7 +2,8 @@ package dk.kb.cop3.backend.crud.api;
 
 import dk.kb.cop3.backend.crud.database.LikeDAO;
 import dk.kb.cop3.backend.crud.database.LikeDAOImpl;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -10,7 +11,7 @@ import javax.ws.rs.core.Response;
 @Path("/like")
 public class LikeService {
 
-    private static Logger logger = Logger.getLogger(LikeService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LikeService.class);
 
     @POST
     @Path("/{medium}/{collection}/{year}/{month}/{edition}/{id}")

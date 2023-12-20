@@ -6,13 +6,14 @@ import dk.kb.cop3.backend.crud.database.hibernate.Category;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
-import org.apache.log4j.Logger;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -47,7 +48,7 @@ public class ObjectFromModsExtractor {
     /**
      * The logger called logger
      */
-    private static Logger logger = Logger.getLogger(ObjectFromModsExtractor.class);
+    private static final Logger logger = LoggerFactory.getLogger(ObjectFromModsExtractor.class);
 
     private static XPathFactory factory = XPathFactory.newInstance();
     private static XPath xPath = factory.newXPath();

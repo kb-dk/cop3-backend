@@ -1,7 +1,8 @@
 package dk.kb.cop3.backend.crud.util;
 
 import dk.kb.cop3.backend.constants.Months;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * User: abwe
@@ -9,7 +10,7 @@ import org.apache.log4j.Logger;
  * Time: 3:25 PM
  */
 public class ValidatorPathParam {
-    private static Logger myLogger = Logger.getLogger(ValidatorPathParam.class);
+    private static final Logger logger = LoggerFactory.getLogger(ValidatorPathParam.class);
 
     public static boolean validateMonth(String aMonth) {
         return aMonth != null && !aMonth.isEmpty() && aMonth.length() == 3 &&

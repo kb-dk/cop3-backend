@@ -1,5 +1,8 @@
 package dk.kb.cop3.backend.crud.update;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.transform.stream.StreamSource;
 
 public class Reformulator {
@@ -7,8 +10,7 @@ public class Reformulator {
     private javax.xml.parsers.DocumentBuilderFactory dfactory =
             javax.xml.parsers.DocumentBuilderFactory.newInstance();
 
-    private org.apache.log4j.Logger logger =
-            org.apache.log4j.Logger.getLogger(Reformulator.class.getPackage().getName());
+    private static final Logger logger = LoggerFactory.getLogger(Reformulator.class.getPackage().getName());
 
     private javax.xml.transform.TransformerFactory transFact
             = new org.apache.xalan.processor.TransformerFactoryImpl();

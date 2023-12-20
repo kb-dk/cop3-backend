@@ -1,5 +1,8 @@
 package dk.kb.cop3.backend.crud.oai.server.crosswalk;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,12 +11,11 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.Source;
 import java.lang.String;
 import java.net.URL;
-import org.apache.log4j.Logger;
 
 public class LocalUriResolver implements URIResolver
 {
 
-    private static Logger logger = Logger.getLogger(MetadataCreator.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetadataCreator.class);
 
     public Source resolve(String fileName, String base) throws TransformerException
     {

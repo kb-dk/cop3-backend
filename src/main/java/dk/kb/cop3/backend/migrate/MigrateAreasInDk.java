@@ -2,16 +2,17 @@ package dk.kb.cop3.backend.migrate;
 
 import dk.kb.cop3.backend.migrate.hibernate.AreasInDkOracle;
 import dk.kb.cop3.backend.migrate.ObjectConverter;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class MigrateAreasInDk {
-    private static Logger logger = Logger.getLogger(MigrateAreasInDk.class);
+    private static final Logger logger = LoggerFactory.getLogger(MigrateAreasInDk.class);
 
     public static void main(String[] args) {
         MigrationUtils.initializeMigration();

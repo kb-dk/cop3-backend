@@ -5,7 +5,8 @@ import com.google.gson.GsonBuilder;
 import dk.kb.cop3.backend.crud.database.SimpleSyndicationDao;
 import dk.kb.cop3.backend.crud.database.SimpleSyndicationDaoImpl;
 import dk.kb.cop3.backend.crud.model.SimpleSyndicationResponse;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import javax.ws.rs.*;
@@ -23,7 +24,7 @@ import java.util.List;
 @Path("/api")
 public class SimpleSyndicationService {
 
-    static final Logger LOGGER = Logger.getLogger(SimpleSyndicationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleSyndicationService.class);
 
 
 
@@ -31,7 +32,7 @@ public class SimpleSyndicationService {
        @Path("/info/")
        @Produces("text/plain")
        public Response getNumberOfElementsInEdition() {
-           LOGGER.info("Simple Syndication service COP-02 - Backend");
+           logger.info("Simple Syndication service COP-02 - Backend");
            return Response.ok("sample request: http://host:port/cop/statistics/correct/?eid=luftfo&cid=subject205  \n Danish chars: æøåÆØÅ.").build(); // Unsupported type
        }
 
@@ -62,7 +63,7 @@ public class SimpleSyndicationService {
                                 @DefaultValue("") @QueryParam("cid") String categoryId) {
         List<SimpleSyndicationResponse> list = null;
 
-        LOGGER.info("getCojects: " + editionId);
+        logger.info("getCojects: " + editionId);
 
         SimpleSyndicationDao dao = new SimpleSyndicationDaoImpl();
 
@@ -95,7 +96,7 @@ public class SimpleSyndicationService {
                                @DefaultValue("") @QueryParam("cid") String categoryId) {
        List<SimpleSyndicationResponse> list  = null;
 
-       LOGGER.info("getCojects: " + editionId);
+       logger.info("getCojects: " + editionId);
        SimpleSyndicationDao dao = new SimpleSyndicationDaoImpl();
 
        try {

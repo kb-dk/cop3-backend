@@ -5,9 +5,10 @@ import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
 import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.format.*;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import javax.servlet.ServletContext;
@@ -42,7 +43,7 @@ public class SyndicationService {
     @Context
     UriInfo uriInfo;
 
-    private static final Logger logger = Logger.getLogger(SyndicationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SyndicationService.class);
 
     /**
      * This method binds to all syndication GET services
