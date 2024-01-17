@@ -100,7 +100,7 @@ public class CreateService {
         } else {
             session.delete(objectId,Object.class);
             session.close();
-            return Response.serverError().entity("error updating solr").build();
+            return Response.serverError().entity("error updating solr "+solrHelper.getErrorMsg()).build();
         }
 
     }
@@ -142,7 +142,7 @@ public class CreateService {
             return Response.ok().build();
         } else {
             session.close();
-            return Response.serverError().entity("error updating solr").build();
+            return Response.serverError().entity("error updating solr "+solrHelper.getErrorMsg()).build();
         }
     }
 

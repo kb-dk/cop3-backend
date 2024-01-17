@@ -7,7 +7,6 @@ import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 import dk.kb.cop3.backend.crud.format.MetadataFormulator;
 import dk.kb.cop3.backend.crud.format.SolrMetadataFormulator;
-import dk.kb.cop3.backend.scripts.UpdateIndex;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.DirectXmlRequest;
@@ -43,8 +42,14 @@ public class CopSolrClient {
 
     private final Session session;
 
+    private String errorMsg;
+
     public CopSolrClient(Session session) {
         this.session = session;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
     }
 
     private String getSolrXmlDocument(String id) {
@@ -75,6 +80,7 @@ public class CopSolrClient {
             }
             client.close();
         } catch (IOException | SolrServerException | SolrException e) {
+            errorMsg = e.getMessage();
             log.error("error updating object in solr: " + objectId + " ",e);
         }
         return updateWentOk;
