@@ -67,7 +67,7 @@ public class CopSolrClient {
         String solrUrl = CopBackendProperties.getSolrBaseurl();
         HttpSolrClient client= new HttpSolrClient.Builder(solrUrl).build();
         String xml = getSolrXmlDocument(objectId);
-        DirectXmlRequest xmlReq = new DirectXmlRequest("/update", xml);
+        DirectXmlRequest xmlReq = new DirectXmlRequest("/update", xml.replaceAll("[^\\p{ASCII}]", "").replaceAll("&.+?;", ""));
         try {
             UpdateResponse response = xmlReq.process(client);
             if (response.getStatus() == 0) {
