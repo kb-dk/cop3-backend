@@ -5,6 +5,7 @@ import dk.kb.cop3.backend.crud.database.HibernateUtil;
 import dk.kb.cop3.backend.crud.database.MetadataSource;
 import dk.kb.cop3.backend.crud.database.SolrMetadataSource;
 import dk.kb.cop3.backend.crud.format.*;
+import org.apache.commons.text.StringEscapeUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -126,6 +127,7 @@ public class SyndicationService {
             if (format == Formats.osd) {
                 rDoc = rDoc.replaceAll("</?[^>]*>", "");
             }
+            rDoc = StringEscapeUtils.unescapeHtml4(rDoc);
 
             Response.ResponseBuilder res = Response.ok(rDoc);
             res.type(mdf.mediaType());
