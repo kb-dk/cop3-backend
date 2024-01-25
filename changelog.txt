@@ -1,3 +1,8 @@
+v.3.0.2
+- fix logging fejl
+- fix problem med indexering af emojis
+v.3.0.1
+Skipped
 v.3.0.0
 Initielt release af COP version 3
 - Skift fra Oracle til Postgres DB
