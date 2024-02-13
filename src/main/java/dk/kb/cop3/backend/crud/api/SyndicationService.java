@@ -25,6 +25,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -46,6 +48,7 @@ public class SyndicationService {
 
     private static final Logger logger = LoggerFactory.getLogger(SyndicationService.class);
 
+    private static Pattern pattern = Pattern.compile("&#(\\d+);");
     /**
      * This method binds to all syndication GET services
      * the class ApiTest is the best reference for it
@@ -127,9 +130,8 @@ public class SyndicationService {
             if (format == Formats.osd) {
                 rDoc = rDoc.replaceAll("</?[^>]*>", "");
             }
-            rDoc = StringEscapeUtils.unescapeHtml4(rDoc);
 
-            Response.ResponseBuilder res = Response.ok(rDoc);
+            Response.ResponseBuilder res = Response.ok(unescapeUTF16Entities(rDoc));
             res.type(mdf.mediaType());
             res.header("Last-Modified-Time-Stamp", mdf.getLastModifiedTimeStamp());
             return res.build();
@@ -141,6 +143,17 @@ public class SyndicationService {
                 session.close();
             }
         }
+    }
+
+    public static String unescapeUTF16Entities(String html) {
+        Matcher matcher = pattern.matcher(html);
+        StringBuffer buffer = new StringBuffer();
+        while (matcher.find()) {
+            int codePoint = Integer.parseInt(matcher.group(1));
+            matcher.appendReplacement(buffer, Character.toString((char) codePoint));
+        }
+        matcher.appendTail(buffer);
+        return buffer.toString();
     }
 
     private void performSearch(String id, String language,
