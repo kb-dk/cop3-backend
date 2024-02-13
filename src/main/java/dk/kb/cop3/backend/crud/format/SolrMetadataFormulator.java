@@ -2,10 +2,13 @@ package dk.kb.cop3.backend.crud.format;
 
 import dk.kb.cop3.backend.constants.CopBackendProperties;
 
+import dk.kb.cop3.backend.crud.util.TransformErrorListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.xml.transform.ErrorListener;
 
 /**
  * Reads a MetadataSource returning mods data, creating SOLR an add document
@@ -33,7 +36,9 @@ public class SolrMetadataFormulator extends MetadataFormulator {
 
     public SolrMetadataFormulator() {
         this.steps[0] = this.trInit("/mods2ese.xsl");
+        this.steps[0].setErrorListener(new TransformErrorListener("mods2ese.xsl"));
         this.steps[1] = this.trInit("/ese_solrizr.xsl");
+        this.steps[1].setErrorListener(new TransformErrorListener("ese_solrizr.xml"));
     }
 
     public Document formulate() {
@@ -63,7 +68,7 @@ public class SolrMetadataFormulator extends MetadataFormulator {
                     dom_result = new javax.xml.transform.dom.DOMResult();
                 }
             } catch (javax.xml.transform.TransformerException trnsFrmPrblm) {
-                logger.debug(trnsFrmPrblm.getMessage());
+                logger.warn("transformer problem "+trnsFrmPrblm.getMessage());
             }
         }
         return solr_doc;

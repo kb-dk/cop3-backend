@@ -142,13 +142,13 @@ public class HibernateUtil {
         try {
             o = ses.get(Category.class, id);
         } catch (ObjectNotFoundException one) {
-            logger.info("ObjectNotFoundException ");
+            logger.warn("ObjectNotFoundException ");
             o = null;
         } catch (HibernateException e) {
-            logger.debug("HibernateException " + e);
+            logger.warn("HibernateException " + e);
             o = null;
         } catch (Exception e) {
-            logger.debug("Exception " + e);
+            logger.warn("Exception " + e);
             o = null;
         }
         if (o == null || !(o instanceof Category)) {

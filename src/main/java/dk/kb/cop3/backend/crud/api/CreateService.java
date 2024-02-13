@@ -178,7 +178,6 @@ public class CreateService {
             String opml) {
 
         String editionId = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition;
-        logger.info("PUT Opml Edition ID" + editionId + "opml " + opml);
 
         Session ses = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = ses.beginTransaction();
