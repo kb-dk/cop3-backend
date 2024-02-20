@@ -1,3 +1,6 @@
+v.3.0.3
+- fixet problem med emojis i commentarer
+- fjernet overflødige logbeskeder
 v.3.0.2
 - fix logging fejl
 - fix problem med indexering af emojis
