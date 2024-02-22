@@ -1,3 +1,6 @@
+v.3.0.4
+- fjernet activemq dependency
+- fjernet gammel JSM kode (blev ikke brugt længere)
 v.3.0.3
 - fixet problem med emojis i commentarer
 - fjernet overflødige logbeskeder
