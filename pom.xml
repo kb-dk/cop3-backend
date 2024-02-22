@@ -145,11 +145,6 @@
       <version>2.10</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-all</artifactId>
-      <version>5.17.2</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj</artifactId>
       <version>8.11.2</version>
@@ -183,7 +178,7 @@
     <artifactId>jersey-media-jaxb</artifactId>
     <version>${jersey-version}</version>
 </dependency>
-    
+
     <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
     <dependency>
       <groupId>javax.xml.bind</groupId>
