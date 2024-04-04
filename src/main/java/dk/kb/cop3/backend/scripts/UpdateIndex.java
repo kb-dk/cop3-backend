@@ -28,7 +28,7 @@ public class UpdateIndex {
 
         Session session = HibernateUtil.getSessionFactory().openSession();
         CopSolrClient solrHelper = new CopSolrClient(session);
-        if ("all".equals(mode) || "edition".equals(mode)) {
+        if ("all".equals(mode) || "edition".equals(mode) || "subject".equals(mode)) {
             int pageSize = 1000;
             int startPage = 0;
             if (args.length > 1) {
@@ -41,7 +41,10 @@ public class UpdateIndex {
                 Query query;
                 if ("edition".equals(mode)) {
                     String eid = args[2];
-                    query = session.createQuery("from Object o where o.edition.id='"+eid+"'order by o.lastModified desc");
+                    query = session.createQuery("from Object o where o.edition.id='" + eid + "' order by o.lastModified desc");
+                } else if ("subject".equals(mode))  {
+                    String cid = args[2];
+                    query = session.createQuery("from Object o where o.categories.id='+"+cid+"' order by o.lastModified desc");
                 } else {
                     query = session.createQuery("from Object o order by o.lastModified desc");
                 }
@@ -49,9 +52,10 @@ public class UpdateIndex {
                 objects = query.setMaxResults(pageSize).setFirstResult(pageNo * pageSize).list();
                 trans.commit();
                 session.clear();
-                logger.info("index objects");
+                logger.info("index objects :"+objects.size());
                 for(int i = 0; i < objects.size(); i++) {
                     boolean commit = i == objects.size()-1;
+                    logger.info("indexing "+objects.get(i).getId());
                     solrHelper.updateCobjectInSolr(objects.get(i).getId(),commit);
                 }
             }

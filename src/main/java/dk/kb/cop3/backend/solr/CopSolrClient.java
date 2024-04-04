@@ -36,10 +36,19 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CopSolrClient {
     private static final Logger log = LoggerFactory.getLogger(CopSolrClient.class);
 
+    private static final Pattern pattern = Pattern.compile(
+            "[\\x{1F600}-\\x{1F64F}\\x{1F300}-\\x{1F5FF}\\x{1F680}-\\x{1F6FF}\\x{2600}-\\x{26FF}\\x{2700}-\\x{27BF}]",
+            Pattern.UNICODE_CHARACTER_CLASS);
+
+    private static final Pattern pattern2 = Pattern.compile(
+            "&#\\d+;",
+            Pattern.UNICODE_CHARACTER_CLASS);
     private final Session session;
 
     private String errorMsg;
@@ -67,7 +76,7 @@ public class CopSolrClient {
         String solrUrl = CopBackendProperties.getSolrBaseurl();
         HttpSolrClient client= new HttpSolrClient.Builder(solrUrl).build();
         String xml = getSolrXmlDocument(objectId);
-        DirectXmlRequest xmlReq = new DirectXmlRequest("/update", xml.replaceAll("[^\\p{ASCII}]", "").replaceAll("&.+?;", ""));
+        DirectXmlRequest xmlReq = new DirectXmlRequest("/update", removeEmojis(xml));
         try {
             UpdateResponse response = xmlReq.process(client);
             if (response.getStatus() == 0) {
@@ -238,6 +247,13 @@ public class CopSolrClient {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String removeEmojis(String text) {
+        Matcher matcher = pattern.matcher(text);
+        String result = matcher.replaceAll("");
+        matcher = pattern2.matcher(result);
+        return matcher.replaceAll("");
     }
 
 }
