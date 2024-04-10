@@ -1,3 +1,6 @@
+v.3.0.6
+- opdateret solrj version
+- gennemtving lukning af http forbindelser til solr efter søgning
 v.3.0.5
 - fixet problemer med æøå i index.
 v.3.0.4
