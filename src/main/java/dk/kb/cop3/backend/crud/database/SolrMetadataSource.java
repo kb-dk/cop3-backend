@@ -7,6 +7,7 @@ import dk.kb.cop3.backend.crud.database.hibernate.Edition;
 
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.database.hibernate.Type;
+import dk.kb.cop3.backend.solr.CopSolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -365,10 +366,10 @@ public class SolrMetadataSource implements MetadataSource {
 
 
     private void solrSearch() {
+        String solr_url = CopBackendProperties.getSolrUrl();
+        HttpSolrClient solr = new HttpSolrClient.Builder(solr_url).build();
         try {
-            String solr_url = CopBackendProperties.getSolrUrl();
             logger.debug("Solr url "+solr_url);
-            HttpSolrClient solr = new HttpSolrClient.Builder(solr_url).build();
             SolrQuery query = new SolrQuery();
 
             Set<String> fields = searchterms.keySet();
@@ -542,6 +543,12 @@ public class SolrMetadataSource implements MetadataSource {
             logger.error(serverProblem.getMessage(),serverProblem);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            try {
+                solr.close();
+            } catch (IOException e) {
+                logger.warn("Error closing solr client ",e);
+            }
         }
     }
 

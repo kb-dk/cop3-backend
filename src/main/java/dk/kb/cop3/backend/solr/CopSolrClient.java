@@ -87,17 +87,17 @@ public class CopSolrClient {
             if (doCommit) {
                 client.commit();
             }
-            client.close();
         } catch (IOException | SolrServerException | SolrException e) {
             errorMsg = e.getMessage();
             log.error("error updating object in solr: " + objectId + " ",e);
+        } finally {
+            closeSolrClient(client);
         }
         return updateWentOk;
     }
 
     public boolean updateEditionsInSolr() {
         boolean updateWentOK = false;
-        String solrUrl = CopBackendProperties.getSolrBaseurl();
         Session session = HibernateUtil.getSessionFactory().openSession();
         List<Edition> editions;
         try {
@@ -108,6 +108,8 @@ public class CopSolrClient {
         } finally {
             session.close();
         }
+
+        String solrUrl = CopBackendProperties.getSolrBaseurl();
         HttpSolrClient client = new HttpSolrClient.Builder(solrUrl).build();
         UpdateRequest update;
         for (Edition edition : editions) {
@@ -129,10 +131,11 @@ public class CopSolrClient {
         }
         try {
             client.commit();
-            client.close();
         } catch (SolrServerException | IOException | SolrException e) {
             updateWentOK = false;
             log.error("Error committing editions solr", e);
+        } finally {
+            closeSolrClient(client);
         }
         return updateWentOK;
     }
@@ -140,15 +143,17 @@ public class CopSolrClient {
     public  boolean updateCategoriesSolrForEdition(String editionId) {
         Edition edition = session.get(Edition.class,editionId);
         if (edition != null) {
-            String solr_url = CopBackendProperties.getSolrBaseurl();
             String topCategoryId = edition.getCumulusTopCatagory();
-            HttpSolrClient solr = new HttpSolrClient.Builder(solr_url).build();
+            String solrUrl = CopBackendProperties.getSolrBaseurl();
+            HttpSolrClient client = new HttpSolrClient.Builder(solrUrl).build();
             try {
-                if (removeCurrentCategoriesFromSolr(topCategoryId, solr)) return false;
+                if (removeCurrentCategoriesFromSolr(topCategoryId, client)) return false;
                 String solrXml = getSolrXMLfromOPML(edition.getOpml(),editionId,topCategoryId);
-                return addNewCategoriesToSolr(solr, solrXml);
+                return addNewCategoriesToSolr(client, solrXml);
             } catch (SolrException | IOException | SolrServerException e) {
                 log.error("Unable to update categories in solr",e);
+            } finally {
+                closeSolrClient(client);
             }
         }
         return false;
@@ -159,7 +164,6 @@ public class CopSolrClient {
         DirectXmlRequest xmlReq = new DirectXmlRequest("/update", solrXml);
         response = xmlReq.process(solr);
         solr.commit();
-        solr.close();
         if (response.getStatus() != 0) {
             log.error("Unable to update categories "+response);
             return false;
@@ -246,6 +250,16 @@ public class CopSolrClient {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            closeSolrClient(client);
+        }
+    }
+
+    private static void closeSolrClient(HttpSolrClient client) {
+        try {
+            client.close();
+        } catch (IOException e) {
+            log.warn("Error closing solr client",e);
         }
     }
 
