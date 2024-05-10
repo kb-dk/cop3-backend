@@ -223,7 +223,7 @@ public abstract class MetadataFormulator {
             throw new NullPointerException("No data source available");
         }
 
-        String baseUrl = CopBackendProperties.getDatabaseUrl();
+        String baseUrl = CopBackendProperties.getCopBackendUrl();
 
         javax.xml.transform.Transformer transformer = null;
 
