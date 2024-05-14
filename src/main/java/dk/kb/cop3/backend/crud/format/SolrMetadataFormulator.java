@@ -9,6 +9,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.ErrorListener;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 
 /**
  * Reads a MetadataSource returning mods data, creating SOLR an add document
@@ -42,13 +45,26 @@ public class SolrMetadataFormulator extends MetadataFormulator {
     }
 
     public Document formulate() {
-        org.w3c.dom.Document solr_doc = (org.w3c.dom.Document) null;
+        Document solr_doc = (org.w3c.dom.Document) null;
 
-        org.w3c.dom.Document src = this.formulate(this.format, this.template, this.xslt);
-        javax.xml.transform.dom.DOMSource dom_source = new javax.xml.transform.dom.DOMSource(src);
-        javax.xml.transform.dom.DOMResult dom_result = new javax.xml.transform.dom.DOMResult();
+        Document src = this.formulate(this.format, this.template, this.xslt);
+        DOMSource dom_source = new DOMSource(src);
+        DOMResult dom_result = new DOMResult();
 
-        for (int i = 0; i < steps.length; i++) {
+        Transformer mods2solr = this.trInit("/mods_solrizr.xsl");
+        mods2solr.setErrorListener(new TransformErrorListener("mods_solrizr.xsl"));
+        mods2solr.setParameter("metadata_context", copBaseUrl);
+        mods2solr.setParameter("url_prefix", baseUrl);
+        mods2solr.setParameter("internal_url_prefix", internalBaseUrl);
+        mods2solr.setParameter("raw_mods", this.currentRawMods);
+        mods2solr.setParameter("content_context", CopBackendProperties.getGuiUri());
+        try {
+            mods2solr.transform(dom_source,dom_result);
+        } catch (javax.xml.transform.TransformerException trnsFrmPrblm) {
+            logger.warn("transformer problem "+trnsFrmPrblm.getMessage());
+        }
+        solr_doc = (Document) dom_result.getNode();
+/*        for (int i = 0; i < 1; i++) {
             if (steps[i] == null) {
                 logger.debug("end of civilization: steps[" + i + "] is null");
                 return null;
@@ -70,7 +86,7 @@ public class SolrMetadataFormulator extends MetadataFormulator {
             } catch (javax.xml.transform.TransformerException trnsFrmPrblm) {
                 logger.warn("transformer problem "+trnsFrmPrblm.getMessage());
             }
-        }
+        }*/
         return solr_doc;
     }
 
