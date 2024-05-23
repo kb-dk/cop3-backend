@@ -237,7 +237,6 @@ public class ObjectFromModsExtractor {
                         String subId = subject.getAttributes().getNamedItem("href").getTextContent();
                         if (!subId.contains("subject0") && subId.contains("subject")) {
                             String absoluteSubjectId = editionString + subId.replace("../..", "");
-                            logger.debug("Setting category: " + absoluteSubjectId);
                             Category tempCat = HibernateUtil.getCategoryElseCreate(session, absoluteSubjectId, name);
                             copject.getCategories().add(tempCat);
                         }
