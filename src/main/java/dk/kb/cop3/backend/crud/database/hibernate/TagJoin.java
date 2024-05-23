@@ -42,4 +42,11 @@ public class TagJoin implements Serializable {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
+
+    @Override
+    public boolean equals(java.lang.Object obj) {
+        return obj.getClass() == this.getClass() &&
+                this.object.getId() == ((TagJoin) obj).object.getId() &&
+                this.tag.getId() == ((TagJoin) obj).tag.getId();
+    }
 }
