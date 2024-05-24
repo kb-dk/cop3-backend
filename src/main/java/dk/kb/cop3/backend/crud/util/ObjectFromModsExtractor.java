@@ -303,7 +303,7 @@ public class ObjectFromModsExtractor {
             if (extractedDate != null || !extractedDate.isEmpty()) {
                 if (extractedDate.trim().length() == 4) { // Only year
                     dateNotAfter = dfYearOnly.parse(extractedDate);
-                    dateNotBefore = dfYearOnly.parse(extractedDate);
+                    dateNotBefore = dateNotAfter;
                     return new Date[]{dateNotBefore, dateNotAfter};
                 } else if (extractedDate.trim().length() == 9 && extractedDate.contains("-")) { // YYYY-YYYY format
                     dateNotBefore = dfYearOnly.parse(extractedDate.substring(0, 4));
