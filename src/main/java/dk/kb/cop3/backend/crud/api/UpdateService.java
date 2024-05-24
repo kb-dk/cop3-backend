@@ -87,7 +87,7 @@ public class UpdateService {
                     return Response.serverError().build();
                 }
                 MetadataWriter mdw = new HibernateMetadataWriter(session);
-                String result = mdw.updateFromMods(uri, new_mods, lastModified, user);
+                String result = mdw.updateFromMods(uri, new_mods, lastModified, user,correctness);
                 return getHttpResponseCodeAndUpdateSolr(session, uri, result);
             }
 

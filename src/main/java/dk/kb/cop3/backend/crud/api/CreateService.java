@@ -122,7 +122,7 @@ public class CreateService {
         String lastmodifiedReturned;
         try {
             MetadataWriter mdw = new HibernateMetadataWriter(session);
-            lastmodifiedReturned = mdw.updateFromMods(objectIdFromRequest, mods, lastModified, user);
+            lastmodifiedReturned = mdw.updateFromMods(objectIdFromRequest, mods, lastModified, user,0.0);
         } catch (HibernateException ex) {
             logger.error("Cannot create object from mods", ex);
             session.close();

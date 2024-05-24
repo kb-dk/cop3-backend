@@ -93,7 +93,7 @@ public class HibernateMetadataWriter implements MetadataWriter {
     }
 
     @Override
-    public String updateFromMods(String id, String mods, String lastModified, String user) {
+    public String updateFromMods(String id, String mods, String lastModified, String user, double correctness) {
         ObjectFromModsExtractor bu = ObjectFromModsExtractor.getInstance();
         if (!id.equals(bu.getIdFromMods(mods))) {
             return "ids-do-not-match";
@@ -105,6 +105,7 @@ public class HibernateMetadataWriter implements MetadataWriter {
                 if (existingCobject.getLastModified().equals(lastModified)) {
                     AuditTrail auditTrail = createAuditTrail(existingCobject, false);
                     Object modifiedCobject = getModifiedObject(mods, user, bu, existingCobject);
+                    modifiedCobject.setCorrectness(BigDecimal.valueOf(correctness));
                     try {
                         hibSession.update(modifiedCobject);
                         hibSession.save(auditTrail);

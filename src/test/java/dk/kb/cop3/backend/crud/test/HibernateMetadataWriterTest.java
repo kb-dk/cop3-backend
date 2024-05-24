@@ -91,7 +91,7 @@ public class HibernateMetadataWriterTest {
         ObjectFromModsExtractor objectFromModsExtractor = new ObjectFromModsExtractor();
         final String modsWithTestId = TestUtil.changeIdInMods(TestUtil.TEST_ID, testMods, objectFromModsExtractor);
         final String modsWithChangedLatLng= TestUtil.changeLatLngInMods(modsWithTestId,44.5,8.7);
-        metadataWriter.updateFromMods(TestUtil.TEST_ID,modsWithChangedLatLng,savedCobject.getLastModified(),"Junit");
+        metadataWriter.updateFromMods(TestUtil.TEST_ID,modsWithChangedLatLng,savedCobject.getLastModified(),"Junit",0.0);
         savedCobject = TestUtil.getCobject(TestUtil.TEST_ID,session);
         double correctness = 0.000001d;
         assertEquals(44.5,savedCobject.getPoint().getCoordinate().getX(),correctness);
@@ -160,7 +160,7 @@ public class HibernateMetadataWriterTest {
         assertTrue(NEW_TITLE.equalsIgnoreCase(titleExtractedFromMods));
         final String stringFromDocument = TestUtil.getStringFromDocument(modsDocument);
         cobject.setMods(stringFromDocument);
-        metadataWriter.updateFromMods(TEST_ID, stringFromDocument, cobject.getLastModified(), TEST_ID);
+        metadataWriter.updateFromMods(TEST_ID, stringFromDocument, cobject.getLastModified(), TEST_ID, 0.0);
         return cobject;
     }
 

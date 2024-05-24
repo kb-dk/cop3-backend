@@ -18,7 +18,7 @@ public interface MetadataWriter {
      */
     public String updateCobject(Object cobject, String lastmodified);
 
-    public String updateFromMods(String id, String mods, String lastModified,String user); //only  update existing objects
+    public String updateFromMods(String id, String mods, String lastModified,String user,double correctness); //only  update existing objects
 
 
     /**
