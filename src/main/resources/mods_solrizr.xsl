@@ -209,32 +209,29 @@
         <xsl:for-each select="md:name[md:role/md:roleTerm[@type='text']='creator' or
 		                    md:role/md:roleTerm[@type='code']='cre' or
 		                    md:role/md:roleTerm[@type='code']='aut']">
+            <xsl:variable name="name"><xsl:call-template name="name"/></xsl:variable>
             <xsl:if test="position()=1">
                 <xsl:element name="field">
                     <xsl:attribute name="name">creator_ssi</xsl:attribute>
-                    <xsl:call-template name="name"/>
+                    <xsl:choose>
+                        <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
+                        <xsl:otherwise><xsl:value-of select="$name"/></xsl:otherwise>
+                    </xsl:choose>
                 </xsl:element>
             </xsl:if>
             <xsl:element name="field">
                 <xsl:attribute name="name">creator_display_tsim</xsl:attribute>
-                <xsl:choose>
-                    <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="md:namePart[@type='family']"/>
-                        <xsl:if test="md:namePart[@type='given']">
-                            <xsl:text>, </xsl:text>
-                            <xsl:value-of select="md:namePart[@type='given']"/>
-                        </xsl:if>
-                    </xsl:otherwise>
-                </xsl:choose>
+                    <xsl:choose>
+                        <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
+                        <xsl:otherwise><xsl:value-of select="$name"/></xsl:otherwise>
+                    </xsl:choose>
             </xsl:element>
             <xsl:element name="field">
                 <xsl:attribute name="name">creator_tsim</xsl:attribute>
-                <xsl:value-of select="md:namePart[@type='family']"/>
-                <xsl:if test="md:namePart[@type='given']">
-                    <xsl:text>, </xsl:text>
-                    <xsl:value-of select="md:namePart[@type='given']"/>
-                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
+                    <xsl:otherwise><xsl:value-of select="$name"/></xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
             <xsl:element name="field">
                 <xsl:attribute name="name">creator_nasim</xsl:attribute>
@@ -388,25 +385,39 @@
         <xsl:for-each select="md:subject/md:name">
             <xsl:variable name="language"><xsl:value-of select="./@xml:lang"/></xsl:variable>
             <xsl:variable name="name"><xsl:call-template name="name"/></xsl:variable>
+            <!-- legacy field -->
             <xsl:element name="field">
                 <xsl:attribute name="name">subject_t<xsl:call-template
                             name="string_lang">
                         <xsl:with-param name="language" select="$language"/>
                     </xsl:call-template>sim</xsl:attribute>
-                <xsl:value-of select="$name"/>
+                <xsl:choose>
+                    <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
+                    <xsl:otherwise><xsl:value-of select="$name"/></xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
-            <xsl:choose>
-                <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
-                <xsl:otherwise><xsl:value-of select="$name"/></xsl:otherwise>
-            </xsl:choose>
-            <xsl:for-each select="md:displayForm">
-                <xsl:element name="field">
-                    <xsl:attribute name="name">
-                        subject_displayForm_tsim
-                    </xsl:attribute>
-                    <xsl:value-of select="."/>
-                </xsl:element>
-            </xsl:for-each>
+            <xsl:element name="field">
+                <xsl:attribute name="name">subject_person_ls</xsl:attribute>
+                <xsl:choose>
+                    <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
+                    <xsl:otherwise><xsl:value-of select="$name"/></xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="field">
+                <xsl:attribute name="name">subject_person_tsim</xsl:attribute>
+                <xsl:choose>
+                    <xsl:when test="md:namePart[@type='family']">
+                        <xsl:value-of select="md:namePart[@type='family']"/>
+                        <xsl:if test="md:namePart[@type='given']">
+                            <xsl:text>, </xsl:text>
+                            <xsl:value-of select="md:namePart[@type='given']"/>
+                        </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="md:namePart[not(@type)]"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
         </xsl:for-each>
 
         <xsl:for-each select="md:typeOfResource">
