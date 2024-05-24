@@ -14,6 +14,12 @@ import org.w3c.dom.Element;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -25,7 +31,7 @@ import java.util.Iterator;
  */
 
 public abstract class MetadataFormulator {
-
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     javax.xml.transform.TransformerFactory trans_fact
             = new org.apache.xalan.processor.TransformerFactoryImpl();
@@ -361,7 +367,7 @@ public abstract class MetadataFormulator {
                     } else {
                         interestingness = "";
                     }
-
+                    logger.debug(this.getClass().getName()+" current Raw Mods "+currentRawMods);
                     java.io.Reader reader = new java.io.StringReader(currentRawMods);
                     org.w3c.dom.Document source_mods =
                             dBuilder.parse(new org.xml.sax.InputSource(reader));
@@ -388,8 +394,8 @@ public abstract class MetadataFormulator {
 			    transformer.setParameter("cobject_random_number",cobject.getRandomNumber().toString());
 			}
 			if(cobject.getLikes() != null) transformer.setParameter("cobject_likes",cobject.getLikes().toString());
-			if(cobject.getNotBefore() != null) transformer.setParameter("cobject_not_before",cobject.getNotBefore().toString());
-			if(cobject.getNotAfter() != null ) transformer.setParameter("cobject_not_after",cobject.getNotAfter().toString());
+			if(cobject.getNotBefore() != null) transformer.setParameter("cobject_not_before",getDateStringWithoutTime(cobject.getNotBefore()));
+			if(cobject.getNotAfter() != null ) transformer.setParameter("cobject_not_after",getDateStringWithoutTime(cobject.getNotAfter()));
 			if(cobject.getLastModified() != null) transformer.setParameter("cobject_last_modified",cobject.getLastModified());
             if(cobject.getLastModifiedBy() != null) {
                 if (cobject.getLastModifiedBy().startsWith("cumulus") || cobject.getLastModifiedBy().startsWith("cop+pdf+creator+client"))
@@ -432,5 +438,8 @@ public abstract class MetadataFormulator {
         return root;
     }
 
+    private String getDateStringWithoutTime(Date date) {
+        return dateFormat.format(date);
+    }
 
 }
