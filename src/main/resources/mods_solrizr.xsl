@@ -216,12 +216,33 @@
                 </xsl:element>
             </xsl:if>
             <xsl:element name="field">
+                <xsl:attribute name="name">creator_display_tsim</xsl:attribute>
+                <xsl:choose>
+                    <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="md:namePart[@type='family']"/>
+                        <xsl:if test="md:namePart[@type='given']">
+                            <xsl:text>, </xsl:text>
+                            <xsl:value-of select="md:namePart[@type='given']"/>
+                        </xsl:if>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="field">
                 <xsl:attribute name="name">creator_tsim</xsl:attribute>
-                <xsl:call-template name="name"/>
+                <xsl:value-of select="md:namePart[@type='family']"/>
+                <xsl:if test="md:namePart[@type='given']">
+                    <xsl:text>, </xsl:text>
+                    <xsl:value-of select="md:namePart[@type='given']"/>
+                </xsl:if>
             </xsl:element>
             <xsl:element name="field">
                 <xsl:attribute name="name">creator_nasim</xsl:attribute>
-                <xsl:call-template name="name"/>
+                <xsl:value-of select="md:namePart[@type='family']"/>
+                <xsl:if test="md:namePart[@type='given']">
+                    <xsl:text>, </xsl:text>
+                    <xsl:value-of select="md:namePart[@type='given']"/>
+                </xsl:if>
             </xsl:element>
         </xsl:for-each>
 
@@ -358,8 +379,7 @@
                 <xsl:attribute name="name">subject_t<xsl:call-template
                             name="string_lang">
                         <xsl:with-param name="language" select="$language"/>
-                    </xsl:call-template>sim
-                </xsl:attribute>
+                    </xsl:call-template>sim</xsl:attribute>
                 <xsl:value-of select="."/>
                 <xsl:if test="position()!=last()">--</xsl:if>
             </xsl:element>
@@ -367,14 +387,26 @@
 
         <xsl:for-each select="md:subject/md:name">
             <xsl:variable name="language"><xsl:value-of select="./@xml:lang"/></xsl:variable>
+            <xsl:variable name="name"><xsl:call-template name="name"/></xsl:variable>
             <xsl:element name="field">
                 <xsl:attribute name="name">subject_t<xsl:call-template
                             name="string_lang">
                         <xsl:with-param name="language" select="$language"/>
-                    </xsl:call-template>sim
-                </xsl:attribute>
-                <xsl:call-template name="name"/>
+                    </xsl:call-template>sim</xsl:attribute>
+                <xsl:value-of select="$name"/>
             </xsl:element>
+            <xsl:choose>
+                <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
+                <xsl:otherwise><xsl:value-of select="$name"/></xsl:otherwise>
+            </xsl:choose>
+            <xsl:for-each select="md:displayForm">
+                <xsl:element name="field">
+                    <xsl:attribute name="name">
+                        subject_displayForm_tsim
+                    </xsl:attribute>
+                    <xsl:value-of select="."/>
+                </xsl:element>
+            </xsl:for-each>
         </xsl:for-each>
 
         <xsl:for-each select="md:typeOfResource">
@@ -444,6 +476,10 @@
                             <xsl:value-of select="."/>
                         </xsl:otherwise>
                     </xsl:choose>
+                </xsl:element>
+                <xsl:element name="field">
+                    <xsl:attribute name="name">pub_dat_display_tsi</xsl:attribute>
+                    <xsl:value-of select="."/>
                 </xsl:element>
             </xsl:if>
         </xsl:for-each>
@@ -692,11 +728,6 @@
                 <xsl:text>, </xsl:text>
                 <xsl:value-of select="md:namePart[@type='date']"/>
                 <xsl:text/>
-            </xsl:if>
-            <xsl:if test="md:displayForm">
-                <xsl:text> (</xsl:text>
-                <xsl:value-of select="md:displayForm"/>
-                <xsl:text>) </xsl:text>
             </xsl:if>
             <xsl:for-each select="md:role[md:roleTerm[@type='text']!='creator']">
                 <xsl:text> (</xsl:text>
