@@ -397,7 +397,7 @@
                 </xsl:choose>
             </xsl:element>
             <xsl:element name="field">
-                <xsl:attribute name="name">subject_person_ls</xsl:attribute>
+                <xsl:attribute name="name">subject_person_ss</xsl:attribute>
                 <xsl:choose>
                     <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
                     <xsl:otherwise><xsl:value-of select="$name"/></xsl:otherwise>
