@@ -55,7 +55,7 @@ public class ObjectFromModsExtractor {
 
     private static final String CREATOR_XPATH = "/mods/name[@type='personal']/namePart";
     private static final String GEOGRAPHIC_XPATH = "/mods/subject/geographic";
-    private static final String PERSON_XPATH = "/mods/subject/name/namePart";
+    private static final String PERSON_XPATH = "/mods/subject/name";
     private static final String EXTENSION_XPATH = "/mods/extension/div";
     private static final String BUILDING_XPATH = "/mods/subject/hierarchicalGeographic/area";
     private static final String MODIFIED_BY_XPATH = "/mods/name[@type='cumulus']/namePart";
@@ -114,6 +114,7 @@ public class ObjectFromModsExtractor {
         Document modsDocument = parseModsString(modsString);
         try {
             populateCopjectWithSimpleFields(copject, version, modsDocument);
+            setPerson(copject, modsDocument);
             setLatLng(copject, modsDocument);
             setDates(copject, modsDocument);
             setTypeAndEdition(copject, session, modsDocument);
@@ -129,6 +130,28 @@ public class ObjectFromModsExtractor {
         return copject;
     }
 
+    private void setPerson(Object copject, Document modsDocument) {
+        try {
+            NodeList nodes = (NodeList) xPath.evaluate(PERSON_XPATH,modsDocument,XPathConstants.NODESET);
+            for (int n = 0; n < nodes.getLength(); n++) {
+                Node node = nodes.item(n);
+                NodeList children = node.getChildNodes();
+                for (int m = 0; m < nodes.getLength(); m++) {
+                    Node child = children.item(m);
+                    if ("displayForm".equals(child.getLocalName())) {
+                        copject.setPerson(child.getNodeValue());
+                        return;
+                    }
+                    if ("namePart".equals(child.getLocalName()) && !child.hasAttributes()) {
+                        copject.setPerson(child.getNodeValue());
+                    }
+                }
+            }
+        } catch (XPathExpressionException e) {
+            logger.warn(copject.getId()+" Unable to extract person "+e.getMessage());
+        }
+    }
+
     private static String getCurrentTimestamp() {
         return "" + new Date().getTime();
     }
@@ -137,7 +160,6 @@ public class ObjectFromModsExtractor {
         String creator = extract(CREATOR_XPATH, modsDocument);
         String geographic = extract(GEOGRAPHIC_XPATH, modsDocument);
         String id = extract(ID_XPATH, modsDocument);
-        String person = extract(PERSON_XPATH, modsDocument);
         String building = extract(BUILDING_XPATH, modsDocument);
         String modifiedBy = extract(MODIFIED_BY_XPATH, modsDocument);
         String title = extract(TITLE_XPATH, modsDocument);
@@ -157,9 +179,6 @@ public class ObjectFromModsExtractor {
         }
         if (geographic != null) {
             copject.setLocation(geographic);
-        }
-        if (person != null) {
-            copject.setPerson(person);
         }
         copject.setId(id);
         copject.setLastModifiedBy(modifiedBy);
