@@ -357,13 +357,13 @@ public abstract class MetadataFormulator {
                     }
                     recordId = cobject.getId();
                     if (cobject.getCorrectness() != null) {
-                        correctness = cobject.getCorrectness().toString();
+                        correctness = String.valueOf(cobject.getCorrectness().intValue());
                     } else {
                         correctness = "";
                     }
 
                     if (cobject.getInterestingess() != null) {
-                        interestingness = cobject.getInterestingess().toString();
+                        interestingness = String.valueOf(cobject.getInterestingess().intValue());
                     } else {
                         interestingness = "";
                     }
