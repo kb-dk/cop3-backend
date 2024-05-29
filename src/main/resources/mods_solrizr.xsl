@@ -213,10 +213,11 @@
             <xsl:if test="position()=1">
                 <xsl:element name="field">
                     <xsl:attribute name="name">creator_ssi</xsl:attribute>
-                    <xsl:choose>
-                        <xsl:when test="md:displayForm"><xsl:value-of select="md:displayForm"/></xsl:when>
-                        <xsl:otherwise><xsl:value-of select="$name"/></xsl:otherwise>
-                    </xsl:choose>
+                    <xsl:value-of select="md:namePart[@type='family']"/>
+                    <xsl:if test="md:namePart[@type='given']">
+                        <xsl:text>, </xsl:text>
+                        <xsl:value-of select="md:namePart[@type='given']"/>
+                    </xsl:if>
                 </xsl:element>
             </xsl:if>
             <xsl:element name="field">
