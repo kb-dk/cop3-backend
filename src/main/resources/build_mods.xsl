@@ -56,7 +56,9 @@
 
     <xsl:template match="md:mods">
         <md:mods>
+            <xsl:comment>template start 1</xsl:comment>
             <xsl:apply-templates/>
+            <xsl:comment>template end 1</xsl:comment>
             <xsl:if test="$latitude and $longitude">
                 <md:subject>
                     <md:cartographics>
@@ -205,13 +207,11 @@
 
     <xsl:template match="md:recordInfo">
         <md:recordInfo>
-            <xsl:comment>hit recordInfo</xsl:comment>
             <xsl:apply-templates/>
         </md:recordInfo>
     </xsl:template>
 
     <xsl:template match="md:recordIdentifier">
-        <xsl:comment>hit recordIdentifier</xsl:comment>
         <md:recordIdentifier>
             <xsl:value-of select="concat($metadata_context,normalize-space(.))"/>
         </md:recordIdentifier>
@@ -232,7 +232,10 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="md:subject[md:cartographics]">
+    <xsl:template match="md:subject/md:cartographics">
+        <md:cartographics>
+            <xsl:copy-of select="md:scale"/>
+        </md:cartographics>
     </xsl:template>
 
     <xsl:template match="md:mods/md:identifier[@type='uri' and not(@displayLabel)]">
