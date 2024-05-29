@@ -463,7 +463,7 @@
             </xsl:element>
         </xsl:for-each>
 
-        <xsl:for-each select="md:subject/md:cartographics/*[1]">
+        <xsl:for-each select="md:subject/md:cartographics/md:coordinates[1]">
             <xsl:element name="field">
                 <xsl:attribute name="name">dcterms_spatial</xsl:attribute>
                 <xsl:value-of select="."/>
