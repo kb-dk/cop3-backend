@@ -4,6 +4,7 @@ import dk.kb.cop3.backend.crud.database.*;
 import dk.kb.cop3.backend.crud.database.hibernate.Object;
 import dk.kb.cop3.backend.crud.update.Reformulator;
 import dk.kb.cop3.backend.solr.CopSolrClient;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 
 // The class binds to /syndication
 @Path("/update")
@@ -37,7 +39,7 @@ public class UpdateService {
                          @FormParam("lastmodified") String lastModified,
                          @FormParam("lat") double lat,
                          @FormParam("lng") double lng,
-                         @FormParam("correctness") double correctness,
+                         @FormParam("correctness") String correctnessParam,
                          @FormParam("title") String title,
                          @FormParam("person") String person,
                          @FormParam("building") String building,
@@ -61,20 +63,26 @@ public class UpdateService {
     ) {
 
         String uri = "/" + medium + "/" + collection + "/" + year + "/" + month + "/" + edition + "/" + id;
-        logInputParams(user, lastModified, lat, lng, correctness, title, person, building, parish, street, housenumber, zipcode, cadastre, area, city, location, note, orientation, iiifIdentifier, imageIdentifier, thumbnailIdentifier, uri);
+        logInputParams(user, lastModified, lat, lng, correctnessParam, title, person, building, parish, street, housenumber, zipcode, cadastre, area, city, location, note, orientation, iiifIdentifier, imageIdentifier, thumbnailIdentifier, uri);
 
         if ((user == null) || "".equals(user)) {
             logger.warn("update service no user given");
             return Response.status(400).build();
         }
-        String current_mods = getCurrentMods(uri);
-        if (current_mods == null) {
+        Object currentObject = getCurrentObject(uri);
+        if (currentObject == null) {
             return Response.status(404).build();
         }
         if (lastModified == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("no last modified").build();
         }
 
+        double correctness = currentObject.getCorrectness().doubleValue();
+        if (!StringUtils.isEmpty(correctnessParam)) {
+            correctness = Double.parseDouble(correctnessParam);
+        }
+
+        String current_mods = currentObject.getMods();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             boolean doModsUpdate = false;
@@ -208,7 +216,7 @@ public class UpdateService {
         return doModsUpdate;
     }
 
-    private void logInputParams(String user, String lastModified, double lat, double lng, double correctness, String title, String person, String building, String parish, String street, String housenumber, String zipcode, String cadastre, String area, String city, String location, String note, String orientation, String iiifIdentifier, String imageIdentifier, String thumbnailIdentifier, String uri) {
+    private void logInputParams(String user, String lastModified, double lat, double lng, String correctness, String title, String person, String building, String parish, String street, String housenumber, String zipcode, String cadastre, String area, String city, String location, String note, String orientation, String iiifIdentifier, String imageIdentifier, String thumbnailIdentifier, String uri) {
         logger.debug("updating object " + uri);
         logger.debug("user: " + user);
         logger.debug("lastModified: " + lastModified);
@@ -232,7 +240,7 @@ public class UpdateService {
         return copSolrClient.updateCobjectInSolr(objectId, true);
     }
 
-    private String getCurrentMods(String uri) {
+    private Object getCurrentObject(String uri) {
         Session ses = HibernateUtil.getSessionFactory().openSession();
         MetadataSource mds = new SolrMetadataSource(ses);
         mds.setSearchterms("id", uri);
@@ -243,7 +251,7 @@ public class UpdateService {
         }
         Object cObject = mds.getAnother();
         ses.close();
-        return cObject.getMods();
+        return cObject;
     }
 
 }
