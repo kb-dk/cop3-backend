@@ -401,7 +401,7 @@ public class SolrMetadataSource implements MetadataSource {
 
                     if ("person".equals(field)) {
                         if (!"".equals(solr_q)) solr_q += " AND ";
-                        solr_q += "cobject_person_tsim:"+searchterms.get(field);
+                        solr_q += "subject_person_tsim"+searchterms.get(field);
                     }
 
                     if ("location".equals(field)) {
