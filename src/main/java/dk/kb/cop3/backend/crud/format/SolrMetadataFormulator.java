@@ -35,13 +35,8 @@ public class SolrMetadataFormulator extends MetadataFormulator {
     private java.lang.String template = "/template_mods_collection.xml";
 
     javax.xml.transform.TransformerFactory trans_fact = new org.apache.xalan.processor.TransformerFactoryImpl();
-    private javax.xml.transform.Transformer[] steps = new javax.xml.transform.Transformer[2];
 
     public SolrMetadataFormulator() {
-        this.steps[0] = this.trInit("/mods2ese.xsl");
-        this.steps[0].setErrorListener(new TransformErrorListener("mods2ese.xsl"));
-        this.steps[1] = this.trInit("/ese_solrizr.xsl");
-        this.steps[1].setErrorListener(new TransformErrorListener("ese_solrizr.xml"));
     }
 
     public Document formulate() {
@@ -64,29 +59,7 @@ public class SolrMetadataFormulator extends MetadataFormulator {
             logger.warn("transformer problem "+trnsFrmPrblm.getMessage());
         }
         solr_doc = (Document) dom_result.getNode();
-/*        for (int i = 0; i < 1; i++) {
-            if (steps[i] == null) {
-                logger.debug("end of civilization: steps[" + i + "] is null");
-                return null;
-            }
 
-            steps[i].setParameter("metadata_context", copBaseUrl);
-            steps[i].setParameter("url_prefix", baseUrl);
-            steps[i].setParameter("internal_url_prefix", internalBaseUrl);
-            steps[i].setParameter("raw_mods", this.currentRawMods);
-            //	    steps[i].setParameter("url_prefix",copBaseUrl);
-            steps[i].setParameter("content_context", CopBackendProperties.getGuiUri());
-            try {
-                steps[i].transform(dom_source, dom_result);
-                solr_doc = (org.w3c.dom.Document) dom_result.getNode();
-                if (i < steps.length) {
-                    dom_source = new javax.xml.transform.dom.DOMSource(solr_doc);
-                    dom_result = new javax.xml.transform.dom.DOMResult();
-                }
-            } catch (javax.xml.transform.TransformerException trnsFrmPrblm) {
-                logger.warn("transformer problem "+trnsFrmPrblm.getMessage());
-            }
-        }*/
         return solr_doc;
     }
 
