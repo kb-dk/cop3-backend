@@ -70,4 +70,7 @@ public class CopBackendProperties {
     public static String getDefaultTemplate() {
         return props.getProperty("template.default");
     }
+
+    public static boolean getTraceTransforms() {return "true".equals(props.getProperty("trace-transformations"));}
+
 }
