@@ -8,11 +8,11 @@
 
     <entry key="cop2_backend.baseurl">http://localhost:8080/cop</entry>
     <entry key="cop2_backend.internal.baseurl">http://localhost:8080/cop</entry>
-    <entry key="solr.baseurl">http://localhost:50006//solr/cop-editions</entry>
+    <entry key="solr.baseurl">http://localhost:50006/solr/cop-editions</entry>
 
-    <entry key="database.url">jdbc:postgresql://localhost:35432/cop</entry>
+    <entry key="database.url">jdbc:postgresql://localhost:25432/cop</entry>
     <entry key="database.user">cop</entry>
-    <entry key="database.password">cop123</entry>
+    <entry key="database.password">gqHqnKFw5us4</entry>
 
     <entry key="oradatabase.url">jdbc:oracle:thin:@oracle-test-03.kb.dk:1521:KURSUS</entry>
 </properties>
