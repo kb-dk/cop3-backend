@@ -367,7 +367,6 @@ public abstract class MetadataFormulator {
                     } else {
                         interestingness = "";
                     }
-                    logger.debug(this.getClass().getName()+" current Raw Mods "+currentRawMods);
                     java.io.Reader reader = new java.io.StringReader(currentRawMods);
                     org.w3c.dom.Document source_mods =
                             dBuilder.parse(new org.xml.sax.InputSource(reader));
