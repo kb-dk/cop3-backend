@@ -601,9 +601,9 @@
         <xsl:for-each select="md:relatedItem[not(@type='original') and not(@type='series') and md:identifier]">
             <xsl:call-template name="make_page_field"/>
             <xsl:for-each select=".//md:relatedItem[@type='constituent' and md:identifier]">
-                <xsl:sort order="{$sort_direction}"
+                <!--xsl:sort order="{$sort_direction}"
                           data-type="number"
-                          select="count(preceding::md:relatedItem[md:identifier])"/>
+                          select="count(preceding::md:relatedItem[md:identifier])"/-->
                 <xsl:call-template name="make_page_field"/>
             </xsl:for-each>
         </xsl:for-each>
