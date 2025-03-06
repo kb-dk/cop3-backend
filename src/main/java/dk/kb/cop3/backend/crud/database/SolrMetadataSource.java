@@ -423,7 +423,7 @@ public class SolrMetadataSource implements MetadataSource {
                 // as we do in oracle spatial
                 String[] tokens = this.boundingBox.split(",");
 
-		        String solr_bb = "["+Math.max(Math.min(Double.parseDouble(tokens[2]),90),-90)+","
+		        String solr_bb = "["+Math.max(Math.min(Double.parseDouble(tokens[3]),90),-90)+","
                         + Math.max(Math.min(Double.parseDouble(tokens[2]),180),-180)+" TO "
                         + Math.max(Math.min(Double.parseDouble(tokens[1]),90),-90)+","
                         + Math.max(Math.min(Double.parseDouble(tokens[0]),180),-180) +"]";
