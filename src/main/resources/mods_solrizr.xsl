@@ -367,8 +367,19 @@
             <xsl:element name="field">
                 <xsl:attribute name="name">subject_tsim</xsl:attribute>
                 <xsl:value-of select="."/>
-                <xsl:if test="position()!=last()">--</xsl:if>
             </xsl:element>
+            <xsl:if test="@xml:lang = 'da'">
+                <xsl:element name="field">
+                    <xsl:attribute name="name">subject_tdsim</xsl:attribute>
+                    <xsl:value-of select="."/>
+                </xsl:element>
+            </xsl:if>
+            <xsl:if test="@xml:lang = 'en'">
+                <xsl:element name="field">
+                    <xsl:attribute name="name">subject_tesim</xsl:attribute>
+                    <xsl:value-of select="."/>
+                </xsl:element>
+            </xsl:if>
         </xsl:for-each>
 
         <xsl:for-each select="md:subject/md:occupation">
