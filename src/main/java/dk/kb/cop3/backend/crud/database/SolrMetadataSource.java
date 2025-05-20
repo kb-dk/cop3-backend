@@ -406,12 +406,12 @@ public class SolrMetadataSource implements MetadataSource {
 
                     if ("location".equals(field)) {
                         if (!"".equals(solr_q)) solr_q += " AND ";
-                        solr_q += "cobject_location_tsim:"+searchterms.get(field);
+                        solr_q += "location_tsim:"+searchterms.get(field);
                     }
 
                     if ("building".equals(field)) {
                         if (!"".equals(solr_q)) solr_q += " AND ";
-                        solr_q += "cobject_building_tsim:" + searchterms.get(field);
+                        solr_q += "building_tsim:" + searchterms.get(field);
                     }
 
                     /* TODO the same for the rest of the fields (or something smarter) */

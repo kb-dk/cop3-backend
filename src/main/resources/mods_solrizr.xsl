@@ -675,6 +675,31 @@
 
         </xsl:for-each>
 
+        <!-- building -->
+        <xsl:for-each select="md:subject/md:hierarchicalGeographic/md:area[@areaType='building']">
+            <xsl:element name="field">
+                <xsl:attribute name="name">building_ssim</xsl:attribute>
+                <xsl:value-of select="."/>
+            </xsl:element>
+            <xsl:element name="field">
+                <xsl:attribute name="name">building_tsim</xsl:attribute>
+                <xsl:value-of select="."/>
+            </xsl:element>
+        </xsl:for-each>
+
+        <!-- building -->
+        <xsl:for-each select="md:subject/md:geographic">
+            <xsl:element name="field">
+                <xsl:attribute name="name">location_ssim</xsl:attribute>
+                <xsl:value-of select="."/>
+            </xsl:element>
+            <xsl:element name="field">
+                <xsl:attribute name="name">location_tsim</xsl:attribute>
+                <xsl:value-of select="."/>
+            </xsl:element>
+        </xsl:for-each>
+
+
         <!-- some Europeana stuff don't know if it is used anymore-->
 
         <!-- we have difficulties with videos and audios -->
