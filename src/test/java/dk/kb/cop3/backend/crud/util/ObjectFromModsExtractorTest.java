@@ -16,6 +16,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import javax.xml.xpath.XPathExpressionException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ObjectFromModsExtractorTest {
@@ -148,5 +151,13 @@ public class ObjectFromModsExtractorTest {
         Throwable error = assertThrows(RuntimeException.class, () -> objectFromModsExtractor.extractFromMods(null, mods, null));
         assertEquals("java.lang.IllegalArgumentException: copject cannot be null", error.toString());
         assertEquals("copject cannot be null", error.getMessage());
+    }
+
+    @Test
+    public void testExtractBuilding() throws IOException, XPathExpressionException {
+        String mods = Files.readString(Path.of(LUFTFOTO_MODS_FILE), StandardCharsets.UTF_8);
+        String BUILDING_XPATH = "/mods/subject/hierarchicalGeographic/area[@areaType='building']";
+        String building = objectFromModsExtractor.extract(BUILDING_XPATH,objectFromModsExtractor.parseModsString(mods));
+        System.out.println(building);
     }
 }
