@@ -59,6 +59,12 @@ public class SolrMetadataSource implements MetadataSource {
     protected char visible_to_public = '1';
 
     private Set<String> allowedSearchTerms = new HashSet<>();
+    private Set<String> allIndexedFields = Set.of(
+            "full_title_tsi^2","title_tdsim",
+            "subject_person_tsim", "subject_area_building","building_tsim","cobject_location_tsim","cobject_building_tsim",
+            "city_tsim","parish_tsim",
+            "description_tsim^0.5"
+    );
     public  Map<String, String> searchterms = new HashMap<>();
 
     private int offset = 0;
@@ -378,7 +384,14 @@ public class SolrMetadataSource implements MetadataSource {
                 logger.debug("search field '"+field+"' value '"+searchterms.get(field)+"'");
                 if (isAllowedSearchField(field)) {
                     if ("mods".equals(field)) {
-                        solr_q += searchterms.get(field);
+                        String all_q = "(";
+                        for (String f : allIndexedFields) {
+                            if (!"(".equals(all_q)) all_q += " OR ";
+                            all_q += f + ":" + searchterms.get(field);
+                        }
+                        all_q += ")";
+                        if (!"".equals(solr_q)) solr_q += " AND ";
+                        solr_q += all_q;
                     }
                     if ("sted".equals(field)) {
                         if (!"".equals(solr_q)) solr_q += " AND ";
