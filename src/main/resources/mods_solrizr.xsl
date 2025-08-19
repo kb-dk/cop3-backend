@@ -687,7 +687,28 @@
             </xsl:element>
         </xsl:for-each>
 
-        <!-- building -->
+        <xsl:for-each select="md:subject/md:hierarchicalGeographic/md:city">
+            <xsl:element name="field">
+                <xsl:attribute name="name">city_ssim</xsl:attribute>
+                <xsl:value-of select="."/>
+            </xsl:element>
+            <xsl:element name="field">
+                <xsl:attribute name="name">city_tsim</xsl:attribute>
+                <xsl:value-of select="."/>
+            </xsl:element>
+        </xsl:for-each>
+
+        <xsl:for-each select="md:subject/md:hierarchicalGeographic/md:area[@areaType='parish']">
+            <xsl:element name="field">
+                <xsl:attribute name="name">parish_ssim</xsl:attribute>
+                <xsl:value-of select="."/>
+            </xsl:element>
+            <xsl:element name="field">
+                <xsl:attribute name="name">parish_tsim</xsl:attribute>
+                <xsl:value-of select="."/>
+            </xsl:element>
+        </xsl:for-each>
+
         <xsl:for-each select="md:subject/md:geographic">
             <xsl:element name="field">
                 <xsl:attribute name="name">location_ssim</xsl:attribute>
