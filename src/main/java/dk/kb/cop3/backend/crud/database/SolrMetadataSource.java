@@ -382,7 +382,7 @@ public class SolrMetadataSource implements MetadataSource {
                     }
                     if ("sted".equals(field)) {
                         if (!"".equals(solr_q)) solr_q += " AND ";
-                        solr_q += "(area_area_tsim:"+searchterms.get(field)+" OR citySection_street_tsim:"+searchterms.get(field)+" OR cobject_location_tsim:"+searchterms.get(field)+")";
+                        solr_q += "cobject_location_tsim:"+searchterms.get(field)+")";
                     }
                     if ("title".equals(field)) {
                         if (!"".equals(solr_q)) solr_q += " AND ";
