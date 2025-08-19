@@ -1,3 +1,7 @@
+v.3.0.12
+- fixed search issues
+v.3.0.11
+- added support for aa=å in searches
 v.3.0.7
 - transform direct from mods to solr
 - added new solr_fields
