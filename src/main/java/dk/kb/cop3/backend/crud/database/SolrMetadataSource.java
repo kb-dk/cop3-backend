@@ -60,8 +60,8 @@ public class SolrMetadataSource implements MetadataSource {
 
     private Set<String> allowedSearchTerms = new HashSet<>();
     private Set<String> allIndexedFields = Set.of(
-            "full_title_tsi^4","title_tdsim^2",
-            "subject_person_tsim^2", "subject_area_building^2","building_tsim^2","cobject_location_tsim^2","cobject_building_tsim^2",
+            "full_title_tsi","local_id_fngsi","title_tdsim",
+            "subject_person_tsim", "subject_area_building","building_tsim","cobject_location_tsim^2","cobject_building_tsim^2",
             "city_tsim","parish_tsim","subject_tsim",
             "description_tsim"
     );
