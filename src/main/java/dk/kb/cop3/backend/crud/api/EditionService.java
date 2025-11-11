@@ -74,7 +74,8 @@ public class EditionService {
 
             Response.ResponseBuilder res = Response.ok(responseDoc);
             logger.debug("The response has been built");
-            session.beginTransaction().commit();
+            session.flush();
+            session.getTransaction().commit();
             return res.build();
         }
     }
