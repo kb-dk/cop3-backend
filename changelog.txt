@@ -1,4 +1,4 @@
-v.3.0.13
+v.3.0.14
 - fixed bug in edition service causing db  transactions not to be closed
 v.3.0.12
 - fixed search issues
