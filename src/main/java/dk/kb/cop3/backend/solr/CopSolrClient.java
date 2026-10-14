@@ -12,6 +12,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.xalan.processor.TransformerFactoryImpl;
@@ -147,7 +148,7 @@ public class CopSolrClient {
             String solrUrl = CopBackendProperties.getSolrBaseurl();
             HttpSolrClient client = new HttpSolrClient.Builder(solrUrl).build();
             try {
-                if (removeCurrentCategoriesFromSolr(topCategoryId, client)) return false;
+                if (removeCurrentCategoriesFromSolr(editionId, client)) return false;
                 String solrXml = getSolrXMLfromOPML(edition.getOpml(),editionId,topCategoryId);
                 return addNewCategoriesToSolr(client, solrXml);
             } catch (SolrException | IOException | SolrServerException e) {
@@ -173,10 +174,11 @@ public class CopSolrClient {
         return true;
     }
 
-    private static boolean removeCurrentCategoriesFromSolr(String topCategoryId, HttpSolrClient solr) throws SolrServerException, IOException {
+    // All category docs from opml2solr.xsl have id <editionId>/subjectN, so delete by that prefix.
+    // Deleting by the edition's cumulus top category left stale docs behind.
+    private static boolean removeCurrentCategoriesFromSolr(String editionId, HttpSolrClient solr) throws SolrServerException, IOException {
         UpdateRequest updateRequest = new UpdateRequest();
-        updateRequest.deleteByQuery("bread_crumb_ssim:"+ topCategoryId);
-        updateRequest.deleteById(topCategoryId);
+        updateRequest.deleteByQuery("id:" + ClientUtils.escapeQueryChars(editionId + "/subject") + "*");
         UpdateResponse response = updateRequest.process(solr);
         if (response.getStatus() != 0) {
             log.error("Unable to update categories "+response);

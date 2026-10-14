@@ -3,6 +3,7 @@ v.3.0.15 (unreleased)
 - UpdateIndex: fixed broken query in subject mode
 - fixed db session leaks in /solrizr, /create and /update services
 - create service now removes the db object again when indexing in solr fails
+- category reindex (solrizr subject, opml upload, UpdateIndex categories) now removes stale category docs from solr
 v.3.0.14
 - fixed bug in edition service causing db  transactions not to be closed
 v.3.0.12
