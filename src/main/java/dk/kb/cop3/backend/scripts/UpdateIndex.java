@@ -26,7 +26,7 @@ public class UpdateIndex {
             + "       UpdateIndex edition <startPage> <editionId>\n"
             + "       UpdateIndex subject <startPage> <categoryId>\n"
             + "       UpdateIndex editions\n"
-            + "       UpdateIndex categories <editionId>\n"
+            + "       UpdateIndex categories <editionId or subjectId>\n"
             + "       UpdateIndex object <copId>\n"
             + "       UpdateIndex file <path to file with one copId per line>";
 
@@ -52,7 +52,8 @@ public class UpdateIndex {
                     ok = solrHelper.updateEditionsInSolr();
                     break;
                 case "categories":
-                    ok = solrHelper.updateCategoriesSolrForEdition(args[1]);
+                    // accept a subject id as the /solrizr endpoint does; categories are rebuilt per edition
+                    ok = solrHelper.updateCategoriesSolrForEdition(args[1].replaceFirst("/subject[0-9]+/?$", ""));
                     break;
                 case "object":
                     ok = solrHelper.updateCobjectInSolr(args[1], true);

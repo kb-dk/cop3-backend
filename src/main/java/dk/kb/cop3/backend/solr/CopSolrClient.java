@@ -155,6 +155,8 @@ public class CopSolrClient {
             } finally {
                 closeSolrClient(client);
             }
+        } else {
+            log.warn("Edition not found, categories not updated: " + editionId);
         }
         return false;
     }
