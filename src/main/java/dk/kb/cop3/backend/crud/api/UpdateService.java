@@ -242,16 +242,18 @@ public class UpdateService {
 
     private Object getCurrentObject(String uri) {
         Session ses = HibernateUtil.getSessionFactory().openSession();
-        MetadataSource mds = new SolrMetadataSource(ses);
-        mds.setSearchterms("id", uri);
-        mds.execute();
-        if (!mds.hasMore()) {
-            logger.debug("no object found with id: " + uri);
-            return null;
+        try {
+            MetadataSource mds = new SolrMetadataSource(ses);
+            mds.setSearchterms("id", uri);
+            mds.execute();
+            if (!mds.hasMore()) {
+                logger.debug("no object found with id: " + uri);
+                return null;
+            }
+            return mds.getAnother();
+        } finally {
+            ses.close();
         }
-        Object cObject = mds.getAnother();
-        ses.close();
-        return cObject;
     }
 
 }

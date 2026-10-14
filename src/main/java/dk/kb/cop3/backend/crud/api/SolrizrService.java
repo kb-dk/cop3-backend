@@ -32,12 +32,16 @@ public class SolrizrService {
 	public Response solrizeAllEditions(@Context HttpServletRequest httpServletRequest,
 							@Context ServletContext servletContext) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		CopSolrClient solrHelper = new CopSolrClient(session);
-		boolean updateWentOK = solrHelper.updateEditionsInSolr();
+		boolean updateWentOK;
+		try {
+			CopSolrClient solrHelper = new CopSolrClient(session);
+			updateWentOK = solrHelper.updateEditionsInSolr();
+		} finally {
+			session.close();
+		}
 		if (updateWentOK) {
 			return Response.ok().build();
 		}
-		session.close();
 		return Response.serverError().build();
 	}
 
@@ -59,11 +63,15 @@ public class SolrizrService {
 		boolean updateWentOk;
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		CopSolrClient copSolrClient = new CopSolrClient(session);
-		if (id.startsWith("object")) {
-			updateWentOk = copSolrClient.updateCobjectInSolr(cop_id,true);
-		} else {
-			updateWentOk = copSolrClient.updateCategoriesSolrForEdition(edition_id);
+		try {
+			CopSolrClient copSolrClient = new CopSolrClient(session);
+			if (id.startsWith("object")) {
+				updateWentOk = copSolrClient.updateCobjectInSolr(cop_id,true);
+			} else {
+				updateWentOk = copSolrClient.updateCategoriesSolrForEdition(edition_id);
+			}
+		} finally {
+			session.close();
 		}
 		if (updateWentOk) {
 			return Response.ok().build();

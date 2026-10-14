@@ -1,6 +1,8 @@
 v.3.0.15 (unreleased)
 - UpdateIndex: new modes editions, categories and object (same operations as the /solrizr endpoint)
 - UpdateIndex: fixed broken query in subject mode
+- fixed db session leaks in /solrizr, /create and /update services
+- create service now removes the db object again when indexing in solr fails
 v.3.0.14
 - fixed bug in edition service causing db  transactions not to be closed
 v.3.0.12
