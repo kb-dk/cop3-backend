@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+    <comment>Configuration for cop2_backend. Placeholders are filled in from the environment at container start.</comment>
+
+    <!-- base uri for the gui -->
+    <entry key="gui.uri">${COP_GUI_URI}</entry>
+
+    <entry key="cop2_backend.baseurl">${COP_BASEURL}</entry>
+    <entry key="cop2_backend.internal.baseurl">${COP_INTERNAL_BASEURL}</entry>
+    <entry key="annotation.baseurl">${ANNOTATION_BASEURL}</entry>
+    <entry key="solr.baseurl">${SOLR_URL}</entry>
+
+    <entry key="database.url">${DATABASE_URL}</entry>
+    <entry key="database.user">${POSTGRES_USER}</entry>
+    <entry key="database.password">${POSTGRES_PASSWORD}</entry>
+</properties>
